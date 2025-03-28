@@ -149,17 +149,30 @@ class GameController:
     def handle_player_shooting(self):
         """
         Manage player's automatic projectile shooting.
-        Targets random enemies when possible.
+        Targets the closest enemy when possible.
         """
         if self.player.can_shoot() and self.enemies:
-            # Select a random enemy to target
-            target = random.choice(list(self.enemies.sprites()))
+            # Find the closest enemy to target
+            closest_enemy = None
+            min_distance = float('inf')
             
+            for enemy in self.enemies:
+                # Calculate distance between player and this enemy
+                dx = enemy.rect.centerx - self.player.rect.centerx
+                dy = enemy.rect.centery - self.player.rect.centery
+                distance = (dx**2 + dy**2)**0.5  # Euclidean distance
+                
+                # Update closest enemy if this one is closer
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_enemy = enemy
+            
+            # Create projectile targeting the closest enemy
             projectile = Projectile(
                 self.player.rect.centerx, 
                 self.player.rect.centery,
-                target.rect.centerx, 
-                target.rect.centery
+                closest_enemy.rect.centerx, 
+                closest_enemy.rect.centery
             )
             
             self.projectiles.add(projectile)
