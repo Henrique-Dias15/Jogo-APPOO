@@ -64,6 +64,16 @@ class MenuSystem:
             center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 100)
         )
         
+        # Quit game instructions
+        quit_text = self.font_menu.render(
+            "Press Q to Quit", 
+            True, GREEN
+        )
+        quit_rect = quit_text.get_rect(
+            center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 150)
+        )
+        
+        self.screen.blit(quit_text, quit_rect)
         self.screen.blit(game_over, game_over_rect)
         self.screen.blit(level_text, level_rect)
         self.screen.blit(restart_text, restart_rect)

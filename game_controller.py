@@ -216,7 +216,8 @@ class GameController:
                 return True
             elif event.key == pygame.K_q:
                 # Quit the game
-                return False
+                pygame.quit()
+                sys.exit()
         return True
     
     def render_screen(self):
