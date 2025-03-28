@@ -132,3 +132,48 @@ class MenuSystem:
             y_offset += 80
         
         return option_rects  # Return clickable regions
+    
+    def draw_game_won(self, player_level):
+        """Render the game over screen."""
+        self.screen.fill(BLACK)
+        
+        # Game Over Text
+        game_over = self.font_title.render(
+            "You Win!", 
+            True, BLUE
+        )
+        game_over_rect = game_over.get_rect(
+            center=(self.width//2, self.height//2 - 100)
+        )
+        
+        # Level Reached
+        level_text = self.font_menu.render(
+            f"You reached Level {player_level}", 
+            True, WHITE
+        )
+        level_rect = level_text.get_rect(
+            center=(self.width//2, self.height//2)
+        )
+        
+        # Restart Instructions
+        restart_text = self.font_menu.render(
+            "Press R to Restart", 
+            True, GREEN
+        )
+        restart_rect = restart_text.get_rect(
+            center=(self.width//2, self.height//2 + 100)
+        )
+        
+        # Quit game instructions
+        quit_text = self.font_menu.render(
+            "Press Q to Quit", 
+            True, RED
+        )
+        quit_rect = quit_text.get_rect(
+            center=(self.width//2, self.height//2 + 150)
+        )
+        
+        self.screen.blit(quit_text, quit_rect)
+        self.screen.blit(game_over, game_over_rect)
+        self.screen.blit(level_text, level_rect)
+        self.screen.blit(restart_text, restart_rect)

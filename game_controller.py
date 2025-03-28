@@ -70,6 +70,7 @@ class GameController:
         
         # Game state flags
         self.game_over_state = False
+        self.game_won_state = False
         self.level_up_state = False
         self.upgrade_options = []
         
@@ -102,20 +103,24 @@ class GameController:
                 # Game over state event handling
                 if self.game_over_state:
                     running = self.handle_game_over_events(event)
+                    
+                # Game won state event handling
+                elif self.game_won_state:
+                    running = self.handle_game_won_events(event)
                 
                 # Level up state event handling
                 elif self.level_up_state:
                     self.handle_level_up_events(event)
             
              # Update game state if not in game over or level up
-            if not self.game_over_state and not self.level_up_state:
+            if not self.game_over_state and not self.level_up_state and not self.game_won_state:
                 self.update_game_state()
               
                 self.elapsed_time += self.clock.get_time() / 1000  # Update elapsed time
                 
                 # Check if game time limit is reached
                 if self.elapsed_time >= GAME_TIME_LIMIT:
-                    self.trigger_game_over()
+                    self.trigger_game_won()
                           
             # Render appropriate screen
             self.render_screen()
@@ -270,10 +275,37 @@ class GameController:
         self.all_sprites.empty()
         self.enemies.empty()
         self.projectiles.empty()
+        
+    def trigger_game_won(self):
+        """
+        Set game won state and prepare for restart/exit.
+        """
+        self.game_won_state = True
+        
+        # Clear all game sprites
+        self.all_sprites.empty()
+        self.enemies.empty()
+        self.projectiles.empty()
     
     def handle_game_over_events(self, event):
         """
         Process player input during game over screen.
+        Returns whether the game should continue running.
+        """
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                # Restart the game
+                self.reset_game_state()
+                return True
+            elif event.key == pygame.K_q:
+                # Quit the game
+                pygame.quit()
+                sys.exit()
+        return True
+    
+    def handle_game_won_events(self, event):
+        """
+        Process player input during game won screen.
         Returns whether the game should continue running.
         """
         if event.type == pygame.KEYDOWN:
@@ -295,6 +327,9 @@ class GameController:
         if self.game_over_state:
             # Game over screen
             self.menu_system.draw_game_over(self.player.level)
+        elif self.game_won_state:
+            # Game won screen
+            self.menu_system.draw_game_won(self.player.level)
         elif self.level_up_state:
             # Base game still visible under level up menu
             # Draw game first
