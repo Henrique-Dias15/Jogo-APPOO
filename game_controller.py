@@ -112,9 +112,33 @@ class GameController:
         self.screen.blit(restart_text, restart_rect)
 
     def restart_game(self):
-        """Restart the game"""
+        """Restart the game by going back to the start menu"""
         self.__init__()  # Reinitialize the game state
-        self.game_over_state = False
+        self.start_menu()  # Display the start menu before resuming
+        
+    def start_menu(self):
+        """Display the start menu"""
+        self.screen.fill(BLACK)
+        title_text = self.font.render("Magical Cat Game", True, WHITE)
+        title_rect = title_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - 50))
+        self.screen.blit(title_text, title_rect)
+
+        start_text = self.font.render("Press Enter to Start", True, WHITE)
+        start_rect = start_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 50))
+        self.screen.blit(start_text, start_rect)
+
+        pygame.display.flip()
+        
+        # Wait for player to press Enter
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        waiting = False
 
     def run(self):
         """Main game loop"""
@@ -160,6 +184,7 @@ class GameController:
 
 def main():
     game = GameController()
+    game.start_menu()
     game.run()
 
 if __name__ == "__main__":
