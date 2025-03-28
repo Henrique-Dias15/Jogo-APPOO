@@ -81,3 +81,54 @@ class MenuSystem:
         self.screen.blit(game_over, game_over_rect)
         self.screen.blit(level_text, level_rect)
         self.screen.blit(restart_text, restart_rect)
+        
+    def draw_level_up(self, player_level, upgrade_options):
+        """Render the level up screen with upgrade options."""
+        # Create semi-transparent overlay
+        overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))  # Semi-transparent black
+        self.screen.blit(overlay, (0, 0))
+        
+        # Level Up Title
+        level_up_text = self.font_title.render(
+            f"Level Up! Level {player_level}", 
+            True, GREEN
+        )
+        level_up_rect = level_up_text.get_rect(
+            center=(self.width//2, self.height//2 - 150)
+        )
+        self.screen.blit(level_up_text, level_up_rect)
+        
+        # Choose Upgrade Text
+        choose_text = self.font_menu.render(
+            "Choose an Upgrade:", 
+            True, WHITE
+        )
+        choose_rect = choose_text.get_rect(
+            center=(self.width//2, self.height//2 - 80)
+        )
+        self.screen.blit(choose_text, choose_rect)
+        
+        # Draw Upgrade Options
+        option_rects = []
+        y_offset = -20
+        for i, option in enumerate(upgrade_options):
+            # Create option button
+            option_rect = pygame.Rect(self.width//2 - 150, self.height//2 + y_offset, 300, 60)
+            pygame.draw.rect(self.screen, BLUE, option_rect, 0, 10)
+            pygame.draw.rect(self.screen, WHITE, option_rect, 2, 10)
+            
+            # Option text
+            option_text = self.font_menu.render(
+                option['name'], 
+                True, WHITE
+            )
+            option_text_rect = option_text.get_rect(
+                center=option_rect.center
+            )
+            self.screen.blit(option_text, option_text_rect)
+            
+            option_rects.append(option_rect)
+            y_offset += 80
+        
+        return option_rects  # Return clickable regions

@@ -7,16 +7,7 @@ from entities.enemy import Enemy
 from entities.projectile import Projectile
 from ui.hud import HUD
 from ui.menu import MenuSystem
-
-import pygame
-import sys
-import random
-from utils.settings import *
-from entities.player import Player
-from entities.enemy import Enemy
-from entities.projectile import Projectile
-from ui.hud import HUD
-from ui.menu import MenuSystem
+from abilities.ability_manager import AbilityManager
 
 class GameController:
     """
@@ -52,6 +43,9 @@ class GameController:
         
         # Initialize game state
         self.reset_game_state()
+        
+        # Connect player level up to game controller
+        self.player.set_level_up_callback(self.trigger_level_up)
     
     def reset_game_state(self):
         """
@@ -70,17 +64,27 @@ class GameController:
         # Create HUD for the player
         self.hud = HUD(self.player, self.screen)
         
+        # Create ability manager
+        self.ability_manager = AbilityManager(self.player)
+        
         # Game state flags
         self.game_over_state = False
+        self.level_up_state = False
+        self.upgrade_options = []
         
         # Timing and spawn management
         self.last_enemy_spawn = pygame.time.get_ticks()
         self.score = 0
+        
+    def trigger_level_up(self):
+        """Pause game and show level up screen."""
+        self.level_up_state = True
+        self.upgrade_options = self.ability_manager.get_upgrade_options()
     
     def run(self):
         """
         Main game loop that manages different game states.
-        Handles menu, gameplay, and game over screens.
+        Handles menu, gameplay, game over screens, and level up.
         """
         # Start with the main menu
         self.show_start_menu()
@@ -95,20 +99,40 @@ class GameController:
                 # Game over state event handling
                 if self.game_over_state:
                     running = self.handle_game_over_events(event)
+                
+                # Level up state event handling
+                elif self.level_up_state:
+                    self.handle_level_up_events(event)
             
-            # Update game state if not in game over
-            if not self.game_over_state:
+            # Update game state if not in game over or level up
+            if not self.game_over_state and not self.level_up_state:
                 self.update_game_state()
                 self.score += self.clock.get_time() / 1000  # Score based on survival time
             
             # Render appropriate screen
             self.render_screen()
-            
+        
             # Control game frame rate
             self.clock.tick(FPS)
-        
+            
         pygame.quit()
         sys.exit()
+    
+    def handle_level_up_events(self, event):
+        """Process player input during level up screen."""
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = event.pos
+            option_rects = self.menu_system.draw_level_up(self.player.level, self.upgrade_options)
+            
+            for i, rect in enumerate(option_rects):
+                if rect.collidepoint(mouse_pos):
+                    # Apply the selected upgrade
+                    ability_name = self.upgrade_options[i]['ability']
+                    self.ability_manager.upgrade_ability(ability_name)
+                    
+                    # Resume game
+                    self.level_up_state = False
+                    break
     
     def show_start_menu(self):
         """
@@ -164,6 +188,7 @@ class GameController:
             self.all_sprites.add(enemy)
             self.last_enemy_spawn = current_time
     
+    # Modify the handle_player_shooting method to pass player's damage to projectiles
     def handle_player_shooting(self):
         """
         Manage player's automatic projectile shooting.
@@ -192,7 +217,8 @@ class GameController:
                 closest_enemy.rect.centerx, 
                 closest_enemy.rect.centery,
                 screen_width=self.width,  # Pass actual screen width
-                screen_height=self.height  # Pass actual screen height
+                screen_height=self.height,  # Pass actual screen height
+                damage=self.player.projectile_damage  # Pass player's damage
             )
             
             self.projectiles.add(projectile)
@@ -256,16 +282,25 @@ class GameController:
     def render_screen(self):
         """
         Render appropriate screen based on game state.
-        Handles game running and game over screens.
+        Handles game running, game over, and level up screens.
         """
-        if not self.game_over_state:
+        if self.game_over_state:
+            # Game over screen
+            self.menu_system.draw_game_over(self.player.level)
+        elif self.level_up_state:
+            # Base game still visible under level up menu
+            # Draw game first
+            self.screen.fill(BLACK)
+            self.all_sprites.draw(self.screen)
+            self.hud.draw()
+            
+            # Then draw level up overlay
+            option_rects = self.menu_system.draw_level_up(self.player.level, self.upgrade_options)
+        else:
             # Normal game rendering
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
             self.hud.draw()
-        else:
-            # Game over screen
-            self.menu_system.draw_game_over(self.player.level)
         
         # Update display
         pygame.display.flip()

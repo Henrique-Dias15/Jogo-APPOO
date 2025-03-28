@@ -18,6 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.exp = 0
         self.projectile_cooldown = 500  # milliseconds
         self.last_shot = pygame.time.get_ticks()
+        self.level_up_callback = None  # Add callback for level up
+        self.projectile_damage = 10  # Base projectile damage
 
     def move(self, keys):
         """Move the player based on keyboard input"""
@@ -50,8 +52,14 @@ class Player(pygame.sprite.Sprite):
         self.level += 1
         self.exp -= 100  # Reset exp
         self.hp = min(self.hp + 10, self.max_hp)
-        # TODO: Add ability selection logic
-        print(f"Level Up! Now at level {self.level}")
+        
+        # Notify game controller that we've leveled up
+        if self.level_up_callback:
+            self.level_up_callback()
+
+    def set_level_up_callback(self, callback):
+        """Set the function to call when player levels up"""
+        self.level_up_callback = callback
 
     def can_shoot(self):
         """Check if player can shoot a projectile"""
