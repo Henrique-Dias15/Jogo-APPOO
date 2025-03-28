@@ -7,6 +7,10 @@ class MenuSystem:
         self.screen = screen
         self.font_title = pygame.font.Font(None, 64)
         self.font_menu = pygame.font.Font(None, 48)
+        
+        # Get the actual screen dimensions
+        self.width = screen.get_width()
+        self.height = screen.get_height()
     
     def draw_start_menu(self):
         """Render the game's start menu."""
@@ -18,7 +22,7 @@ class MenuSystem:
             True, WHITE
         )
         title_rect = title.get_rect(
-            center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - 100)
+            center=(self.width//2, self.height//2 - 100)
         )
         
         # Subtitle
@@ -27,7 +31,7 @@ class MenuSystem:
             True, GREEN
         )
         subtitle_rect = subtitle.get_rect(
-            center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+            center=(self.width//2, self.height//2)
         )
         
         self.screen.blit(title, title_rect)
@@ -43,7 +47,7 @@ class MenuSystem:
             True, RED
         )
         game_over_rect = game_over.get_rect(
-            center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - 100)
+            center=(self.width//2, self.height//2 - 100)
         )
         
         # Level Reached
@@ -52,7 +56,7 @@ class MenuSystem:
             True, WHITE
         )
         level_rect = level_text.get_rect(
-            center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+            center=(self.width//2, self.height//2)
         )
         
         # Restart Instructions
@@ -61,7 +65,7 @@ class MenuSystem:
             True, GREEN
         )
         restart_rect = restart_text.get_rect(
-            center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 100)
+            center=(self.width//2, self.height//2 + 100)
         )
         
         # Quit game instructions
@@ -70,7 +74,7 @@ class MenuSystem:
             True, GREEN
         )
         quit_rect = quit_text.get_rect(
-            center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 150)
+            center=(self.width//2, self.height//2 + 150)
         )
         
         self.screen.blit(quit_text, quit_rect)

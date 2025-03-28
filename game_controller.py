@@ -8,6 +8,16 @@ from entities.projectile import Projectile
 from ui.hud import HUD
 from ui.menu import MenuSystem
 
+import pygame
+import sys
+import random
+from utils.settings import *
+from entities.player import Player
+from entities.enemy import Enemy
+from entities.projectile import Projectile
+from ui.hud import HUD
+from ui.menu import MenuSystem
+
 class GameController:
     """
     Primary game management class responsible for:
@@ -26,7 +36,15 @@ class GameController:
         pygame.display.set_caption("Magical Cat Game")
         
         # Screen and timing setup
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        if FULLSCREEN:
+            info = pygame.display.Info()
+            self.width, self.height = info.current_w, info.current_h
+            self.screen = pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
+        else:
+            self.width, self.height = SCREEN_WIDTH, SCREEN_HEIGHT
+            self.screen = pygame.display.set_mode((self.width, self.height))
+        
+        # Initialize clock for timing and frame rate control
         self.clock = pygame.time.Clock()
         
         # UI Systems
@@ -46,7 +64,7 @@ class GameController:
         self.projectiles = pygame.sprite.Group()
         
         # Create player at screen center
-        self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        self.player = Player(self.width // 2, self.height // 2)
         self.all_sprites.add(self.player)
         
         # Create HUD for the player
@@ -141,7 +159,7 @@ class GameController:
         """
         current_time = pygame.time.get_ticks()
         if current_time - self.last_enemy_spawn > SPAWN_INTERVAL:
-            enemy = Enemy(self.player)
+            enemy = Enemy(self.player, screen_width=self.width, screen_height=self.height)
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)
             self.last_enemy_spawn = current_time
@@ -172,7 +190,9 @@ class GameController:
                 self.player.rect.centerx, 
                 self.player.rect.centery,
                 closest_enemy.rect.centerx, 
-                closest_enemy.rect.centery
+                closest_enemy.rect.centery,
+                screen_width=self.width,  # Pass actual screen width
+                screen_height=self.height  # Pass actual screen height
             )
             
             self.projectiles.add(projectile)

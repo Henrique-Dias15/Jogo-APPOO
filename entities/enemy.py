@@ -3,13 +3,17 @@ import math
 from utils.settings import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, player, x=None, y=None):
+    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None):
         super().__init__()
         self.image = pygame.Surface((20, 20))
         self.image.fill(RED)  # Placeholder red rectangle
         self.rect = self.image.get_rect()
         
         self.player = player
+        
+        # Store actual screen dimensions
+        self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
+        self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
         
         # Randomize spawn location if not specified
         if x is None or y is None:
@@ -26,13 +30,13 @@ class Enemy(pygame.sprite.Sprite):
         side = random.choice(['top', 'bottom', 'left', 'right'])
         
         if side == 'top':
-            self.rect.midtop = (random.randint(0, SCREEN_WIDTH), 0)
+            self.rect.midtop = (random.randint(0, self.screen_width), 0)
         elif side == 'bottom':
-            self.rect.midbottom = (random.randint(0, SCREEN_WIDTH), SCREEN_HEIGHT)
+            self.rect.midbottom = (random.randint(0, self.screen_width), self.screen_height)
         elif side == 'left':
-            self.rect.midleft = (0, random.randint(0, SCREEN_HEIGHT))
+            self.rect.midleft = (0, random.randint(0, self.screen_height))
         else:  # right
-            self.rect.midright = (SCREEN_WIDTH, random.randint(0, SCREEN_HEIGHT))
+            self.rect.midright = (self.screen_width, random.randint(0, self.screen_height))
 
     def update(self, *args, **kwargs):
         """Move enemy towards player, now accepts any arguments"""
