@@ -59,7 +59,7 @@ class GameController:
         self.projectiles = pygame.sprite.Group()
         
         # Create player at screen center
-        self.player = Player(self.width // 2, self.height // 2)
+        self.player = Player(self.width // 2, self.height // 2, screen_width=self.width, screen_height=self.height)
         self.all_sprites.add(self.player)
         
         # Create HUD for the player

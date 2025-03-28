@@ -3,7 +3,7 @@ import math
 from utils.settings import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, screen_width=None, screen_height=None):
         super().__init__()
         self.image = pygame.Surface((30, 30))
         self.image.fill(GREEN)  # Placeholder green rectangle
@@ -20,6 +20,10 @@ class Player(pygame.sprite.Sprite):
         self.last_shot = pygame.time.get_ticks()
         self.level_up_callback = None  # Add callback for level up
         self.projectile_damage = 10  # Base projectile damage
+        
+        # Store actual screen dimensions
+        self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
+        self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
 
     def move(self, keys):
         """Move the player based on keyboard input"""
@@ -38,8 +42,19 @@ class Player(pygame.sprite.Sprite):
             dx *= 0.7071  # 1/sqrt(2)
             dy *= 0.7071
 
+        # Update position
         self.rect.x += dx
         self.rect.y += dy
+        
+        # Apply boundary checks
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > self.screen_width:
+            self.rect.right = self.screen_width
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > self.screen_height:
+            self.rect.bottom = self.screen_height
 
     def gain_exp(self, amount):
         """Add experience points and check for level up"""
