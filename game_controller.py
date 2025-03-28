@@ -1,190 +1,244 @@
 import pygame
+import sys
 import random
-import sys  # Add this import
 from utils.settings import *
 from entities.player import Player
 from entities.enemy import Enemy
 from entities.projectile import Projectile
+from ui.hud import HUD
+from ui.menu import MenuSystem
 
 class GameController:
+    """
+    Primary game management class responsible for:
+    - Game state management
+    - Game loop control
+    - Collision detection
+    - Enemy and projectile spawning
+    - Rendering game elements
+    """
     def __init__(self):
+        """
+        Initialize the game with all necessary components.
+        Sets up pygame, screen, game state, and system components.
+        """
         pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Magical Cat Game")
+        
+        # Screen and timing setup
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         
-        # Font for game over text
-        self.font = pygame.font.Font(None, 36)
+        # UI Systems
+        self.menu_system = MenuSystem(self.screen)
         
-        # Game state
-        self.game_over_state = False
-        
-        # Sprite Groups
+        # Initialize game state
+        self.reset_game_state()
+    
+    def reset_game_state(self):
+        """
+        Reset all game variables to their initial state.
+        Allows for clean game restart or initial setup.
+        """
+        # Sprite Groups for efficient rendering and collision detection
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.projectiles = pygame.sprite.Group()
         
-        # Player
+        # Create player at screen center
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.all_sprites.add(self.player)
         
-        # Enemy spawn timer
+        # Create HUD for the player
+        self.hud = HUD(self.player, self.screen)
+        
+        # Game state flags
+        self.game_over_state = False
+        
+        # Timing and spawn management
         self.last_enemy_spawn = pygame.time.get_ticks()
-
-    def spawn_enemy(self):
-        """Spawn an enemy periodically"""
-        if self.game_over_state:
-            return
+        self.score = 0
+    
+    def run(self):
+        """
+        Main game loop that manages different game states.
+        Handles menu, gameplay, and game over screens.
+        """
+        # Start with the main menu
+        self.show_start_menu()
         
-        now = pygame.time.get_ticks()
-        if now - self.last_enemy_spawn > SPAWN_INTERVAL:
-            enemy = Enemy(self.player)
-            self.enemies.add(enemy)
-            self.all_sprites.add(enemy)
-            self.last_enemy_spawn = now
-
-    def handle_player_shooting(self):
-        """Handle automatic player shooting"""
-        if self.game_over_state:
-            return
+        running = True
+        while running:
+            # Process events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                
+                # Game over state event handling
+                if self.game_over_state:
+                    running = self.handle_game_over_events(event)
+            
+            # Update game state if not in game over
+            if not self.game_over_state:
+                self.update_game_state()
+                self.score += self.clock.get_time() / 1000  # Score based on survival time
+            
+            # Render appropriate screen
+            self.render_screen()
+            
+            # Control game frame rate
+            self.clock.tick(FPS)
         
-        if self.player.can_shoot() and self.enemies:
-            target = random.choice(list(self.enemies.sprites()))
-            projectile = Projectile(
-                self.player.rect.centerx, 
-                self.player.rect.centery,
-                target.rect.centerx, 
-                target.rect.centery
-            )
-            self.projectiles.add(projectile)
-            self.all_sprites.add(projectile)
-            self.player.last_shot = pygame.time.get_ticks()
-
-    def handle_collisions(self):
-        """Check and handle collisions"""
-        if self.game_over_state:
-            return
-        
-        # Projectile hits enemy
-        for projectile in self.projectiles:
-            hit_enemies = pygame.sprite.spritecollide(projectile, self.enemies, False)
-            for enemy in hit_enemies:
-                if enemy.take_damage(projectile.damage):
-                    self.player.gain_exp(10)  # Gain exp for killing enemy
-                    enemy.kill()
-                projectile.kill()
-
-        # Enemy hits player
-        for enemy in self.enemies:
-            if pygame.sprite.collide_rect(enemy, self.player):
-                self.player.hp -= 10
-                enemy.kill()
-                if self.player.hp <= 0:
-                    self.game_over()
-
-    def game_over(self):
-        """Handle game over state"""
-        print("Game Over!")
-        self.game_over_state = True
-        
-        # Clear existing sprites
-        self.all_sprites.empty()
-        self.enemies.empty()
-        self.projectiles.empty()
-
-    def draw_game_over(self):
-        """Draw game over screen"""
-        self.screen.fill(BLACK)
-        
-        # Game Over Text
-        game_over_text = self.font.render("Game Over!", True, RED)
-        text_rect = game_over_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - 50))
-        self.screen.blit(game_over_text, text_rect)
-        
-        # Final Score Text
-        score_text = self.font.render(f"Final Level: {self.player.level}", True, WHITE)
-        score_rect = score_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 50))
-        self.screen.blit(score_text, score_rect)
-        
-        # Restart Prompt
-        restart_text = self.font.render("Press R to Restart or Q to Quit", True, WHITE)
-        restart_rect = restart_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 100))
-        self.screen.blit(restart_text, restart_rect)
-
-    def restart_game(self):
-        """Restart the game by going back to the start menu"""
-        self.__init__()  # Reinitialize the game state
-        self.start_menu()  # Display the start menu before resuming
-        
-    def start_menu(self):
-        """Display the start menu"""
-        self.screen.fill(BLACK)
-        title_text = self.font.render("Magical Cat Game", True, WHITE)
-        title_rect = title_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - 50))
-        self.screen.blit(title_text, title_rect)
-
-        start_text = self.font.render("Press Enter to Start", True, WHITE)
-        start_rect = start_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 50))
-        self.screen.blit(start_text, start_rect)
-
-        pygame.display.flip()
-        
-        # Wait for player to press Enter
+        pygame.quit()
+        sys.exit()
+    
+    def show_start_menu(self):
+        """
+        Display the start menu and wait for player to begin.
+        Blocks main game loop until player starts the game.
+        """
         waiting = True
         while waiting:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        waiting = False
-
-    def run(self):
-        """Main game loop"""
-        running = True
-        while running:
-            # Event handling
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
                 
-                # Handle game over state input
-                if self.game_over_state:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_r:
-                            self.restart_game()
-                        elif event.key == pygame.K_q:
-                            running = False
-
-            # Get pressed keys
-            keys = pygame.key.get_pressed()
-
-            # Update game state
-            if not self.game_over_state:
-                self.all_sprites.update(keys)
-                self.spawn_enemy()
-                self.handle_player_shooting()
-                self.handle_collisions()
-
-            # Draw
-            if not self.game_over_state:
-                self.screen.fill(BLACK)
-                self.all_sprites.draw(self.screen)
-            else:
-                self.draw_game_over()
-
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    waiting = False
+            
+            # Draw menu
+            self.menu_system.draw_start_menu()
             pygame.display.flip()
-
-            # Cap the frame rate
-            self.clock.tick(FPS)
-
-        pygame.quit()
-        sys.exit()  # Ensure complete exit
+    
+    def update_game_state(self):
+        """
+        Update all game logic:
+        - Player movement
+        - Enemy spawning
+        - Projectile management
+        - Collision detection
+        """
+        # Get current keyboard state
+        keys = pygame.key.get_pressed()
+        
+        # Update all sprites
+        self.all_sprites.update(keys)
+        
+        # Spawn enemies periodically
+        self.spawn_enemies()
+        
+        # Handle player shooting
+        self.handle_player_shooting()
+        
+        # Check for collisions
+        self.check_collisions()
+    
+    def spawn_enemies(self):
+        """
+        Spawn enemies at regular intervals.
+        Randomizes enemy spawning to create dynamic challenge.
+        """
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_enemy_spawn > SPAWN_INTERVAL:
+            enemy = Enemy(self.player)
+            self.enemies.add(enemy)
+            self.all_sprites.add(enemy)
+            self.last_enemy_spawn = current_time
+    
+    def handle_player_shooting(self):
+        """
+        Manage player's automatic projectile shooting.
+        Targets random enemies when possible.
+        """
+        if self.player.can_shoot() and self.enemies:
+            # Select a random enemy to target
+            target = random.choice(list(self.enemies.sprites()))
+            
+            projectile = Projectile(
+                self.player.rect.centerx, 
+                self.player.rect.centery,
+                target.rect.centerx, 
+                target.rect.centery
+            )
+            
+            self.projectiles.add(projectile)
+            self.all_sprites.add(projectile)
+            
+            # Update last shot time
+            self.player.last_shot = pygame.time.get_ticks()
+    
+    def check_collisions(self):
+        """
+        Detect and handle various game collisions:
+        - Projectiles hitting enemies
+        - Enemies hitting the player
+        """
+        # Projectile-Enemy Collisions
+        for projectile in self.projectiles:
+            hit_enemies = pygame.sprite.spritecollide(projectile, self.enemies, False)
+            for enemy in hit_enemies:
+                if enemy.take_damage(projectile.damage):
+                    # Enemy destroyed, give player experience
+                    self.player.gain_exp(10)
+                    enemy.kill()
+                projectile.kill()
+        
+        # Enemy-Player Collisions
+        for enemy in self.enemies:
+            if pygame.sprite.collide_rect(enemy, self.player):
+                self.player.hp -= 10
+                enemy.kill()
+                
+                if self.player.hp <= 0:
+                    self.trigger_game_over()
+    
+    def trigger_game_over(self):
+        """
+        Set game over state and prepare for restart/exit.
+        """
+        self.game_over_state = True
+        
+        # Clear all game sprites
+        self.all_sprites.empty()
+        self.enemies.empty()
+        self.projectiles.empty()
+    
+    def handle_game_over_events(self, event):
+        """
+        Process player input during game over screen.
+        Returns whether the game should continue running.
+        """
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                # Restart the game
+                self.reset_game_state()
+                return True
+            elif event.key == pygame.K_q:
+                # Quit the game
+                return False
+        return True
+    
+    def render_screen(self):
+        """
+        Render appropriate screen based on game state.
+        Handles game running and game over screens.
+        """
+        if not self.game_over_state:
+            # Normal game rendering
+            self.screen.fill(BLACK)
+            self.all_sprites.draw(self.screen)
+            self.hud.draw()
+        else:
+            # Game over screen
+            self.menu_system.draw_game_over(self.player.level)
+        
+        # Update display
+        pygame.display.flip()
 
 def main():
+    """Entry point for the game."""
     game = GameController()
-    game.start_menu()
     game.run()
 
 if __name__ == "__main__":
