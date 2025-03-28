@@ -8,10 +8,11 @@ class HUD:
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
     
-    def draw(self):
+    def draw(self, clock):
         """Render all HUD elements."""
         self._draw_health_bar()
         self._draw_level_and_exp()
+        self._draw_time(clock)
     
     def _draw_health_bar(self):
         """Draw player's health bar."""
@@ -40,3 +41,16 @@ class HUD:
         
         self.screen.blit(level_text, (10, 40))
         self.screen.blit(exp_text, (10, 70))
+    
+    def _draw_time(self, clock):
+        """Display the current game time in minutes:seconds format."""
+        # Convert to minutes and seconds
+        minutes = int(clock) // 60
+        seconds = int(clock) % 60
+        
+        time_text = self.font.render(
+            f"Time: {minutes:02d}:{seconds:02d}", 
+            True, WHITE
+        )
+        
+        self.screen.blit(time_text, (10, 100))

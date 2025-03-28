@@ -18,7 +18,7 @@ class MenuSystem:
         
         # Title
         title = self.font_title.render(
-            "Magical Cat Game", 
+            GAME_TITLE, 
             True, WHITE
         )
         title_rect = title.get_rect(

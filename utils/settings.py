@@ -13,6 +13,10 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+# Game Settings
+GAME_TITLE = "Mage Cats"
+GAME_TIME_LIMIT = 300 #5 minutes in seconds
+
 # Player Settings
 PLAYER_SPEED = 5
 PLAYER_HP = 100

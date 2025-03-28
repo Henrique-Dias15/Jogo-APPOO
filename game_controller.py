@@ -24,7 +24,7 @@ class GameController:
         Sets up pygame, screen, game state, and system components.
         """
         pygame.init()
-        pygame.display.set_caption("Magical Cat Game")
+        pygame.display.set_caption(GAME_TITLE)
         
         # Screen and timing setup
         if FULLSCREEN:
@@ -37,7 +37,8 @@ class GameController:
         
         # Initialize clock for timing and frame rate control
         self.clock = pygame.time.Clock()
-        
+        self.elapsed_time = 0
+                
         # UI Systems
         self.menu_system = MenuSystem(self.screen)
         
@@ -74,7 +75,8 @@ class GameController:
         
         # Timing and spawn management
         self.last_enemy_spawn = pygame.time.get_ticks()
-        self.score = 0
+        self.elapsed_time = 0
+        
         
     def trigger_level_up(self):
         """Pause game and show level up screen."""
@@ -91,6 +93,7 @@ class GameController:
         
         running = True
         while running:
+            
             # Process events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -104,11 +107,16 @@ class GameController:
                 elif self.level_up_state:
                     self.handle_level_up_events(event)
             
-            # Update game state if not in game over or level up
+             # Update game state if not in game over or level up
             if not self.game_over_state and not self.level_up_state:
                 self.update_game_state()
-                self.score += self.clock.get_time() / 1000  # Score based on survival time
-            
+              
+                self.elapsed_time += self.clock.get_time() / 1000  # Update elapsed time
+                
+                # Check if game time limit is reached
+                if self.elapsed_time >= GAME_TIME_LIMIT:
+                    self.trigger_game_over()
+                          
             # Render appropriate screen
             self.render_screen()
         
@@ -292,7 +300,7 @@ class GameController:
             # Draw game first
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
-            self.hud.draw()
+            self.hud.draw(int(self.elapsed_time))
             
             # Then draw level up overlay
             option_rects = self.menu_system.draw_level_up(self.player.level, self.upgrade_options)
@@ -300,7 +308,7 @@ class GameController:
             # Normal game rendering
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
-            self.hud.draw()
+            self.hud.draw(int(self.elapsed_time))
         
         # Update display
         pygame.display.flip()
