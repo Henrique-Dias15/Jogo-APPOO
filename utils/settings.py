@@ -20,12 +20,12 @@ GREY = (128, 128, 128)
 
 # Game Settings
 GAME_TITLE = "Mage Cats"
-GAME_TIME_LIMIT = 30 # 5 minutes in seconds
+GAME_TIME_LIMIT = 300 # 5 minutes in seconds 
 
 # Player Settings
 PLAYER_SPEED = 5
-PLAYER_HP = 100
-PLAYER_MAX_HP = 100
+PLAYER_HP = 1
+PLAYER_MAX_HP = 1
 
 # Enemy Settings
 ENEMY_SPEED = 2
