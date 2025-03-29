@@ -4,6 +4,10 @@ import random
 from utils.settings import *
 from entities.player import Player
 from entities.enemy import Enemy
+from entities.triangle_enemy import TriangleEnemy
+from entities.square_enemy import SquareEnemy
+from entities.triangle_enemy import TriangleEnemy
+from entities.fast_enemy import FastEnemy
 from entities.projectile import Projectile
 from ui.hud import HUD
 from ui.menu import MenuSystem
@@ -191,12 +195,40 @@ class GameController:
     
     def spawn_enemies(self):
         """
-        Spawn enemies at regular intervals.
-        Randomizes enemy spawning to create dynamic challenge.
+        Spawn enemies at regular intervals with random enemy types.
         """
         current_time = pygame.time.get_ticks()
         if current_time - self.last_enemy_spawn > SPAWN_INTERVAL:
-            enemy = Enemy(self.player, screen_width=self.width, screen_height=self.height)
+            # Choose a random enemy type based on current difficulty
+            enemy_types = [
+                Enemy,           # Basic enemy - most common
+                SquareEnemy,     # Tough enemy
+                TriangleEnemy,   # Unpredictable enemy
+                FastEnemy        # Quick enemy
+            ]
+            
+            # You can adjust probabilities based on player level
+            weights = [0.6, 0.2, 1, 0.1]  # 60% basic, 20% square, 10% triangle, 10% fast
+            
+            # Make the game more challenging as time goes on
+            if self.elapsed_time > GAME_TIME_LIMIT * 0.2:  # After 20% of the game time
+                weights = [0.5, 0.25, 0.15, 0.1]
+            elif self.elapsed_time > GAME_TIME_LIMIT * 0.4:  # After 40% of the game time
+                weights = [0.4, 0.3, 0.2, 0.1]
+            elif self.elapsed_time > GAME_TIME_LIMIT * 0.6:  # After 60% of the game time
+                weights = [0.3, 0.35, 0.25, 0.1]
+            elif self.elapsed_time > GAME_TIME_LIMIT * 0.8:  # After 80% of the game time
+                weights = [0.2, 0.4, 0.3, 0.1]
+            elif self.elapsed_time > GAME_TIME_LIMIT * 0.9:  # After 90% of the game time
+                weights = [0.1, 0.5, 0.3, 0.1]
+                
+            
+            # Select enemy type based on weights
+            import random
+            enemy_class = random.choices(enemy_types, weights=weights)[0]
+            
+            # Create the selected enemy type
+            enemy = enemy_class(self.player, screen_width=self.width, screen_height=self.height)
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)
             self.last_enemy_spawn = current_time

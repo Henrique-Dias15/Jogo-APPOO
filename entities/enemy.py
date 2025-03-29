@@ -1,14 +1,20 @@
 import pygame
 import math
+import random
 from utils.settings import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None):
+    """Base enemy class that can be extended for different enemy types"""
+    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None, 
+                 size=(20, 20), color=RED, speed=None, hp=None):
         super().__init__()
-        self.image = pygame.Surface((20, 20))
-        self.image.fill(RED)  # Placeholder red rectangle
+        
+        # Create enemy sprite with specified size and color
+        self.image = pygame.Surface(size)
+        self.image.fill(color)  # Default color is red
         self.rect = self.image.get_rect()
         
+        # Reference to player for targeting
         self.player = player
         
         # Store actual screen dimensions
@@ -21,12 +27,13 @@ class Enemy(pygame.sprite.Sprite):
         else:
             self.rect.center = (x, y)
         
-        self.speed = ENEMY_SPEED
-        self.hp = 20
+        # Enemy attributes - use passed values or defaults
+        self.speed = speed if speed is not None else ENEMY_SPEED
+        self.hp = hp if hp is not None else 20
+        self.damage = 10  # Default damage when colliding with player
 
     def spawn_at_screen_edge(self):
         """Spawn enemy at random edge of screen"""
-        import random
         side = random.choice(['top', 'bottom', 'left', 'right'])
         
         if side == 'top':
