@@ -36,11 +36,23 @@ class GameStateManager:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 # Restart the game
-                self.current_state = self.PLAYING
+                self.current_state = self.PLAYING  # Changed from MAIN_MENU to PLAYING
                 return True
             elif event.key == pygame.K_q:
                 # Quit the game
                 return False
+        return True
+    
+    def handle_game_won_input(self, event):
+        """Handle input during game won state"""
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                # Restart the game
+                self.current_state = self.PLAYING  # Changed from MAIN_MENU to PLAYING
+                return True
+            elif event.key == pygame.K_q:
+                # Quit the game
+                return False  # This needs to return False to signal quitting
         return True
     
     def handle_level_up_input(self, event, menu_system, player_level, option_rects, ability_manager):

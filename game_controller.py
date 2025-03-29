@@ -65,9 +65,8 @@ class GameController:
         # Connect player level up to game controller
         self.player.set_level_up_callback(self.trigger_level_up)
         
-        # Reset game state
-        self.state_manager.change_state(self.state_manager.MAIN_MENU)
-        self.elapsed_time = 0
+        # Don't reset the game state here unless starting from scratch
+        # We'll reset elapsed_time when transitioning from menu to playing
     
     def trigger_level_up(self):
         """Pause game and show level up screen."""
@@ -105,14 +104,24 @@ class GameController:
                 # Game over state event handling
                 if self.state_manager.is_state(self.state_manager.GAME_OVER):
                     running = self.state_manager.handle_game_over_input(event)
-                    if not self.state_manager.is_state(self.state_manager.GAME_OVER):
+                    if not running:
+                        break  # Exit the loop if we should quit
+                    
+                    # Only reset if we're continuing (R was pressed)
+                    if self.state_manager.is_state(self.state_manager.PLAYING):
                         self.reset_game_state()
+                        self.elapsed_time = 0  # Reset timer when restarting after game over
                         
                 # Game won state event handling
                 elif self.state_manager.is_state(self.state_manager.GAME_WON):
-                    running = self.state_manager.handle_game_over_input(event)
-                    if not self.state_manager.is_state(self.state_manager.GAME_WON):
+                    running = self.state_manager.handle_game_won_input(event)
+                    if not running:
+                        break  # Exit the loop if we should quit
+                    
+                    # Only reset if we're continuing (R was pressed)
+                    if self.state_manager.is_state(self.state_manager.PLAYING):
                         self.reset_game_state()
+                        self.elapsed_time = 0  # Reset timer when restarting after winning
                 
                 # Level up state event handling
                 elif self.state_manager.is_state(self.state_manager.LEVEL_UP):
@@ -120,6 +129,12 @@ class GameController:
                         self.player.level, self.state_manager.upgrade_options)
                     self.state_manager.handle_level_up_input(
                         event, self.menu_system, self.player.level, option_rects, self.ability_manager)
+                
+                # Main menu handling
+                elif self.state_manager.is_state(self.state_manager.MAIN_MENU):
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                        self.state_manager.change_state(self.state_manager.PLAYING)
+                        self.elapsed_time = 0  # Reset timer when starting game from menu
             
             # Update game state if playing
             if self.state_manager.is_state(self.state_manager.PLAYING):
@@ -141,6 +156,8 @@ class GameController:
     
     def show_start_menu(self):
         """Display the start menu and wait for player to begin."""
+        self.state_manager.change_state(self.state_manager.MAIN_MENU)
+        
         waiting = True
         while waiting:
             for event in pygame.event.get():
@@ -151,10 +168,14 @@ class GameController:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     waiting = False
                     self.state_manager.change_state(self.state_manager.PLAYING)
+                    self.elapsed_time = 0  # Reset timer when starting from menu
             
             # Draw menu
             self.menu_system.draw_start_menu()
             pygame.display.flip()
+            
+            # Still need to tick the clock here to maintain frame rate
+            self.clock.tick(FPS)
     
     def update_game_state(self):
         """Update all game logic."""
@@ -200,7 +221,10 @@ class GameController:
     
     def render_screen(self):
         """Render appropriate screen based on game state."""
-        if self.state_manager.is_state(self.state_manager.GAME_OVER):
+        if self.state_manager.is_state(self.state_manager.MAIN_MENU):
+            # Menu screen
+            self.menu_system.draw_start_menu()
+        elif self.state_manager.is_state(self.state_manager.GAME_OVER):
             # Game over screen
             self.menu_system.draw_game_over(self.player.level)
         elif self.state_manager.is_state(self.state_manager.GAME_WON):
