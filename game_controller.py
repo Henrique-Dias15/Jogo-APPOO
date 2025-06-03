@@ -4,7 +4,7 @@ from utils.settings import *
 from entities.player import Player
 from ui.hud import HUD
 from ui.menu import MenuSystem
-from abilities.ability_manager import AbilityManager
+from managers.ability_manager import AbilityManager
 from managers.enemy_spawner import EnemyManager
 from managers.projectile_manager import ProjectileManager
 from managers.collision_manager import CollisionManager
