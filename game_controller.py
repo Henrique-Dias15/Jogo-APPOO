@@ -62,6 +62,9 @@ class GameController:
         self.projectile_manager = ProjectileManager(self.player, self.width, self.height)
         self.collision_manager = CollisionManager(self.player)
         
+        # Connect managers to ability system
+        self.ability_manager.set_managers(self.projectile_manager, self.enemy_manager)
+        
         # Connect player level up to game controller
         self.player.set_level_up_callback(self.trigger_level_up)
         
@@ -185,6 +188,10 @@ class GameController:
         # Update player
         self.player.update(keys)
         
+        # Update ability system
+        dt = self.clock.get_time()
+        self.ability_manager.update(dt, keys)
+        
         # Spawn enemies periodically
         self.enemy_manager.spawn_enemy(self.elapsed_time)
         
@@ -194,8 +201,8 @@ class GameController:
         # Handle player shooting
         self.projectile_manager.handle_auto_shooting(self.enemy_manager.enemies)
         
-        # Update projectiles
-        self.projectile_manager.update()
+        # Update projectiles (pass enemies for homing projectiles)
+        self.projectile_manager.update(self.enemy_manager.enemies)
         
         # Check for collisions
         self.check_collisions()
@@ -235,7 +242,7 @@ class GameController:
             # Draw game first
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
-            self.hud.draw(int(self.elapsed_time))
+            self.hud.draw(int(self.elapsed_time), self.ability_manager)
             
             # Then draw level up overlay
             option_rects = self.menu_system.draw_level_up(
@@ -244,7 +251,7 @@ class GameController:
             # Normal game rendering
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
-            self.hud.draw(int(self.elapsed_time))
+            self.hud.draw(int(self.elapsed_time), self.ability_manager)
         
         # Update display
         pygame.display.flip()
