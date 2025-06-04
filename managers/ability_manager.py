@@ -2,7 +2,15 @@ import pygame
 import random
 from utils.settings import PLAYER_SPEED, PLAYER_MAX_HP, ENEMY_SPEED
 from abilities.base_ability import PassiveAbility, ActiveAbility, BuffAbility
-from abilities.all_abilities import *
+
+# Import abilities by category
+from abilities.passive import CatnipSpell, FrozenClaw
+from abilities.projectile import WhiskerBeam, ArcaneFurBall, ElementalTail
+from abilities.active import (
+    FelineTeleport, EnchantedGaze, GhostRatSummoning, 
+    PurringShield, ReflexAura
+)
+from abilities.area_effect import EtherealFishRain, MysticalMeow
 
 class AbilityManager:
     """
