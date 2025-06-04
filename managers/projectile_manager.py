@@ -59,9 +59,14 @@ class ProjectileManager:
         
         return None
     
-    def update(self, *args, **kwargs):
-        """Update all projectiles"""
-        self.projectiles.update(*args, **kwargs)
+    def update(self, enemies=None, *args, **kwargs):
+        """Update all projectiles, passing enemies for homing projectiles"""
+        for projectile in self.projectiles:
+            if hasattr(projectile, 'update'):
+                if enemies is not None:
+                    projectile.update(enemies, *args, **kwargs)
+                else:
+                    projectile.update(*args, **kwargs)
         
     def draw(self, screen):
         """Draw all projectiles"""
