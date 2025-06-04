@@ -2,13 +2,14 @@ import pygame
 from utils.settings import *
 from utils.database import DatabaseManager
 import time as tm
+
 class MenuSystem:
     """Manages different game menus and state transitions."""
     def __init__(self, screen):
         self.screen = screen
         self.font_title = pygame.font.Font(None, 64)
         self.font_menu = pygame.font.Font(None, 48)
-        
+        self.databaseManager = DatabaseManager("game_data.db")
         # Get the actual screen dimensions
         self.width = screen.get_width()
         self.height = screen.get_height()
@@ -117,11 +118,11 @@ class MenuSystem:
         
         # Game Over Text
         game_over = self.font_title.render(
-            "Game Over", 
+            "Game Over",
             True, RED
         )
         game_over_rect = game_over.get_rect(
-            center=(self.width//2, self.height//2 - 100)
+            center=(self.width//2, self.height//9)
         )
         
         # Level Reached
@@ -165,7 +166,7 @@ class MenuSystem:
             True, GREEN
         )
         restart_rect = restart_text.get_rect(
-            center=(self.width//2, self.height//2 + 100)
+            center=(self.width//2, self.height - 100)
         )
         
         # Quit game instructions
@@ -174,7 +175,7 @@ class MenuSystem:
             True, GREEN
         )
         quit_rect = quit_text.get_rect(
-            center=(self.width//2, self.height//2 + 150)
+            center=(self.width//2, self.height - 50)
         )
         
         self.screen.blit(quit_text, quit_rect)
