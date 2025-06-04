@@ -93,16 +93,15 @@ ABILITIES = {
 
 def show_menu():
     """Exibe o menu interativo de seleção"""
-    print("\n" + "="*80)
-    print("🐱 TESTADOR DE HABILIDADES MÁGICAS 🐱")
-    print("="*80)
+    print("\n🐱 Testador de Habilidades")
+    print("-" * 30)
     
     # Organiza por categorias
     categories = {
-        '🔮 Habilidades Passivas': ['catnip', 'frozen'],
-        '🎯 Habilidades de Projétil': ['whisker', 'furball', 'tail'],
-        '⚡ Habilidades Ativas': ['teleport', 'gaze', 'rats', 'shield', 'reflex'],
-        '💫 Habilidades de Área': ['fish', 'meow']
+        'Passivas': ['catnip', 'frozen'],
+        'Projéteis': ['whisker', 'furball', 'tail'],
+        'Ativas': ['teleport', 'gaze', 'rats', 'shield', 'reflex'],
+        'Área': ['fish', 'meow']
     }
     
     choice_map = {}
@@ -112,20 +111,18 @@ def show_menu():
         print(f"\n{category}:")
         for key in ability_keys:
             ability = ABILITIES[key]
-            print(f"  {counter:2d}. {ability['name']}")
-            print(f"      {ability['description']}")
+            print(f"  {counter}. {ability['name']}")
             choice_map[counter] = key
             counter += 1
     
-    print(f"\n  {counter:2d}. Testar TODAS as habilidades (sequencial)")
+    print(f"\n  {counter}. Testar todas")
     choice_map[counter] = 'all'
     
-    print(f"\n   0. Sair")
-    print("="*80)
+    print("  0. Sair")
     
     while True:
         try:
-            choice = input("\n🎮 Digite o número da habilidade: ").strip()
+            choice = input("\nEscolha: ").strip()
             if choice == '0':
                 return None
             
@@ -133,24 +130,19 @@ def show_menu():
             if choice in choice_map:
                 return choice_map[choice]
             else:
-                print("❌ Número inválido. Tente novamente.")
+                print("Número inválido.")
         except ValueError:
-            print("❌ Digite um número válido.")
+            print("Digite um número válido.")
 
 def test_ability(ability_key):
     """Testa uma habilidade específica"""
     if ability_key not in ABILITIES:
-        print(f"❌ Habilidade '{ability_key}' não encontrada!")
+        print(f"Habilidade '{ability_key}' não encontrada!")
         return
     
     ability = ABILITIES[ability_key]
-    print(f"\n🧪 Testando: {ability['name']} ({ability['type']})")
-    print(f"📝 {ability['description']}")
-    print("\n⌨️  Controles do Teste:")
-    print("   WASD/Setas: Mover o gato")
-    print("   T: Ativar habilidade")
-    print("   ESC: Sair do teste")
-    print("\n🎮 Iniciando jogo...")
+    print(f"\nTestando: {ability['name']}")
+    print("Controles: WASD + T (ativar) + ESC (sair)")
     
     try:
         # Executa o jogo com a habilidade específica
@@ -159,26 +151,24 @@ def test_ability(ability_key):
         ], cwd='/home/henrique/Jogo-APPOO')
         
         if result.returncode == 0:
-            print(f"✅ Teste de '{ability['name']}' concluído!")
+            print(f"Teste concluído!")
         else:
-            print(f"❌ Erro durante o teste de '{ability['name']}'")
+            print(f"Erro durante o teste")
     except KeyboardInterrupt:
-        print(f"\n🛑 Teste de '{ability['name']}' interrompido")
+        print(f"\nTeste interrompido")
     except Exception as e:
-        print(f"❌ Erro: {e}")
+        print(f"Erro: {e}")
 
 def test_all_abilities():
     """Testa todas as habilidades sequencialmente"""
-    print("\n🔄 Testando TODAS as habilidades sequencialmente...")
-    print("🛑 Pressione ESC em cada teste para passar para a próxima habilidade")
+    print("\nTestando todas as habilidades...")
     
     for i, (key, ability) in enumerate(ABILITIES.items(), 1):
-        print(f"\n📊 Progresso: {i}/{len(ABILITIES)}")
-        input(f"▶️  Pressione Enter para testar '{ability['name']}'...")
+        print(f"\n[{i}/{len(ABILITIES)}] {ability['name']}")
+        input("Enter para continuar...")
         test_ability(key)
-        print(f"✅ Teste {i} de {len(ABILITIES)} concluído")
     
-    print("\n🎉 Todos os testes concluídos!")
+    print("\nTodos os testes concluídos!")
 
 def show_help():
     """Exibe ajuda do script"""
@@ -218,16 +208,16 @@ def main():
             choice = show_menu()
             
             if choice is None:
-                print("\n👋 Saindo do testador. Até logo!")
+                print("\nSaindo...")
                 break
             elif choice == 'all':
                 test_all_abilities()
             else:
                 test_ability(choice)
-                input("\n⏸️  Pressione Enter para voltar ao menu...")
+                input("\nEnter para voltar ao menu...")
     
     except KeyboardInterrupt:
-        print("\n\n👋 Testador encerrado. Até logo!")
+        print("\n\nTestador encerrado.")
 
 if __name__ == "__main__":
     main()
