@@ -57,9 +57,6 @@ class GameController:
         # Create ability manager
         self.ability_manager = AbilityManager(self.player)
         
-        # Apply test mode modifications if in test mode
-        self.apply_test_mode_modifications()
-        
         # Create game managers
         self.enemy_manager = EnemyManager(self.player, self.width, self.height)
         self.projectile_manager = ProjectileManager(self.player, self.width, self.height)
@@ -382,6 +379,7 @@ def main(test_ability=None):
     # Se estiver no modo de teste, configura apenas uma habilidade
     if test_ability:
         game.setup_test_mode(test_ability)
+        game.apply_test_mode_modifications()  # Apply modifications after setup
     
     game.run()
 
