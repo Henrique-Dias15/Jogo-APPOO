@@ -9,6 +9,7 @@ from managers.enemy_spawner import EnemyManager
 from managers.projectile_manager import ProjectileManager
 from managers.collision_manager import CollisionManager
 from managers.game_state_manager import GameStateManager
+from utils.database import DatabaseManager
 
 class GameController:
     """
@@ -18,6 +19,7 @@ class GameController:
         """Initialize the game with all necessary components."""
         pygame.init()
         pygame.display.set_caption(GAME_TITLE)
+        self.database = DatabaseManager("game_data.db")
         
         # Screen and timing setup
         if FULLSCREEN:
@@ -75,6 +77,7 @@ class GameController:
     
     def trigger_game_over(self):
         """Set game over state and prepare for restart/exit."""
+        self.database.adicionar("self.player.name", int(self.elapsed_time))
         self.state_manager.change_state(self.state_manager.GAME_OVER)
         self.clear_game_entities()
         

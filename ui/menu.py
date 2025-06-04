@@ -1,13 +1,13 @@
 import pygame
 from utils.settings import *
-
+from utils.database import DatabaseManager
 class MenuSystem:
     """Manages different game menus and state transitions."""
     def __init__(self, screen):
         self.screen = screen
         self.font_title = pygame.font.Font(None, 64)
         self.font_menu = pygame.font.Font(None, 48)
-        
+        self.databaseManager = DatabaseManager("game_data.db")
         # Get the actual screen dimensions
         self.width = screen.get_width()
         self.height = screen.get_height()
@@ -43,11 +43,11 @@ class MenuSystem:
         
         # Game Over Text
         game_over = self.font_title.render(
-            "Game Over", 
+            "Game Over",
             True, RED
         )
         game_over_rect = game_over.get_rect(
-            center=(self.width//2, self.height//2 - 100)
+            center=(self.width//2, self.height//9)
         )
         
         # Level Reached
@@ -56,16 +56,40 @@ class MenuSystem:
             True, WHITE
         )
         level_rect = level_text.get_rect(
-            center=(self.width//2, self.height//2)
+            center=(self.width//2, self.height//9 + self.height//18)
         )
         
+        ranking_text = self.font_menu.render(
+            "Top 10 Rankings:",
+            True, WHITE
+        )
+        ranking_rect = ranking_text.get_rect(
+            center=(self.width//2, self.height//9 + self.height//9)
+        )
+
+        self.screen.blit(ranking_text, ranking_rect)
+        # # Fetch and display rankings
+        rankings = self.databaseManager.listar_rankings()
+        y_offset = 0
+        for i, (name, time) in enumerate(rankings):
+            rank_text = self.font_menu.render(
+                f"{i + 1}. {name} - {time:.2f}s", 
+                True, WHITE
+            )
+            rank_rect = rank_text.get_rect(
+                center=(self.width//2, self.height//9 + self.height//6 + y_offset)
+            )
+            self.screen.blit(rank_text, rank_rect)
+            y_offset += self.height // 18
+            
+
         # Restart Instructions
         restart_text = self.font_menu.render(
             "Press R to Restart", 
             True, GREEN
         )
         restart_rect = restart_text.get_rect(
-            center=(self.width//2, self.height//2 + 100)
+            center=(self.width//2, self.height - 100)
         )
         
         # Quit game instructions
@@ -74,7 +98,7 @@ class MenuSystem:
             True, GREEN
         )
         quit_rect = quit_text.get_rect(
-            center=(self.width//2, self.height//2 + 150)
+            center=(self.width//2, self.height - 50)
         )
         
         self.screen.blit(quit_text, quit_rect)
