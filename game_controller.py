@@ -57,6 +57,9 @@ class GameController:
         # Create ability manager
         self.ability_manager = AbilityManager(self.player)
         
+        # Apply test mode modifications if in test mode
+        self.apply_test_mode_modifications()
+        
         # Create game managers
         self.enemy_manager = EnemyManager(self.player, self.width, self.height)
         self.projectile_manager = ProjectileManager(self.player, self.width, self.height)
@@ -86,6 +89,118 @@ class GameController:
         self.state_manager.change_state(self.state_manager.GAME_WON)
         self.clear_game_entities()
         
+    def setup_test_mode(self, test_ability):
+        """Configura o jogo para testar apenas uma habilidade específica."""
+        print(f"🧪 MODO TESTE ATIVO: {test_ability}")
+        
+        # Mapeamento de nomes amigáveis para chaves de habilidade
+        ability_map = {
+            # Passivas
+            'catnip': 'catnip_spell',
+            'frozen': 'frozen_claw',
+            
+            # Projéteis  
+            'whisker': 'whisker_beam',
+            'furball': 'arcane_fur_ball',
+            'tail': 'elemental_tail',
+            
+            # Ativas
+            'teleport': 'feline_teleport',
+            'gaze': 'enchanted_gaze',
+            'rats': 'ghost_rat_summoning',
+            'shield': 'purring_shield',
+            'reflex': 'reflex_aura',
+            
+            # Área
+            'fish': 'ethereal_fish_rain',
+            'meow': 'mystical_meow'
+        }
+        
+        # Converte nome amigável para chave real se necessário
+        if test_ability in ability_map:
+            test_ability = ability_map[test_ability]
+        
+        # Adiciona flag para indicar modo de teste
+        self.test_mode = True
+        self.test_ability_key = test_ability
+        
+        print(f"✅ Modo de teste configurado para: {test_ability}")
+        print("⌨️  Controles:")
+        print("   WASD/Setas: Mover")
+        print("   T: Ativar habilidade de teste")
+        print("   ESC: Sair")
+        
+    def apply_test_mode_modifications(self):
+        """Aplica as modificações necessárias para o modo de teste."""
+        if not hasattr(self, 'test_mode') or not self.test_mode:
+            return
+            
+        ability_manager = self.ability_manager
+        test_key = self.test_ability_key
+        
+        # Limpa todas as habilidades
+        ability_manager.player_abilities.clear()
+        
+        # Adiciona apenas a habilidade de teste
+        if test_key in ability_manager.available_abilities:
+            ability_class = type(ability_manager.available_abilities[test_key])
+            new_ability = ability_class()
+            
+            # Adiciona ao jogador
+            ability_manager.player_abilities[test_key] = new_ability
+            
+            # Se for passiva, ativa imediatamente
+            from abilities.base_ability import PassiveAbility
+            if isinstance(new_ability, PassiveAbility):
+                new_ability.activate(self.player)
+                print(f"✨ Habilidade passiva '{new_ability.name}' ativada!")
+            else:
+                print(f"⚡ Habilidade '{new_ability.name}' pronta! Use 'T' para ativar.")
+                
+            # Reduz cooldown para facilitar teste
+            if hasattr(new_ability, 'cooldown'):
+                original_cooldown = new_ability.cooldown
+                new_ability.cooldown = max(original_cooldown // 3, 300)
+                print(f"🔧 Cooldown reduzido: {original_cooldown}ms → {new_ability.cooldown}ms")
+        else:
+            print(f"❌ Habilidade '{test_key}' não encontrada!")
+            
+    def handle_test_mode_input(self, events):
+        """Gerencia input específico do modo de teste."""
+        if not hasattr(self, 'test_mode') or not self.test_mode:
+            return
+            
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_t:  # Tecla T para ativar habilidade
+                    self.activate_test_ability()
+                elif event.key == pygame.K_ESCAPE:  # ESC para sair
+                    pygame.quit()
+                    sys.exit()
+                    
+    def activate_test_ability(self):
+        """Ativa a habilidade de teste."""
+        if not hasattr(self, 'test_ability_key'):
+            return
+            
+        ability_manager = self.ability_manager
+        test_key = self.test_ability_key
+        
+        if test_key in ability_manager.player_abilities:
+            ability = ability_manager.player_abilities[test_key]
+            
+            if ability.can_activate():
+                activated = ability_manager.activate_ability(test_key)
+                if activated:
+                    print(f"🎯 '{ability.name}' ativada!")
+                else:
+                    print(f"❌ Falha ao ativar '{ability.name}'")
+            else:
+                remaining = (ability.last_activation + ability.cooldown - pygame.time.get_ticks()) / 1000
+                print(f"⏳ Cooldown: {remaining:.1f}s restantes")
+        else:
+            print(f"❌ Habilidade '{test_key}' não encontrada!")
+
     def clear_game_entities(self):
         """Clear all game entities."""
         self.all_sprites.empty()
@@ -100,7 +215,8 @@ class GameController:
         running = True
         while running:
             # Process events
-            for event in pygame.event.get():
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     running = False
                 
@@ -138,6 +254,9 @@ class GameController:
                     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                         self.state_manager.change_state(self.state_manager.PLAYING)
                         self.elapsed_time = 0  # Reset timer when starting game from menu
+            
+            # Handle test mode input
+            self.handle_test_mode_input(events)
             
             # Update game state if playing
             if self.state_manager.is_state(self.state_manager.PLAYING):
@@ -256,9 +375,14 @@ class GameController:
         # Update display
         pygame.display.flip()
 
-def main():
+def main(test_ability=None):
     """Entry point for the game."""
     game = GameController()
+    
+    # Se estiver no modo de teste, configura apenas uma habilidade
+    if test_ability:
+        game.setup_test_mode(test_ability)
+    
     game.run()
 
 if __name__ == "__main__":
