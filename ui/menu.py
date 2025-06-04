@@ -38,6 +38,79 @@ class MenuSystem:
         self.screen.blit(title, title_rect)
         self.screen.blit(subtitle, subtitle_rect)
     
+    def draw_input_name(self, current_name, player_level, max_length=10):
+        """Render the name input screen."""
+        self.screen.fill(BLACK)
+
+        game_over = self.font_title.render(
+            "Game Over",
+            True, RED
+        )
+        game_over_rect = game_over.get_rect(
+            center=(self.width//2, self.height//9)
+        )
+        
+        # Level Reached
+        level_text = self.font_menu.render(
+            f"You reached Level {player_level}", 
+            True, WHITE
+        )
+        level_rect = level_text.get_rect(
+            center=(self.width//2, self.height//9 + self.height//18)
+        )
+
+        if current_name is None:
+            current_name = ""
+
+        current_name = str(current_name)
+        
+        # Title
+        title = self.font_title.render(
+            "Enter Your Name", 
+            True, WHITE
+        )
+        title_rect = title.get_rect(
+            center=(self.width//2, self.height//3 + self.height//18)
+        )        # Input Box
+
+        input_box = pygame.Rect(self.width//2 - 150, self.height//2-50, 300, 50)
+        pygame.draw.rect(self.screen, BLUE, input_box, 0, 10)
+        pygame.draw.rect(self.screen, WHITE, input_box, 3, 10)
+
+        if current_name:
+            name_text = self.font_menu.render(
+                current_name, 
+                True, WHITE
+            )
+            name_rect = name_text.get_rect(
+                center=input_box.center
+            )
+            self.screen.blit(name_text, name_rect)
+
+        limit_text = self.font_menu.render(
+            f"{len(current_name)}/{max_length} characters",
+            True, GREY if len(current_name) < max_length else RED
+        )
+
+        limit_rect = limit_text.get_rect(
+            center=(self.width//2, self.height//2 + 30)
+        )
+        # Instructions
+        instructions = self.font_menu.render(
+            "Press ENTER to Confirm", 
+            True, GREEN
+        )
+        instructions_rect = instructions.get_rect(
+            center=(self.width//2, self.height//2 + 100)
+        )
+        
+
+        self.screen.blit(game_over, game_over_rect)
+        self.screen.blit(level_text, level_rect)
+        self.screen.blit(title, title_rect)
+        self.screen.blit(limit_text, limit_rect)
+        self.screen.blit(instructions, instructions_rect)
+
     def draw_game_over(self, player_level):
         """Render the game over screen."""
         self.screen.fill(BLACK)
@@ -57,7 +130,7 @@ class MenuSystem:
             True, WHITE
         )
         level_rect = level_text.get_rect(
-            center=(self.width//2, self.height//2)
+            center=(self.width//2, self.height//6)
         )
         
         ranking_text = self.font_menu.render(
