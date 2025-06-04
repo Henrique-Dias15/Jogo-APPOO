@@ -1,8 +1,8 @@
 import pygame
 import random
-from utils.settings import PLAYER_SPEED, PLAYER_MAX_HP
-from abilities.cat_abilities import *
-from abilities.advanced_cat_abilities import *
+from utils.settings import PLAYER_SPEED, PLAYER_MAX_HP, ENEMY_SPEED
+from abilities.base_ability import PassiveAbility, ActiveAbility, BuffAbility
+from abilities.all_abilities import *
 
 class AbilityManager:
     """
