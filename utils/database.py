@@ -32,6 +32,6 @@ class DatabaseManager:
     
 
     def listar_rankings(self):
-        query = "SELECT name, time FROM player ORDER BY time DESC LIMIT 10"
+        query = "SELECT name, time FROM player ORDER BY time DESC, id ASC LIMIT 10"
         self._cursor.execute(query)
         return self._cursor.fetchall()

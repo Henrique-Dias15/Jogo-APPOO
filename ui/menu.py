@@ -1,6 +1,7 @@
 import pygame
 from utils.settings import *
 from utils.database import DatabaseManager
+import time as tm
 class MenuSystem:
     """Manages different game menus and state transitions."""
     def __init__(self, screen):
@@ -146,7 +147,9 @@ class MenuSystem:
         y_offset = 0
         for i, (name, time) in enumerate(rankings):
             rank_text = self.font_menu.render(
-                f"{i + 1}. {name} - {time:.2f}s", 
+                f"{i + 1}. {name} - {tm.strftime(
+                    "%M:%S" if time < 3600 else "%H:%M:%S", tm.gmtime(time)
+                )}", 
                 True, WHITE
             )
             rank_rect = rank_text.get_rect(
