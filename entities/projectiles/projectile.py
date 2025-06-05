@@ -5,13 +5,18 @@ from utils.settings import *
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, x, y, target_x, target_y, screen_width=None, screen_height=None, speed=7, damage=10, modifications=None):
         super().__init__()
-        self.image = pygame.Surface((5, 5))
-        self.image.fill(BLUE)  
+        
+        # Store modifications and apply them
+        self.modifications = modifications or {}
+        
+        # Apply modifications to get final properties
+        size = self.modifications.get('size', (5, 5))
+        color = self.modifications.get('color', BLUE)
+        
+        self.image = pygame.Surface(size)
+        self.image.fill(color)  
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        
-        # Store modifications for potential future use
-        self.modifications = modifications or {}
         
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
