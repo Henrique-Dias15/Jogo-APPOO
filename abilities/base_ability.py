@@ -171,7 +171,7 @@ class ProjectileAbility(ActiveAbility):
         """
         Create a projectile instance.
         """
-        from entities.ability_projectile import AbilityProjectile
+        from entities.projectiles.ability_projectile import AbilityProjectile
         return AbilityProjectile(
             start_x, start_y, target_x, target_y,
             speed=self.speed, damage=self.damage,

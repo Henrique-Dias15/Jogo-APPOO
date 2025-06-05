@@ -1,7 +1,7 @@
 import pygame
 import math
 from abilities.base_ability import ActiveAbility
-from entities.ability_projectile import AbilityProjectile
+from entities.projectiles.ability_projectile import AbilityProjectile
 from utils.settings import GREY
 
 class GhostRatSummoning(ActiveAbility):

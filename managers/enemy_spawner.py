@@ -1,10 +1,10 @@
 import pygame
 import random
 from utils.settings import *
-from entities.enemy import Enemy
-from entities.square_enemy import SquareEnemy
-from entities.triangle_enemy import TriangleEnemy
-from entities.fast_enemy import FastEnemy
+from entities.enemys.enemy import Enemy
+from entities.enemys.square_enemy import SquareEnemy
+from entities.enemys.triangle_enemy import TriangleEnemy
+from entities.enemys.fast_enemy import FastEnemy
 
 class EnemyManager:
     """

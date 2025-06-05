@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from abilities.base_ability import AreaEffectAbility
-from entities.ability_projectile import AbilityProjectile
+from entities.projectiles.ability_projectile import AbilityProjectile
 from utils.settings import CYAN
 
 class EtherealFishRain(AreaEffectAbility):

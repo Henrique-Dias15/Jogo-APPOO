@@ -1,7 +1,7 @@
 import pygame
 import sys
 from utils.settings import *
-from entities.player import Player
+from entities.player.player import Player
 from ui.hud import HUD
 from ui.menu import MenuSystem
 from managers.ability_manager import AbilityManager

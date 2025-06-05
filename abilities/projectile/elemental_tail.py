@@ -1,6 +1,6 @@
 import pygame
 from abilities.base_ability import ProjectileAbility
-from entities.ability_projectile import SpecialProjectile
+from entities.projectiles.ability_projectile import SpecialProjectile
 from utils.settings import ORANGE, RED, CYAN, YELLOW
 
 class ElementalTail(ProjectileAbility):

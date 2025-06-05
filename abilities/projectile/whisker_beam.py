@@ -1,7 +1,7 @@
 import pygame
 import math
 from abilities.base_ability import ProjectileAbility
-from entities.ability_projectile import SpecialProjectile
+from entities.projectiles.ability_projectile import SpecialProjectile
 from utils.settings import YELLOW
 
 class WhiskerBeam(ProjectileAbility):
