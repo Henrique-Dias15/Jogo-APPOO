@@ -3,12 +3,15 @@ import math
 from utils.settings import *
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, x, y, target_x, target_y, screen_width=None, screen_height=None, speed=7, damage=10):
+    def __init__(self, x, y, target_x, target_y, screen_width=None, screen_height=None, speed=7, damage=10, modifications=None):
         super().__init__()
         self.image = pygame.Surface((5, 5))
         self.image.fill(BLUE)  # Blue projectile
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        
+        # Store modifications for potential future use
+        self.modifications = modifications or {}
         
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
