@@ -6,7 +6,7 @@ class Projectile(pygame.sprite.Sprite):
     def __init__(self, x, y, target_x, target_y, screen_width=None, screen_height=None, speed=7, damage=10, modifications=None):
         super().__init__()
         self.image = pygame.Surface((5, 5))
-        self.image.fill(BLUE)  # Blue projectile
+        self.image.fill(BLUE)  
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         
