@@ -9,8 +9,8 @@ class FrozenClaw(PassiveAbility):
         projectile_mods = {
             'color': (135, 206, 250),  # Light blue for ice
             'visual_effect': 'frozen',
-            'particles': 'ice_trail',
-            'size': (7, 7)  # Slightly larger
+            'particles': 'ice_trail', # Not working for now
+            'size': (7, 7)  
         }
         
         super().__init__(
