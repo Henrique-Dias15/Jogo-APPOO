@@ -77,18 +77,21 @@ class BaseAbility(ABC):
 class PassiveAbility(BaseAbility):
     """
     Base class for passive abilities that provide permanent stat boosts.
+    Can also modify projectiles fired by the player.
     """
-    def __init__(self, name, description, stat_name, stat_increase):
+    def __init__(self, name, description, stat_name, stat_increase, projectile_modifications=None):
         super().__init__(name, description, cooldown=0)  # No cooldown for passive abilities
         self.stat_name = stat_name
         self.base_stat_increase = stat_increase
         self.stat_increase = stat_increase
+        self.projectile_modifications = projectile_modifications or {}
     
     def activate(self, player, **kwargs):
         """
         Apply the passive effect to the player.
         """
         self.apply_stat_boost(player)
+        self.apply_projectile_modifications(player)
         return True
     
     def apply_stat_boost(self, player):
@@ -98,6 +101,34 @@ class PassiveAbility(BaseAbility):
         if hasattr(player, self.stat_name):
             current_value = getattr(player, self.stat_name)
             setattr(player, self.stat_name, current_value + self.stat_increase)
+    
+    def apply_projectile_modifications(self, player):
+        """
+        Apply projectile modifications to the player.
+        """
+        if not hasattr(player, 'projectile_modifications'):
+            player.projectile_modifications = {}
+            
+        # Merge this ability's modifications with existing ones
+        for key, value in self.projectile_modifications.items():
+            if key == 'on_hit_effects':
+                # Special handling for on_hit_effects - append to list
+                if key not in player.projectile_modifications:
+                    player.projectile_modifications[key] = []
+                if isinstance(value, list):
+                    player.projectile_modifications[key].extend(value)
+                else:
+                    player.projectile_modifications[key].append(value)
+            else:
+                # For other modifications, use the latest value
+                player.projectile_modifications[key] = value
+    
+    def get_projectile_modifications(self):
+        """
+        Get the projectile modifications this ability provides.
+        Override this method for dynamic modifications.
+        """
+        return self.projectile_modifications.copy()
     
     def on_upgrade(self):
         """
