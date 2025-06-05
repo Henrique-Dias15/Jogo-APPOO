@@ -1,6 +1,5 @@
 import pygame
 from entities.projectile import Projectile
-from entities.enhanced_projectile import EnhancedProjectile
 
 class ProjectileManager:
     """
