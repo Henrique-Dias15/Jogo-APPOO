@@ -28,72 +28,6 @@ ABILITIES = {
         'name': 'Patas Flamejantes',
         'description': 'Ataques causam queimadura e projéteis deixam rastro de fogo',
         'type': '🔮 Passiva'
-    },
-    
-    # Projéteis
-    'whisker': {
-        'key': 'whisker_beam',
-        'name': 'Raio de Bigodes', 
-        'description': 'Dispara feixes mágicos que atravessam inimigos',
-        'type': '🎯 Projétil'
-    },
-    'furball': {
-        'key': 'arcane_fur_ball',
-        'name': 'Bola de Pêlo Arcana',
-        'description': 'Lança esferas explosivas de pelos mágicos', 
-        'type': '🎯 Projétil'
-    },
-    'tail': {
-        'key': 'elemental_tail',
-        'name': 'Cauda Elemental',
-        'description': 'Dispara energia elemental com efeitos variados',
-        'type': '🎯 Projétil'
-    },
-    
-    # Ativas
-    'teleport': {
-        'key': 'feline_teleport',
-        'name': 'Teleporte Felino',
-        'description': 'Teleporta para uma posição segura',
-        'type': '⚡ Ativa'
-    },
-    'gaze': {
-        'key': 'enchanted_gaze',
-        'name': 'Olhar Encantado',
-        'description': 'Converte inimigos próximos em aliados temporários',
-        'type': '⚡ Ativa'
-    },
-    'rats': {
-        'key': 'ghost_rat_summoning',
-        'name': 'Invocação de Ratos Fantasmas',
-        'description': 'Invoca ratos espectrais que caçam inimigos',
-        'type': '⚡ Ativa'
-    },
-    'shield': {
-        'key': 'purring_shield',
-        'name': 'Escudo de Ronronar',
-        'description': 'Cria uma barreira que reflete dano aos inimigos',
-        'type': '⚡ Buff'
-    },
-    'reflex': {
-        'key': 'reflex_aura',
-        'name': 'Aura de Reflexos',
-        'description': 'Aumenta drasticamente a velocidade de ataque',
-        'type': '⚡ Buff'
-    },
-    
-    # Área de Efeito
-    'fish': {
-        'key': 'ethereal_fish_rain',
-        'name': 'Chuva de Peixes Etéreos',
-        'description': 'Invoca peixes mágicos que caem do céu',
-        'type': '💫 Área'
-    },
-    'meow': {
-        'key': 'mystical_meow',
-        'name': 'Miau Místico',
-        'description': 'Atordoa inimigos próximos temporariamente',
-        'type': '💫 Área'
     }
 }
 
@@ -104,10 +38,7 @@ def show_menu():
     
     # Organiza por categorias
     categories = {
-        'Passivas': ['catnip', 'frozen', 'flaming'],
-        'Projéteis': ['whisker', 'furball', 'tail'],
-        'Ativas': ['teleport', 'gaze', 'rats', 'shield', 'reflex'],
-        'Área': ['fish', 'meow']
+        'Passivas': ['catnip', 'frozen', 'flaming']
     }
     
     choice_map = {}

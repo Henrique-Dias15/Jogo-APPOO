@@ -83,19 +83,6 @@ class AbilityManager:
         current_time = pygame.time.get_ticks()
         
         for enemy in enemies:
-            # Handle stun
-            if hasattr(enemy, 'stunned') and enemy.stunned:
-                if current_time >= enemy.stun_end_time:
-                    enemy.stunned = False
-                    enemy.speed = getattr(enemy, 'original_speed', ENEMY_SPEED)
-            
-            # Handle charm
-            if hasattr(enemy, 'charmed') and enemy.charmed:
-                if current_time >= enemy.charm_end_time:
-                    enemy.charmed = False
-                    if hasattr(enemy, 'original_color'):
-                        enemy.image.fill(enemy.original_color)
-            
             # Handle freeze
             if hasattr(enemy, 'frozen') and enemy.frozen:
                 if current_time >= enemy.freeze_end_time:
