@@ -51,7 +51,7 @@ class FlamingPaws(PassiveAbility):
             projectile_modifications=projectile_mods
         )
         self.burn_duration = 3000  # 3 seconds
-        self.burn_damage = 2  # Damage per tick
+        self.burn_damage = 20  # Damage per tick
     
     def activate(self, player, **kwargs):
         super().activate(player, **kwargs)
