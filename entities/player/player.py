@@ -22,12 +22,12 @@ class Player(pygame.sprite.Sprite):
         self.projectile_damage = 10  # Base projectile damage
         
         # Ability-related attributes
-        self.has_purring_shield = False
-        self.shield_damage = 0
-        self.shield_radius = 0
         self.has_frozen_claw = False
         self.freeze_chance = 0
         self.freeze_duration = 0
+        self.has_flaming_paws = False
+        self.burn_duration = 0
+        self.burn_damage = 0
         
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH

@@ -5,12 +5,6 @@ from abilities.base_ability import PassiveAbility, ActiveAbility, BuffAbility
 
 # Import abilities by category
 from abilities.passive import CatnipSpell, FrozenClaw, FlamingPaws
-from abilities.projectile import WhiskerBeam, ArcaneFurBall, ElementalTail
-from abilities.active import (
-    FelineTeleport, EnchantedGaze, GhostRatSummoning, 
-    PurringShield, ReflexAura
-)
-from abilities.area_effect import EtherealFishRain, MysticalMeow
 
 class AbilityManager:
     """
@@ -28,19 +22,10 @@ class AbilityManager:
         
         # Magical abilities collection
         self.available_abilities = {
+            # Passive abilities
             'catnip_spell': CatnipSpell(),
             'flaming_paws': FlamingPaws(),
-            'whisker_beam': WhiskerBeam(),
-            'purring_shield': PurringShield(),
-            'feline_teleport': FelineTeleport(),
-            'arcane_fur_ball': ArcaneFurBall(),
-            'ethereal_fish_rain': EtherealFishRain(),
             'frozen_claw': FrozenClaw(),
-            'mystical_meow': MysticalMeow(),
-            'enchanted_gaze': EnchantedGaze(),
-            'reflex_aura': ReflexAura(),
-            'elemental_tail': ElementalTail(),
-            'ghost_rat_summoning': GhostRatSummoning()
         }
         
         # Player's acquired abilities
@@ -93,12 +78,15 @@ class AbilityManager:
             if hasattr(enemy, 'burning') and enemy.burning:
                 if current_time >= enemy.burn_end_time:
                     enemy.burning = False
+                    enemy.speed = getattr(enemy, 'original_speed', ENEMY_SPEED)  # Restore speed when burn ends
                 else:
                     # Apply burn damage periodically
                     if not hasattr(enemy, 'last_burn_tick'):
                         enemy.last_burn_tick = current_time
-                    elif current_time - enemy.last_burn_tick >= 1000:  # Every second
-                        enemy.take_damage(enemy.burn_damage)
+                    elif current_time - enemy.last_burn_tick >= 500:  # Every 500ms (0.5 seconds)
+                        if enemy.take_damage(enemy.burn_damage):
+                            self.player.gain_exp(5)  # Give exp when enemy dies from burn
+                            enemy.kill()
                         enemy.last_burn_tick = current_time
     
     def activate_ability(self, ability_name, **kwargs):

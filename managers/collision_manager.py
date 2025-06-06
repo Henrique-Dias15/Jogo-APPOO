@@ -107,6 +107,17 @@ class CollisionManager:
             enemy.original_speed = getattr(enemy, 'original_speed', enemy.speed)
             enemy.speed = 0
         
+        # Apply flaming paws effect
+        if (hasattr(self.player, 'has_flaming_paws') and self.player.has_flaming_paws):
+            enemy.burning = True
+            enemy.burn_end_time = pygame.time.get_ticks() + self.player.burn_duration
+            enemy.burn_damage = self.player.burn_damage
+            # Don't change speed for burning enemies - they can still move while burning
+                
+            # Start burn damage timer
+            if not hasattr(enemy, 'last_burn_tick'):
+                enemy.last_burn_tick = pygame.time.get_ticks()
+        
         # Apply projectile-specific effects
         if hasattr(projectile, 'apply_effects'):
             projectile.apply_effects(enemy)

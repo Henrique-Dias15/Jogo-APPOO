@@ -48,8 +48,6 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, *args, **kwargs):
         """Move enemy towards player, now accepts any arguments"""
         # Check for status effects that prevent movement
-        if hasattr(self, 'stunned') and self.stunned:
-            return
         if hasattr(self, 'frozen') and self.frozen:
             return
         
@@ -80,3 +78,4 @@ class Enemy(pygame.sprite.Sprite):
         """Handle enemy taking damage"""
         self.hp -= damage
         return self.hp <= 0
+    
