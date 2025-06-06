@@ -103,6 +103,7 @@ class GameController:
             # Passivas
             'catnip': 'catnip_spell',
             'frozen': 'frozen_claw',
+            'flaming': 'flaming_paws',
             
             # Projéteis  
             'whisker': 'whisker_beam',

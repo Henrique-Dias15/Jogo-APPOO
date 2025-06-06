@@ -23,6 +23,12 @@ ABILITIES = {
         'description': 'Ataques têm chance de congelar inimigos',
         'type': '🔮 Passiva'
     },
+    'flaming': {
+        'key': 'flaming_paws',
+        'name': 'Patas Flamejantes',
+        'description': 'Ataques causam queimadura e projéteis deixam rastro de fogo',
+        'type': '🔮 Passiva'
+    },
     
     # Projéteis
     'whisker': {
@@ -98,7 +104,7 @@ def show_menu():
     
     # Organiza por categorias
     categories = {
-        'Passivas': ['catnip', 'frozen'],
+        'Passivas': ['catnip', 'frozen', 'flaming'],
         'Projéteis': ['whisker', 'furball', 'tail'],
         'Ativas': ['teleport', 'gaze', 'rats', 'shield', 'reflex'],
         'Área': ['fish', 'meow']

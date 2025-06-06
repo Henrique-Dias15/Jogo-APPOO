@@ -4,7 +4,7 @@ from utils.settings import PLAYER_SPEED, PLAYER_MAX_HP, ENEMY_SPEED
 from abilities.base_ability import PassiveAbility, ActiveAbility, BuffAbility
 
 # Import abilities by category
-from abilities.passive import CatnipSpell, FrozenClaw
+from abilities.passive import CatnipSpell, FrozenClaw, FlamingPaws
 from abilities.projectile import WhiskerBeam, ArcaneFurBall, ElementalTail
 from abilities.active import (
     FelineTeleport, EnchantedGaze, GhostRatSummoning, 
@@ -29,6 +29,7 @@ class AbilityManager:
         # Magical abilities collection
         self.available_abilities = {
             'catnip_spell': CatnipSpell(),
+            'flaming_paws': FlamingPaws(),
             'whisker_beam': WhiskerBeam(),
             'purring_shield': PurringShield(),
             'feline_teleport': FelineTeleport(),
