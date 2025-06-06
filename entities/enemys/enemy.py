@@ -47,6 +47,17 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, *args, **kwargs):
         """Move enemy towards player, now accepts any arguments"""
+        # Check for status effects that prevent movement
+        if hasattr(self, 'stunned') and self.stunned:
+            return
+        if hasattr(self, 'frozen') and self.frozen:
+            return
+        
+        # Handle charmed enemies (attack other enemies instead)
+        if hasattr(self, 'charmed') and self.charmed:
+            self.update_charmed_behavior()
+            return
+        
         # Calculate direction to player
         dx = self.player.rect.centerx - self.rect.centerx
         dy = self.player.rect.centery - self.rect.centery
@@ -58,6 +69,12 @@ class Enemy(pygame.sprite.Sprite):
         
         self.rect.x += dx * self.speed
         self.rect.y += dy * self.speed
+    
+    def update_charmed_behavior(self):
+        """Handle behavior for charmed enemies"""
+        # For now, charmed enemies just stop moving
+        # In a more complex implementation, they could attack other enemies
+        pass
 
     def take_damage(self, damage):
         """Handle enemy taking damage"""
