@@ -9,6 +9,7 @@ from managers.enemy_spawner import EnemyManager
 from managers.projectile_manager import ProjectileManager
 from managers.collision_manager import CollisionManager
 from managers.game_state_manager import GameStateManager
+from utils.database import DatabaseManager
 
 class GameController:
     """
@@ -18,6 +19,8 @@ class GameController:
         """Initialize the game with all necessary components."""
         pygame.init()
         pygame.display.set_caption(GAME_TITLE)
+        self.database = DatabaseManager("game_data.db")
+        self.current_name = ""
         
         # Screen and timing setup
         if FULLSCREEN:
@@ -76,6 +79,11 @@ class GameController:
         self.state_manager.change_state(self.state_manager.LEVEL_UP)
         self.state_manager.set_level_up_options(self.ability_manager.get_upgrade_options())
     
+    def trigger_input_name(self):
+        """Pause game and show input name screen."""
+        self.state_manager.change_state(self.state_manager.INPUTTING_NAME)
+        
+
     def trigger_game_over(self):
         """Set game over state and prepare for restart/exit."""
         self.state_manager.change_state(self.state_manager.GAME_OVER)
@@ -251,7 +259,15 @@ class GameController:
                     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                         self.state_manager.change_state(self.state_manager.PLAYING)
                         self.elapsed_time = 0  # Reset timer when starting game from menu
-            
+                elif self.state_manager.is_state(self.state_manager.INPUTTING_NAME):
+                    self.current_name, name_confirmed = self.state_manager.handle_name_input(event, current_name=self.current_name, max_length=10)
+
+                    if name_confirmed and len(self.current_name) > 0:
+                        # Save name to database
+                        self.database.adicionar(self.current_name, int(self.elapsed_time))
+                        self.current_input_name = ""
+                        self.state_manager.change_state(self.state_manager.GAME_OVER)
+                  
             # Handle test mode input
             self.handle_test_mode_input(events)
             
@@ -340,13 +356,16 @@ class GameController:
             self.enemy_manager.enemies)
         
         if is_player_dead:
-            self.trigger_game_over()
+            self.trigger_input_name()
     
     def render_screen(self):
         """Render appropriate screen based on game state."""
         if self.state_manager.is_state(self.state_manager.MAIN_MENU):
             # Menu screen
             self.menu_system.draw_start_menu()
+        elif self.state_manager.is_state(self.state_manager.INPUTTING_NAME):
+            # Input name screen
+            self.menu_system.draw_input_name(self.current_name, self.player.level)
         elif self.state_manager.is_state(self.state_manager.GAME_OVER):
             # Game over screen
             self.menu_system.draw_game_over(self.player.level)
