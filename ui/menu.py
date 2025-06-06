@@ -1,11 +1,7 @@
 import pygame
 from utils.settings import *
-<<<<<<< HEAD
-
-=======
 from utils.database import DatabaseManager
 import time as tm
->>>>>>> f470c72 (fix: improve ranking query to include player ID for consistent ordering)
 class MenuSystem:
     """Manages different game menus and state transitions."""
     def __init__(self, screen):
@@ -64,8 +60,6 @@ class MenuSystem:
             center=(self.width//2, self.height//2)
         )
         
-<<<<<<< HEAD
-=======
         ranking_text = self.font_menu.render(
             "Top 10 Rankings:",
             True, WHITE
@@ -92,7 +86,6 @@ class MenuSystem:
             y_offset += self.height // 18
             
 
->>>>>>> f470c72 (fix: improve ranking query to include player ID for consistent ordering)
         # Restart Instructions
         restart_text = self.font_menu.render(
             "Press R to Restart", 
