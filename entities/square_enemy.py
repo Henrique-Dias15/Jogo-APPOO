@@ -1,5 +1,5 @@
 import pygame
-from entities.enemys.enemy import Enemy
+from entities.enemy import Enemy
 from utils.settings import *
 
 class SquareEnemy(Enemy):

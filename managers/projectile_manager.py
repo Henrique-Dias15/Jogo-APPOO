@@ -1,5 +1,5 @@
 import pygame
-from entities.projectiles.projectile import Projectile
+from entities.projectile import Projectile
 
 class ProjectileManager:
     """
@@ -15,32 +15,15 @@ class ProjectileManager:
     def create_projectile(self, target_x, target_y):
         """Create a projectile targeting the specified coordinates"""
         if self.player.can_shoot():
-            # Check if player has projectile modifications from passive abilities
-            modifications = getattr(self.player, 'projectile_modifications', {})
-            
-            if modifications:
-                # Use enhanced projectile with modifications
-                projectile = Projectile(
-                    self.player.rect.centerx, 
-                    self.player.rect.centery,
-                    target_x, 
-                    target_y,
-                    screen_width=self.screen_width,
-                    screen_height=self.screen_height,
-                    damage=self.player.projectile_damage,
-                    modifications=modifications
-                )
-            else:
-                # Use basic projectile
-                projectile = Projectile(
-                    self.player.rect.centerx, 
-                    self.player.rect.centery,
-                    target_x, 
-                    target_y,
-                    screen_width=self.screen_width,
-                    screen_height=self.screen_height,
-                    damage=self.player.projectile_damage
-                )
+            projectile = Projectile(
+                self.player.rect.centerx, 
+                self.player.rect.centery,
+                target_x, 
+                target_y,
+                screen_width=self.screen_width,
+                screen_height=self.screen_height,
+                damage=self.player.projectile_damage
+            )
             
             self.projectiles.add(projectile)
             self.all_sprites.add(projectile)
@@ -76,24 +59,13 @@ class ProjectileManager:
         
         return None
     
-    def update(self, enemies=None, *args, **kwargs):
-        """Update all projectiles, passing enemies for homing projectiles"""
-        for projectile in self.projectiles:
-            if hasattr(projectile, 'update'):
-                if enemies is not None:
-                    projectile.update(enemies, *args, **kwargs)
-                else:
-                    projectile.update(*args, **kwargs)
+    def update(self, *args, **kwargs):
+        """Update all projectiles"""
+        self.projectiles.update(*args, **kwargs)
         
     def draw(self, screen):
         """Draw all projectiles"""
-        for projectile in self.projectiles:
-            if hasattr(projectile, 'draw') and callable(projectile.draw):
-                # Enhanced projectiles have custom draw method with particles
-                projectile.draw(screen)
-            else:
-                # Basic projectiles use standard sprite drawing
-                screen.blit(projectile.image, projectile.rect)
+        self.projectiles.draw(screen)
     
     def reset(self):
         """Clear all projectiles"""

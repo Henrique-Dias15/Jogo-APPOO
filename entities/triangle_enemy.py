@@ -1,8 +1,8 @@
 import pygame
 import math
-from entities.enemys.enemy import Enemy
+from entities.enemy import Enemy
 from utils.settings import *
-from entities.projectiles.projectile import Projectile
+from entities.projectile import Projectile
 
 class TriangleEnemy(Enemy):
     """A enemy that keeps a distance from the player and shoots projectiles"""

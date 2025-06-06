@@ -1,10 +1,10 @@
 import pygame
 import sys
 from utils.settings import *
-from entities.player.player import Player
+from entities.player import Player
 from ui.hud import HUD
 from ui.menu import MenuSystem
-from managers.ability_manager import AbilityManager
+from abilities.ability_manager import AbilityManager
 from managers.enemy_spawner import EnemyManager
 from managers.projectile_manager import ProjectileManager
 from managers.collision_manager import CollisionManager
@@ -62,9 +62,6 @@ class GameController:
         self.projectile_manager = ProjectileManager(self.player, self.width, self.height)
         self.collision_manager = CollisionManager(self.player)
         
-        # Connect managers to ability system
-        self.ability_manager.set_managers(self.projectile_manager, self.enemy_manager)
-        
         # Connect player level up to game controller
         self.player.set_level_up_callback(self.trigger_level_up)
         
@@ -86,118 +83,6 @@ class GameController:
         self.state_manager.change_state(self.state_manager.GAME_WON)
         self.clear_game_entities()
         
-    def setup_test_mode(self, test_ability):
-        """Configura o jogo para testar apenas uma habilidade específica."""
-        print(f"🧪 MODO TESTE ATIVO: {test_ability}")
-        
-        # Mapeamento de nomes amigáveis para chaves de habilidade
-        ability_map = {
-            # Passivas
-            'catnip': 'catnip_spell',
-            'frozen': 'frozen_claw',
-            
-            # Projéteis  
-            'whisker': 'whisker_beam',
-            'furball': 'arcane_fur_ball',
-            'tail': 'elemental_tail',
-            
-            # Ativas
-            'teleport': 'feline_teleport',
-            'gaze': 'enchanted_gaze',
-            'rats': 'ghost_rat_summoning',
-            'shield': 'purring_shield',
-            'reflex': 'reflex_aura',
-            
-            # Área
-            'fish': 'ethereal_fish_rain',
-            'meow': 'mystical_meow'
-        }
-        
-        # Converte nome amigável para chave real se necessário
-        if test_ability in ability_map:
-            test_ability = ability_map[test_ability]
-        
-        # Adiciona flag para indicar modo de teste
-        self.test_mode = True
-        self.test_ability_key = test_ability
-        
-        print(f"✅ Modo de teste configurado para: {test_ability}")
-        print("⌨️  Controles:")
-        print("   WASD/Setas: Mover")
-        print("   T: Ativar habilidade de teste")
-        print("   ESC: Sair")
-        
-    def apply_test_mode_modifications(self):
-        """Aplica as modificações necessárias para o modo de teste."""
-        if not hasattr(self, 'test_mode') or not self.test_mode:
-            return
-            
-        ability_manager = self.ability_manager
-        test_key = self.test_ability_key
-        
-        # Limpa todas as habilidades
-        ability_manager.player_abilities.clear()
-        
-        # Adiciona apenas a habilidade de teste
-        if test_key in ability_manager.available_abilities:
-            ability_class = type(ability_manager.available_abilities[test_key])
-            new_ability = ability_class()
-            
-            # Adiciona ao jogador
-            ability_manager.player_abilities[test_key] = new_ability
-            
-            # Se for passiva, ativa imediatamente
-            from abilities.base_ability import PassiveAbility
-            if isinstance(new_ability, PassiveAbility):
-                new_ability.activate(self.player)
-                print(f"✨ Habilidade passiva '{new_ability.name}' ativada!")
-            else:
-                print(f"⚡ Habilidade '{new_ability.name}' pronta! Use 'T' para ativar.")
-                
-            # Reduz cooldown para facilitar teste
-            if hasattr(new_ability, 'cooldown'):
-                original_cooldown = new_ability.cooldown
-                new_ability.cooldown = max(original_cooldown // 3, 300)
-                print(f"🔧 Cooldown reduzido: {original_cooldown}ms → {new_ability.cooldown}ms")
-        else:
-            print(f"❌ Habilidade '{test_key}' não encontrada!")
-            
-    def handle_test_mode_input(self, events):
-        """Gerencia input específico do modo de teste."""
-        if not hasattr(self, 'test_mode') or not self.test_mode:
-            return
-            
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_t:  # Tecla T para ativar habilidade
-                    self.activate_test_ability()
-                elif event.key == pygame.K_ESCAPE:  # ESC para sair
-                    pygame.quit()
-                    sys.exit()
-                    
-    def activate_test_ability(self):
-        """Ativa a habilidade de teste."""
-        if not hasattr(self, 'test_ability_key'):
-            return
-            
-        ability_manager = self.ability_manager
-        test_key = self.test_ability_key
-        
-        if test_key in ability_manager.player_abilities:
-            ability = ability_manager.player_abilities[test_key]
-            
-            if ability.can_activate():
-                activated = ability_manager.activate_ability(test_key)
-                if activated:
-                    print(f"🎯 '{ability.name}' ativada!")
-                else:
-                    print(f"❌ Falha ao ativar '{ability.name}'")
-            else:
-                remaining = (ability.last_activation + ability.cooldown - pygame.time.get_ticks()) / 1000
-                print(f"⏳ Cooldown: {remaining:.1f}s restantes")
-        else:
-            print(f"❌ Habilidade '{test_key}' não encontrada!")
-
     def clear_game_entities(self):
         """Clear all game entities."""
         self.all_sprites.empty()
@@ -212,8 +97,7 @@ class GameController:
         running = True
         while running:
             # Process events
-            events = pygame.event.get()
-            for event in events:
+            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 
@@ -251,7 +135,15 @@ class GameController:
                     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                         self.state_manager.change_state(self.state_manager.PLAYING)
                         self.elapsed_time = 0  # Reset timer when starting game from menu
-            
+                elif self.state_manager.is_state(self.state_manager.INPUTTING_NAME):
+                    self.current_name, name_confirmed = self.state_manager.handle_name_input(event, current_name=self.current_name, max_length=10)
+
+                    if name_confirmed and len(self.current_name) > 0:
+                        # Save name to database
+                        self.database.adicionar(self.current_name, int(self.elapsed_time))
+                        self.current_input_name = ""
+                        self.state_manager.change_state(self.state_manager.GAME_OVER)
+                  
             # Handle test mode input
             self.handle_test_mode_input(events)
             
@@ -304,10 +196,6 @@ class GameController:
         # Update player
         self.player.update(keys)
         
-        # Update ability system
-        dt = self.clock.get_time()
-        self.ability_manager.update(dt, keys)
-        
         # Spawn enemies periodically
         self.enemy_manager.spawn_enemy(self.elapsed_time)
         
@@ -317,8 +205,8 @@ class GameController:
         # Handle player shooting
         self.projectile_manager.handle_auto_shooting(self.enemy_manager.enemies)
         
-        # Update projectiles (pass enemies for homing projectiles)
-        self.projectile_manager.update(self.enemy_manager.enemies)
+        # Update projectiles
+        self.projectile_manager.update()
         
         # Check for collisions
         self.check_collisions()
@@ -358,7 +246,7 @@ class GameController:
             # Draw game first
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
-            self.hud.draw(int(self.elapsed_time), self.ability_manager)
+            self.hud.draw(int(self.elapsed_time))
             
             # Then draw level up overlay
             option_rects = self.menu_system.draw_level_up(
@@ -367,20 +255,14 @@ class GameController:
             # Normal game rendering
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
-            self.hud.draw(int(self.elapsed_time), self.ability_manager)
+            self.hud.draw(int(self.elapsed_time))
         
         # Update display
         pygame.display.flip()
 
-def main(test_ability=None):
+def main():
     """Entry point for the game."""
     game = GameController()
-    
-    # Se estiver no modo de teste, configura apenas uma habilidade
-    if test_ability:
-        game.setup_test_mode(test_ability)
-        game.apply_test_mode_modifications()  # Apply modifications after setup
-    
     game.run()
 
 if __name__ == "__main__":
