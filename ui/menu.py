@@ -146,10 +146,10 @@ class MenuSystem:
         rankings = self.databaseManager.listar_rankings()
         y_offset = 0
         for i, (name, time) in enumerate(rankings):
+            time_format = "%M:%S" if time < 3600 else "%H:%M:%S"
+            time_str = tm.strftime(time_format, tm.gmtime(time))
             rank_text = self.font_menu.render(
-                f"{i + 1}. {name} - {tm.strftime(
-                    "%M:%S" if time < 3600 else "%H:%M:%S", tm.gmtime(time)
-                )}", 
+                f"{i + 1}. {name} - {time_str}", 
                 True, WHITE
             )
             rank_rect = rank_text.get_rect(
