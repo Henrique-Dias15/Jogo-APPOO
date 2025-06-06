@@ -12,7 +12,6 @@ class GameStateManager:
         self.LEVEL_UP = "level_up"
         self.GAME_OVER = "game_over"
         self.GAME_WON = "game_won"
-        self.INPUTTING_NAME = "inputting_name"
         
         # Current state
         self.current_state = self.MAIN_MENU
@@ -31,27 +30,6 @@ class GameStateManager:
     def set_level_up_options(self, options):
         """Set available upgrade options for level up screen"""
         self.upgrade_options = options
-
-    def handle_name_input(self, event, current_name="", max_length=10):
-        """Handle input for name entry"""
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                # Confirm name input
-                if current_name:
-                    self.current_state = self.PLAYING
-                    return current_name, True
-                return current_name, False
-            elif event.key == pygame.K_BACKSPACE:
-                # Remove last character
-                current_name = current_name[:-1]
-                return current_name, False
-            else:
-                # Add new character if within limits and printable
-                if len(current_name) < max_length and event.unicode.isprintable():
-                    current_name += event.unicode
-                return current_name, False
-        
-        return current_name, False
         
     def handle_game_over_input(self, event):
         """Handle input during game over state"""

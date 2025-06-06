@@ -1,14 +1,13 @@
 import pygame
 from utils.settings import *
-from utils.database import DatabaseManager
-import time as tm
+
 class MenuSystem:
     """Manages different game menus and state transitions."""
     def __init__(self, screen):
         self.screen = screen
         self.font_title = pygame.font.Font(None, 64)
         self.font_menu = pygame.font.Font(None, 48)
-        self.databaseManager = DatabaseManager("game_data.db")
+        
         # Get the actual screen dimensions
         self.width = screen.get_width()
         self.height = screen.get_height()
@@ -38,90 +37,17 @@ class MenuSystem:
         self.screen.blit(title, title_rect)
         self.screen.blit(subtitle, subtitle_rect)
     
-    def draw_input_name(self, current_name, player_level, max_length=10):
-        """Render the name input screen."""
-        self.screen.fill(BLACK)
-
-        game_over = self.font_title.render(
-            "Game Over",
-            True, RED
-        )
-        game_over_rect = game_over.get_rect(
-            center=(self.width//2, self.height//9)
-        )
-        
-        # Level Reached
-        level_text = self.font_menu.render(
-            f"You reached Level {player_level}", 
-            True, WHITE
-        )
-        level_rect = level_text.get_rect(
-            center=(self.width//2, self.height//9 + self.height//18)
-        )
-
-        if current_name is None:
-            current_name = ""
-
-        current_name = str(current_name)
-        
-        # Title
-        title = self.font_title.render(
-            "Enter Your Name", 
-            True, WHITE
-        )
-        title_rect = title.get_rect(
-            center=(self.width//2, self.height//3 + self.height//18)
-        )        # Input Box
-
-        input_box = pygame.Rect(self.width//2 - 150, self.height//2-50, 300, 50)
-        pygame.draw.rect(self.screen, BLUE, input_box, 0, 10)
-        pygame.draw.rect(self.screen, WHITE, input_box, 3, 10)
-
-        if current_name:
-            name_text = self.font_menu.render(
-                current_name, 
-                True, WHITE
-            )
-            name_rect = name_text.get_rect(
-                center=input_box.center
-            )
-            self.screen.blit(name_text, name_rect)
-
-        limit_text = self.font_menu.render(
-            f"{len(current_name)}/{max_length} characters",
-            True, GREY if len(current_name) < max_length else RED
-        )
-
-        limit_rect = limit_text.get_rect(
-            center=(self.width//2, self.height//2 + 30)
-        )
-        # Instructions
-        instructions = self.font_menu.render(
-            "Press ENTER to Confirm", 
-            True, GREEN
-        )
-        instructions_rect = instructions.get_rect(
-            center=(self.width//2, self.height//2 + 100)
-        )
-        
-
-        self.screen.blit(game_over, game_over_rect)
-        self.screen.blit(level_text, level_rect)
-        self.screen.blit(title, title_rect)
-        self.screen.blit(limit_text, limit_rect)
-        self.screen.blit(instructions, instructions_rect)
-
     def draw_game_over(self, player_level):
         """Render the game over screen."""
         self.screen.fill(BLACK)
         
         # Game Over Text
         game_over = self.font_title.render(
-            "Game Over",
+            "Game Over", 
             True, RED
         )
         game_over_rect = game_over.get_rect(
-            center=(self.width//2, self.height//9)
+            center=(self.width//2, self.height//2 - 100)
         )
         
         # Level Reached
@@ -130,42 +56,16 @@ class MenuSystem:
             True, WHITE
         )
         level_rect = level_text.get_rect(
-            center=(self.width//2, self.height//6)
+            center=(self.width//2, self.height//2)
         )
         
-        ranking_text = self.font_menu.render(
-            "Top 10 Rankings:",
-            True, WHITE
-        )
-        ranking_rect = ranking_text.get_rect(
-            center=(self.width//2, self.height//9 + self.height//9)
-        )
-
-        self.screen.blit(ranking_text, ranking_rect)
-        # # Fetch and display rankings
-        rankings = self.databaseManager.listar_rankings()
-        y_offset = 0
-        for i, (name, time) in enumerate(rankings):
-            rank_text = self.font_menu.render(
-                f"{i + 1}. {name} - {tm.strftime(
-                    "%M:%S" if time < 3600 else "%H:%M:%S", tm.gmtime(time)
-                )}", 
-                True, WHITE
-            )
-            rank_rect = rank_text.get_rect(
-                center=(self.width//2, self.height//9 + self.height//6 + y_offset)
-            )
-            self.screen.blit(rank_text, rank_rect)
-            y_offset += self.height // 18
-            
-
         # Restart Instructions
         restart_text = self.font_menu.render(
             "Press R to Restart", 
             True, GREEN
         )
         restart_rect = restart_text.get_rect(
-            center=(self.width//2, self.height - 100)
+            center=(self.width//2, self.height//2 + 100)
         )
         
         # Quit game instructions
@@ -174,7 +74,7 @@ class MenuSystem:
             True, GREEN
         )
         quit_rect = quit_text.get_rect(
-            center=(self.width//2, self.height - 50)
+            center=(self.width//2, self.height//2 + 150)
         )
         
         self.screen.blit(quit_text, quit_rect)
