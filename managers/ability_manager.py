@@ -13,15 +13,8 @@ class AbilityManager:
     def __init__(self, player):
         self.player = player
         
-        # Traditional stat abilities
-        self.stat_abilities = {
-            'damage': 1,
-            'speed': 1,
-            'health': 1
-        }
-        
         # Magical abilities collection
-        self.available_abilities = {
+        self.passive_abilities = {
             # Passive abilities
             'catnip_spell': CatnipSpell(),
             'flaming_paws': FlamingPaws(),
@@ -103,26 +96,15 @@ class AbilityManager:
     
     def get_upgrade_options(self):
         """
-        Generate upgrade options including both traditional stats and magical abilities.
+        Generate upgrade options for magical abilities.
         """
         options = []
         
-        # Traditional stat upgrades (always available)
-        stat_options = [
-            {'name': 'Mais Dano', 'ability': 'damage', 'type': 'stat',
-             'description': 'Aumenta o dano dos ataques básicos'},
-            {'name': 'Mais Velocidade', 'ability': 'speed', 'type': 'stat',
-             'description': 'Aumenta a velocidade de movimento'},
-            {'name': 'Mais Vida', 'ability': 'health', 'type': 'stat',
-             'description': 'Aumenta a vida máxima'}
-        ]
-        
         # Add magical abilities (new or upgrades)
-        magical_options = self.get_magical_ability_options()
+        abilities_options = self.get_magical_ability_options()
         
-        # Combine and randomly select 3 options
-        all_options = stat_options + magical_options
-        selected_options = random.sample(all_options, min(3, len(all_options)))
+        # Randomly select 3 options
+        selected_options = random.sample(abilities_options, min(3, len(abilities_options)))
         
         return selected_options
     
@@ -131,7 +113,7 @@ class AbilityManager:
         options = []
         
         # New abilities (not yet acquired)
-        for ability_name, ability in self.available_abilities.items():
+        for ability_name, ability in self.passive_abilities.items():
             if ability_name not in self.player_abilities:
                 options.append({
                     'name': ability.name,
@@ -151,7 +133,6 @@ class AbilityManager:
                 })
         
         return options
-    
     
     def upgrade_ability(self, ability_name):
         """Apply the selected ability upgrade to the player."""
@@ -206,9 +187,9 @@ class AbilityManager:
     
     def acquire_magical_ability(self, ability_name):
         """Acquire a new magical ability."""
-        if ability_name in self.available_abilities and ability_name not in self.player_abilities:
+        if ability_name in self.passive_abilities and ability_name not in self.player_abilities:
             # Create a new instance of the ability
-            ability_class = type(self.available_abilities[ability_name])
+            ability_class = type(self.passive_abilities[ability_name])
             new_ability = ability_class()
             
             # Add to player abilities
