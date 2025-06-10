@@ -126,10 +126,11 @@ class AbilityManager:
         for ability_name, ability in self.player_abilities.items():
             if ability.level < ability.max_level:
                 options.append({
-                    'name': f"{ability.name} (Nível {ability.level + 1})",
+                    'name': ability.name,
                     'ability': ability_name,
                     'type': 'upgrade_magical',
-                    'description': f"Melhora: {ability.description}"
+                    'description': f"Melhora: {ability.description}",
+                    'level': ability.level + 1
                 })
         
         return options
