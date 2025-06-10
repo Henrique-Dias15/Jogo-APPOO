@@ -15,7 +15,7 @@ class FrozenClaw(PassiveAbility):
         
         super().__init__(
             name="Garra Gélida",
-            description="Ataques têm chance de congelar inimigos e projéteis ficam azul gelo",
+            description="Ataques têm chance de congelar inimigos",
             stat_name="projectile_damage",
             stat_increase=3,
             projectile_modifications=projectile_mods

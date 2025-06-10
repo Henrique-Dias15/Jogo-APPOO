@@ -15,7 +15,7 @@ class FlamingPaws(PassiveAbility):
         
         super().__init__(
             name="Patas Flamejantes",
-            description="Ataques causam queimadura nos inimigos e projéteis ficam vermelhos com trilha de fogo",
+            description="Ataques causam queimadura nos inimigos",
             stat_name="projectile_damage",
             stat_increase=2,
             projectile_modifications=projectile_mods
