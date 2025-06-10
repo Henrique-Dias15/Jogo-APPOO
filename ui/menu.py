@@ -12,6 +12,10 @@ class MenuSystem:
         # Get the actual screen dimensions
         self.width = screen.get_width()
         self.height = screen.get_height()
+
+        # Cache fonts to avoid repeated allocations
+        self.desc_font = pygame.font.Font(None, 32)
+        self.level_font = pygame.font.Font(None, 36)
     
     def draw_start_menu(self):
         """Render the game's start menu."""
@@ -247,7 +251,7 @@ class MenuSystem:
             self.screen.blit(name_text, name_rect)
 
             # Descrição (com quebra de linha automática)
-            desc_font = pygame.font.Font(None, 32)
+            desc_font = self.desc_font
             desc = option.get('description', '')
             desc_lines = []
             for line in desc.split('\n'):
@@ -261,7 +265,7 @@ class MenuSystem:
 
             # Nível
             level_str = f"Nível: {option.get('level', 1)}"
-            level_font = pygame.font.Font(None, 36)
+            level_font = self.level_font
             level_text = level_font.render(level_str, True, GREEN)
             level_rect = level_text.get_rect(midbottom=(card_rect.centerx, card_rect.bottom - 16))
             self.screen.blit(level_text, level_rect)
