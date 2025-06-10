@@ -183,7 +183,7 @@ class MenuSystem:
         self.screen.blit(restart_text, restart_rect)
         
     def draw_level_up(self, player_level, upgrade_options):
-        """Render the level up screen with upgrade options."""
+        """Render the level up screen with upgrade options as cards."""
         # Create semi-transparent overlay
         overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 180))  # Semi-transparent black
@@ -195,41 +195,78 @@ class MenuSystem:
             True, GREEN
         )
         level_up_rect = level_up_text.get_rect(
-            center=(self.width//2, self.height//2 - 150)
+            center=(self.width//2, self.height//2 - 200)
         )
         self.screen.blit(level_up_text, level_up_rect)
         
         # Choose Upgrade Text
         choose_text = self.font_menu.render(
-            "Choose an Upgrade:", 
+            "Escolha uma habilidade:", 
             True, WHITE
         )
         choose_rect = choose_text.get_rect(
-            center=(self.width//2, self.height//2 - 80)
+            center=(self.width//2, self.height//2 - 140)
         )
         self.screen.blit(choose_text, choose_rect)
         
-        # Draw Upgrade Options
+        # Draw Upgrade Option Cards
         option_rects = []
-        y_offset = -20
+        card_width = 320
+        card_height = 180
+        spacing = 40
+        total_width = len(upgrade_options) * card_width + (len(upgrade_options) - 1) * spacing
+        start_x = (self.width - total_width) // 2
+        y = self.height // 2 - card_height // 2 + 20
+
+        def wrap_text(text, font, max_width):
+            """Helper to wrap text to fit inside a given width."""
+            words = text.split()
+            lines = []
+            current_line = ""
+            for word in words:
+                test_line = current_line + (" " if current_line else "") + word
+                if font.size(test_line)[0] <= max_width:
+                    current_line = test_line
+                else:
+                    if current_line:
+                        lines.append(current_line)
+                    current_line = word
+            if current_line:
+                lines.append(current_line)
+            return lines
+
         for i, option in enumerate(upgrade_options):
-            # Create option button
-            option_rect = pygame.Rect(self.width//2 - 150, self.height//2 + y_offset, 300, 60)
-            pygame.draw.rect(self.screen, BLUE, option_rect, 0, 10)
-            pygame.draw.rect(self.screen, WHITE, option_rect, 2, 10)
-            
-            # Option text
-            option_text = self.font_menu.render(
-                option['name'], 
-                True, WHITE
-            )
-            option_text_rect = option_text.get_rect(
-                center=option_rect.center
-            )
-            self.screen.blit(option_text, option_text_rect)
-            
-            option_rects.append(option_rect)
-            y_offset += 80
+            x = start_x + i * (card_width + spacing)
+            card_rect = pygame.Rect(x, y, card_width, card_height)
+            pygame.draw.rect(self.screen, BLUE, card_rect, 0, 12)
+            pygame.draw.rect(self.screen, WHITE, card_rect, 3, 12)
+
+            # Habilidade (nome)
+            name_text = self.font_menu.render(option.get('name', ''), True, WHITE)
+            name_rect = name_text.get_rect(midtop=(card_rect.centerx, card_rect.top + 16))
+            self.screen.blit(name_text, name_rect)
+
+            # Descrição (com quebra de linha automática)
+            desc_font = pygame.font.Font(None, 32)
+            desc = option.get('description', '')
+            desc_lines = []
+            for line in desc.split('\n'):
+                desc_lines.extend(wrap_text(line, desc_font, card_width - 32))
+            for j, line in enumerate(desc_lines):
+                desc_text = desc_font.render(line, True, BLACK)
+                desc_rect = desc_text.get_rect(midtop=(card_rect.centerx, card_rect.top + 60 + j * 28))
+                # Evita desenhar fora do card
+                if desc_rect.bottom <= card_rect.bottom - 36:
+                    self.screen.blit(desc_text, desc_rect)
+
+            # Nível
+            level_str = f"Nível: {option.get('level', 1)}"
+            level_font = pygame.font.Font(None, 36)
+            level_text = level_font.render(level_str, True, GREEN)
+            level_rect = level_text.get_rect(midbottom=(card_rect.centerx, card_rect.bottom - 16))
+            self.screen.blit(level_text, level_rect)
+
+            option_rects.append(card_rect)
         
         return option_rects  # Return clickable regions
     
