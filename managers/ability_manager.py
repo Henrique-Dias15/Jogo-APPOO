@@ -14,7 +14,7 @@ class AbilityManager:
         self.player = player
         
         # Magical abilities collection
-        self.passive_abilities = {
+        self.magical_abilities = {
             # Passive abilities
             'catnip_spell': CatnipSpell(),
             'flaming_paws': FlamingPaws(),
@@ -113,7 +113,7 @@ class AbilityManager:
         options = []
         
         # New abilities (not yet acquired)
-        for ability_name, ability in self.passive_abilities.items():
+        for ability_name, ability in self.magical_abilities.items():
             if ability_name not in self.player_abilities:
                 options.append({
                     'name': ability.name,
@@ -188,7 +188,7 @@ class AbilityManager:
     
     def acquire_magical_ability(self, ability_name):
         """Acquire a new magical ability."""
-        if ability_name in self.passive_abilities and ability_name not in self.player_abilities:
+        if ability_name in self.magical_abilities and ability_name not in self.player_abilities:
             # Create a new instance of the ability
             ability_class = type(self.passive_abilities[ability_name])
             new_ability = ability_class()
