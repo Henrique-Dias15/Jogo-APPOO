@@ -21,14 +21,6 @@ class Player(pygame.sprite.Sprite):
         self.level_up_callback = None  # Add callback for level up
         self.projectile_damage = 10  # Base projectile damage
         
-        # Ability-related attributes
-        self.has_frozen_claw = False
-        self.freeze_chance = 0
-        self.freeze_duration = 0
-        self.has_flaming_paws = False
-        self.burn_duration = 0
-        self.burn_damage = 0
-        
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
         self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
