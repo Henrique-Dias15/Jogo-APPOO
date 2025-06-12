@@ -86,13 +86,14 @@ class PassiveAbility(BaseAbility):
         self.stat_increase = stat_increase
         self.projectile_modifications = projectile_modifications or {}
     
-    def activate(self, player, **kwargs):
+    def activate(self, player, enemies=None, projectiles=None, **kwargs):
         """
         Apply the passive effect to the player.
         """
         self.apply_stat_boost(player)
         self.apply_projectile_modifications(player)
-        return True
+        # Passive abilities do not need to return anything
+        return None
     
     def apply_stat_boost(self, player):
         """
@@ -229,12 +230,12 @@ class BuffAbility(BaseAbility):
         self.buff_effects = buff_effects  # Dict of stat_name: multiplier
         self.original_stats = {}
     
-    def activate(self, player, **kwargs):
+    def activate(self, player, enemies=None, projectiles=None, **kwargs):
         """
         Apply temporary buffs to the player.
         """
         if not self.can_activate():
-            return False
+            return None
         
         # Store original stats
         for stat_name in self.buff_effects:
@@ -247,7 +248,7 @@ class BuffAbility(BaseAbility):
         self.is_active = True
         self.activation_time = pygame.time.get_ticks()
         self.start_cooldown()
-        return True
+        return None
     
     def deactivate(self, player, **kwargs):
         """
