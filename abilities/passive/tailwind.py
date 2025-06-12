@@ -16,10 +16,10 @@ class Tailwind(PassiveAbility):
             name="Tailwind",
             description="Increases movement speed and firing rate",
             stat_name="speed",                
-            stat_increase=5.1,               
+            stat_increase=0.2,               
             projectile_modifications=projectile_mods
         )
-        self.cooldown_reduction = 0.2    
+        self.cooldown_reduction = 0.3    
     
     def activate(self, player, **kwargs):
         super().activate(player, **kwargs)
