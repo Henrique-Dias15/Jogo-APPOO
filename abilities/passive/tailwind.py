@@ -1,0 +1,34 @@
+import pygame
+from abilities.base_ability import PassiveAbility
+
+class Tailwind(PassiveAbility):
+    """Tailwind - Increases movement speed and firing rate."""
+    def __init__(self):
+        # Define projectile modifications for tailwind effect
+        projectile_mods = {
+            'color': (173, 216, 230), # Light blue for tailwind
+            'visual_effect': 'tailwind',
+            'particles': 'tailwind_trail',
+            'size': (5, 5)
+        }
+        
+        super().__init__(
+            name="Tailwind",
+            description="Increases movement speed and firing rate",
+            stat_name="speed",                
+            stat_increase=5.1,               
+            projectile_modifications=projectile_mods
+        )
+        self.cooldown_reduction = 0.2    
+    
+    def activate(self, player, **kwargs):
+        super().activate(player, **kwargs)
+        player.has_tailwind = True
+        player.projectile_cooldown = int(
+            player.projectile_cooldown * (1 - self.cooldown_reduction)
+        )
+        return True                
+    
+    def on_upgrade(self):
+        super().on_upgrade()
+        self.cooldown_reduction = min(self.cooldown_reduction + 0.05, 0.8)
