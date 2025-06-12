@@ -24,7 +24,6 @@ class CatnipSpell(PassiveAbility):
         super().activate(player, **kwargs)
         # Add catnip effect to player
         player.has_catnip_spell = True
-        player.catnip_spell_damage_increase = self.stat_increase
         return True
     
     def on_upgrade(self):
