@@ -333,6 +333,7 @@ class GameController:
         
         # Handle player shooting
         self.projectile_manager.handle_auto_shooting(self.enemy_manager.enemies)
+        self.projectile_manager.handle_enemy_auto_shooting(self.enemy_manager.enemies)
         
         # Update projectiles (pass enemies for homing projectiles)
         self.projectile_manager.update(self.enemy_manager.enemies)
@@ -350,8 +351,10 @@ class GameController:
         """Handle all collision detection and resolution."""
         # Projectile-Enemy Collisions
         killed_enemies = self.collision_manager.check_projectile_enemy_collisions(
-            self.projectile_manager.projectiles, self.enemy_manager.enemies)
+            self.projectile_manager.player_projectiles, self.enemy_manager.enemies)
         
+        collided_projectiles, is_player_dead = self.collision_manager.check_projectile_player_collisions(
+            self.projectile_manager.enemy_projectiles)
         # Enemy-Player Collisions
         collided_enemies, is_player_dead = self.collision_manager.check_enemy_player_collisions(
             self.enemy_manager.enemies)

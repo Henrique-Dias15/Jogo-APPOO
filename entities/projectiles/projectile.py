@@ -3,12 +3,12 @@ import math
 from utils.settings import *
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, x, y, target_x, target_y, screen_width=None, screen_height=None, speed=7, damage=10, modifications=None):
+    def __init__(self, x, y, target_x, target_y, screen_width=None, screen_height=None, speed=7, damage=10, modifications=None, is_player_projectile=True):
         super().__init__()
         
         # Store modifications and apply them
         self.modifications = modifications or {}
-        
+        self.is_player_projectile = is_player_projectile
         # Apply modifications to get final properties
         size = self.modifications.get('size', (5, 5))
         color = self.modifications.get('color', BLUE)

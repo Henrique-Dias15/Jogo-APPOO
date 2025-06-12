@@ -50,7 +50,19 @@ class CollisionManager:
                     break
                 
         return killed_enemies
-    
+
+    def check_projectile_player_collisions(self, projectiles):
+        """Check for collisions between projectiles and player"""
+        collided_projectiles = []
+        for projectile in projectiles:
+            if pygame.sprite.collide_rect(projectile, self.player):
+                # Handle player hit by projectile
+                self.player.hp -= projectile.damage
+                projectile.kill()
+                collided_projectiles.append(projectile)
+
+        return collided_projectiles, self.player.hp <= 0
+                    
     def check_enemy_player_collisions(self, enemies):
         """Check for collisions between enemies and player"""
         collided_enemies = []
