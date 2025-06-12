@@ -44,8 +44,11 @@ class TriangleEnemy(Enemy):
         if distance > 500: # If the player is far away, move towards them
             self.rect.x += dx * self.speed
             self.rect.y += dy * self.speed
+            self.shooter = False
         elif distance < 300: # If the player is too close, move away from them
             self.rect.x -= dx * self.speed
             self.rect.y -= dy * self.speed
-
+            self.shooter = False
+        else:  # If the player is at a medium distance, shoot projectiles
+            self.shooter = True
 
