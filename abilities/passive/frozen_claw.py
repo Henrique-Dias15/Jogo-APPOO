@@ -3,7 +3,7 @@ from abilities.base_ability import PassiveAbility
 from utils.settings import *
 
 class FrozenClaw(PassiveAbility):
-    """Garra Gélida - Adiciona efeitos de congelamento aos ataques"""
+    """Frozen Claw - Adds ice effect to attacks, chance to freeze enemies"""
     def __init__(self):
         # Define projectile modifications for ice effect
         projectile_mods = {
@@ -14,8 +14,8 @@ class FrozenClaw(PassiveAbility):
         }
         
         super().__init__(
-            name="Garra Gélida",
-            description="Ataques têm chance de congelar inimigos",
+            name="Frozen Claw",
+            description="Attacks have a chance to freeze enemies",
             stat_name="projectile_damage",
             stat_increase=3,
             projectile_modifications=projectile_mods
