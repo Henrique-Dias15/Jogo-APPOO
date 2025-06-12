@@ -6,7 +6,7 @@ from utils.settings import *
 class Enemy(pygame.sprite.Sprite):
     """Base enemy class that can be extended for different enemy types"""
     def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None, 
-                 size=(20, 20), color=RED, speed=None, hp=None):
+                 size=(20, 20), color=RED, speed=None, hp=None, shooter=False):
         super().__init__()
         
         # Create enemy sprite with specified size and color
@@ -16,7 +16,10 @@ class Enemy(pygame.sprite.Sprite):
         
         # Reference to player for targeting
         self.player = player
-        
+
+        # Shooter flag
+        self.shooter = shooter
+
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
         self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
@@ -78,4 +81,9 @@ class Enemy(pygame.sprite.Sprite):
         """Handle enemy taking damage"""
         self.hp -= damage
         return self.hp <= 0
-    
+
+    def can_shoot(self):
+        """Check if the enemy can shoot based on cooldown"""
+        if not self.shooter:
+            return False
+        return pygame.time.get_ticks() - self.last_shot > self.projectile_cooldown

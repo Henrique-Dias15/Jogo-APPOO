@@ -17,13 +17,17 @@ class TriangleEnemy(Enemy):
             size=(25, 25),  # Medium size
             color=PURPLE,   # Blue color
             speed=3,        # Fast speed
-            hp=15           # Less health
+            hp=15,
+            shooter=True    # Can shoot projectiles
         )
         
         # Create a triangle shape
         self.original_image = pygame.Surface((25, 25), pygame.SRCALPHA)
         pygame.draw.polygon(self.original_image, BLUE, [(12, 0), (0, 25), (25, 25)])
         self.image = self.original_image
+        self.last_shot = pygame.time.get_ticks()  # Initialize last shot time
+        self.projectile_cooldown = 500  # milliseconds
+        self.projectile_damage = 5
 
     def update(self, *args, **kwargs):
         """Move enemy towards player and shoot projectiles"""
