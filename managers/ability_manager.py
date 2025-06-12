@@ -131,7 +131,7 @@ class AbilityManager:
                     'name': ability.name,
                     'ability': ability_name,
                     'type': 'upgrade_magical',
-                    'description': f"Melhora: {ability.description}",
+                    'description': f"{ability.description}",
                     'level': ability.level + 1
                 })
         
