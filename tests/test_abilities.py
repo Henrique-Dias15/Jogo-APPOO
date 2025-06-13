@@ -35,7 +35,7 @@ ABILITIES = {
         'description': 'Aumenta a velocidade de movimento e projéteis',
         'type': '🔮 Passiva'
     },
-    'cleaning': {
+    'cleaning_tongue': {
         'key': 'cleaning_tongue',
         'name': 'Cleaning Tongue',
         'description': 'Remove efeitos negativos e cura ao se lamber',
@@ -56,7 +56,7 @@ def show_menu():
     
     # Organiza por categorias
     categories = {
-        'Passivas': ['catnip', 'frozen', 'flaming', 'tailwind', 'cleaning', 'pawquake'],
+        'Passivas': ['catnip', 'frozen', 'flaming', 'tailwind', 'cleaning_tongue', 'pawquake'],
     }
     
     choice_map = {}
