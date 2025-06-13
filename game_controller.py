@@ -148,8 +148,8 @@ class GameController:
         ability_manager.player_abilities.clear()
         
         # Adiciona apenas a habilidade de teste
-        if test_key in ability_manager.available_abilities:
-            ability_class = type(ability_manager.available_abilities[test_key])
+        if test_key in ability_manager.passive_abilities:
+            ability_class = type(ability_manager.passive_abilities[test_key])
             new_ability = ability_class()
             
             # Adiciona ao jogador
@@ -266,7 +266,7 @@ class GameController:
                     if name_confirmed and len(self.current_name) > 0:
                         # Save name to database
                         self.database.adicionar(self.current_name, int(self.elapsed_time))
-                        self.current_input_name = ""
+                        self.current_name = ""
                         self.state_manager.change_state(self.state_manager.GAME_OVER)
                   
             # Handle test mode input
