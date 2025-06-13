@@ -24,8 +24,8 @@ GAME_TIME_LIMIT = 300 # 5 minutes in seconds
 
 # Player Settings
 PLAYER_SPEED = 5
-PLAYER_HP = 1
-PLAYER_MAX_HP = 1
+PLAYER_HP = 100
+PLAYER_MAX_HP = 100
 
 # Enemy Settings
 ENEMY_SPEED = 2
