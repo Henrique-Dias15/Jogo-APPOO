@@ -4,7 +4,7 @@ from utils.settings import PLAYER_SPEED, PLAYER_MAX_HP, ENEMY_SPEED
 from abilities.base_ability import PassiveAbility, ActiveAbility, BuffAbility
 
 # Import abilities by category
-from abilities.passive import CatnipSpell, FrozenClaw, FlamingPaws, Tailwind
+from abilities.passive import CatnipSpell, FrozenClaw, FlamingPaws, Tailwind, CleaningTongue
 
 class AbilityManager:
     """
@@ -19,7 +19,8 @@ class AbilityManager:
             'catnip_spell': CatnipSpell(),
             'flaming_paws': FlamingPaws(),
             'frozen_claw': FrozenClaw(),
-            'tailwind': Tailwind()
+            'tailwind': Tailwind(),
+            'cleaning_tongue': CleaningTongue(),
         }
         
         # Player's acquired abilities
