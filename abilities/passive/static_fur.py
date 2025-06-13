@@ -24,7 +24,7 @@ class StaticFur(PassiveAbility):
     def activate(self, player, **kwargs):
         super().activate(player, **kwargs)
         player.has_static_fur = True
-        player.jump_count = self.enemies_jump
+        player.static_max_jumps = self.enemies_jump
         return True
     
     def on_upgrade(self):
