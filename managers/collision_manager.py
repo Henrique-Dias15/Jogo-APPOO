@@ -13,32 +13,45 @@ class CollisionManager:
         killed_enemies = []
         
         for projectile in projectiles:
+            # Initialize piercing hit tracking
+            if getattr(projectile, 'piercing', False) and not hasattr(projectile, 'hit_enemies'):
+                projectile.hit_enemies = set()
+            
             hit_enemies = pygame.sprite.spritecollide(projectile, enemies, False)
             
             for enemy in hit_enemies:
-                # Check if projectile can hit this enemy (for piercing projectiles)
-                if hasattr(projectile, 'can_hit_enemy') and not projectile.can_hit_enemy(enemy):
+                # Skip if already hit by piercing projectile
+                if getattr(projectile, 'piercing', False) and enemy in projectile.hit_enemies:
                     continue
-                
-                # Apply damage
+
+                # Apply damage once per enemy
                 if enemy.take_damage(projectile.damage):
-                    # Enemy destroyed, give player experience
                     self.player.gain_exp(10)
                     enemy.kill()
                     killed_enemies.append(enemy)
-                
+
                 # Apply special effects
                 self.apply_projectile_effects(projectile, enemy)
-                
-                # Mark enemy as hit for piercing projectiles
-                if hasattr(projectile, 'mark_enemy_hit'):
-                    projectile.mark_enemy_hit(enemy)
-                
-                # Remove projectile if it's not piercing
-                if not hasattr(projectile, 'piercing') or not projectile.piercing:
-                    projectile.kill()
-                    break
-                
+
+                # Handle piercing logic
+                if getattr(projectile, 'piercing', False):
+                    # Initialize hit tracking if missing
+                    if not hasattr(projectile, 'hit_enemies') or projectile.hit_enemies is None:
+                        projectile.hit_enemies = set()
+                    # Track hit enemy
+                    projectile.hit_enemies.add(enemy)
+                    # Check max pierces
+                    max_pierces = getattr(projectile, 'max_pierces', None)
+                    if max_pierces is not None and len(projectile.hit_enemies) >= max_pierces:
+                        projectile.kill()
+                        break
+                    # Continue piercing
+                    continue
+
+                # Non-piercing projectile: remove after hit
+                projectile.kill()
+                break
+         
         return killed_enemies
 
     def check_projectile_player_collisions(self, projectiles):
@@ -100,7 +113,16 @@ class CollisionManager:
             knockback_vector = pygame.math.Vector2(enemy.rect.center) - pygame.math.Vector2(self.player.rect.center)
             knockback_vector.scale_to_length(self.player.knockback_distance)
             enemy.rect.move_ip(knockback_vector.x, knockback_vector.y)
-        
+            
+        # Apply steel whiskers effect
+        if hasattr(self.player, 'has_steel_whiskers') and self.player.has_steel_whiskers:
+            # Enable piercing on projectile and set max pierces
+            projectile.piercing = True
+            projectile.max_pierces = getattr(self.player, 'piercing_count', None)
+            # If projectile has a piercing effect, apply it
+            if hasattr(projectile, 'pierce_effect'):
+                projectile.pierce_effect(enemy)
+         
         # Apply projectile-specific effects
         if hasattr(projectile, 'apply_effects'):
             projectile.apply_effects(enemy)
