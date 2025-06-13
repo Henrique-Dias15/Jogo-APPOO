@@ -1,7 +1,7 @@
 from abilities.base_ability import PassiveAbility
 
 class CleaningTongue(PassiveAbility):
-    """"Cleaning Tongue - Basic shots have a chance to heal 2% of max HP on hit"""
+    """Cleaning Tongue - Basic shots have a chance to heal a % of max HP on hit"""
     def __init__(self):
         # Define projectile modifications for healing effect
         projectile_mods = {
