@@ -13,13 +13,13 @@ class CleaningTongue(PassiveAbility):
 
         super().__init__(
             name="Cleaning Tongue",
-            description="Basic shots have a chance to heal 2% of max HP on hit",
+            description="Basic shots have a chance to heal a % of max HP on hit",
             stat_name="",
             stat_increase=0,  # No stat increase for this ability
             projectile_modifications=projectile_mods
         )
-        self.heal_chance = 1
-        self.heal_amount = 0.02
+        self.heal_chance = 0.05
+        self.heal_amount = 0.15
         
     def activate(self, player, **kwargs):
         super().activate(player, **kwargs)
