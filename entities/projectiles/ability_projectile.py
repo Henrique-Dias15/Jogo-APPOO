@@ -8,7 +8,7 @@ class AbilityProjectile(pygame.sprite.Sprite):
     """
     def __init__(self, x, y, target_x, target_y, speed=7, damage=10, 
                  size=(8, 8), color=BLUE, screen_width=None, screen_height=None,
-                 piercing=False, explosion_radius=0, lifetime=None, homing=False, 
+                 piercing=False, static=False, lifetime=None, homing=False, 
                  effects=None):
         super().__init__()
         
@@ -44,15 +44,16 @@ class AbilityProjectile(pygame.sprite.Sprite):
         # Combat properties
         self.damage = damage
         self.piercing = piercing
-        self.explosion_radius = explosion_radius
+        self.static = static
         self.effects = effects or []  # List of effect functions to apply on hit
         
         # Lifetime management
         self.lifetime = lifetime  # milliseconds, None for infinite
         self.creation_time = pygame.time.get_ticks()
         
-        # Hit tracking for piercing projectiles
+        # Hit tracking for piercing and static projectiles
         self.hit_enemies = set() if piercing else None
+        self.jump_enemies = set() if static else None
     
     def update(self, enemies=None, *args, **kwargs):
         """Update projectile position and handle homing."""
@@ -129,22 +130,8 @@ class AbilityProjectile(pygame.sprite.Sprite):
         """Mark an enemy as hit (for piercing projectiles)."""
         if self.piercing and self.hit_enemies is not None:
             self.hit_enemies.add(enemy)
-    
-    def explode(self, enemies):
-        """Handle explosion damage if this projectile has explosion radius."""
-        if self.explosion_radius <= 0:
-            return []
-        
-        hit_enemies = []
-        for enemy in enemies:
-            distance = math.hypot(
-                enemy.rect.centerx - self.rect.centerx,
-                enemy.rect.centery - self.rect.centery
-            )
-            if distance <= self.explosion_radius:
-                hit_enemies.append(enemy)
-        
-        return hit_enemies
+        if self.static and self.jump_enemies is not None:
+            self.jump_enemies.add(enemy)
     
     def apply_effects(self, enemy):
         """Apply any special effects to the hit enemy."""
