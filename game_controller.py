@@ -24,9 +24,8 @@ class GameController:
         
         # Screen and timing setup
         if FULLSCREEN:
-            info = pygame.display.Info()
-            self.width, self.height = info.current_w, info.current_h
-            self.screen = pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
+            self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+            self.width, self.height = self.screen.get_size()
         else:
             self.width, self.height = SCREEN_WIDTH, SCREEN_HEIGHT
             self.screen = pygame.display.set_mode((self.width, self.height))
