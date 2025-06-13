@@ -6,7 +6,7 @@ class CatnipSpell(PassiveAbility):
     def __init__(self):
         # Define projectile modifications for catnip effect
         projectile_mods = {
-            'color': (130, 167, 145),  # Green color for catnip
+            'color': (51, 209, 122),  # Plant color
             'visual_effect': 'catnip',
             'particles': 'catnip_trail',  # Not working for now
             'size': (6, 6)  
