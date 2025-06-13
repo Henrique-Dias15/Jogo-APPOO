@@ -140,7 +140,7 @@ class AbilityManager:
     def upgrade_ability(self, ability_name):
         """Apply the selected ability upgrade to the player."""
         # Find the ability in upgrade options to get its type
-        upgrade_options = self.get_upgrade_options()
+        upgrade_options = self.get_magical_ability_options()
         ability_info = None
         
         for option in upgrade_options:
