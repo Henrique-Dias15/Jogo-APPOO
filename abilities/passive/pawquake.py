@@ -14,7 +14,7 @@ class Pawquake(PassiveAbility):
         
         super().__init__(
             name="Pawquake",
-            description="Basic attacks have a chance to knock back enemies",
+            description="Add knockback effect to basic attacks, repelling enemies.",
             stat_name="",
             stat_increase=0,  # No stat increase for this ability
             projectile_modifications=projectile_mods
