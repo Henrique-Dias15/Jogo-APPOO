@@ -7,7 +7,7 @@ class FlamingPaws(PassiveAbility):
     def __init__(self):        
         # Define projectile modifications for fire effect
         projectile_mods = {
-            'color': (255, 69, 0),  # Red-orange for fire
+            'color': (255, 78, 28),  # Fire color
             'visual_effect': 'empowered',
             'particles': 'fire_trail',
             'size': (6, 6)

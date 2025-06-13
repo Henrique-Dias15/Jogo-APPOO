@@ -6,7 +6,7 @@ class Tailwind(PassiveAbility):
     def __init__(self):
         # Define projectile modifications for tailwind effect
         projectile_mods = {
-            'color': (173, 216, 230), # Light blue for tailwind
+            'color': (143, 94, 255), # Air color
             'visual_effect': 'tailwind',
             'particles': 'tailwind_trail',
             'size': (5, 5)
