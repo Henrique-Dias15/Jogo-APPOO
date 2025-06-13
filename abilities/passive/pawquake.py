@@ -19,17 +19,15 @@ class Pawquake(PassiveAbility):
             stat_increase=0,  # No stat increase for this ability
             projectile_modifications=projectile_mods
         )
-        self.knockback_chance = 1  # 100% chance
-        self.knockback_distance = 50  # Distance to knock back enemies
+        self.knockback_distance = 60  # Distance to knock back enemies
     
     def activate(self, player, **kwargs):
         super().activate(player, **kwargs)
         # Add knockback effect to player
         player.has_pawquake = True
-        player.knockback_chance = self.knockback_chance
         player.knockback_distance = self.knockback_distance
         return True
     
     def on_upgrade(self):
         super().on_upgrade()
-        self.knockback_distance += 5  # Increase knockback distance on upgrade
+        self.knockback_distance += 10  # Increase knockback distance on upgrade
