@@ -30,16 +30,6 @@ class CollisionManager:
                 # Apply special effects
                 self.apply_projectile_effects(projectile, enemy)
                 
-                # Handle explosion damage
-                if hasattr(projectile, 'explosion_radius') and projectile.explosion_radius > 0:
-                    explosion_enemies = projectile.explode(enemies)
-                    for exp_enemy in explosion_enemies:
-                        if exp_enemy != enemy:  # Don't double damage the direct hit
-                            if exp_enemy.take_damage(projectile.damage // 2):  # Half damage for explosion
-                                self.player.gain_exp(10)
-                                exp_enemy.kill()
-                                killed_enemies.append(exp_enemy)
-                
                 # Mark enemy as hit for piercing projectiles
                 if hasattr(projectile, 'mark_enemy_hit'):
                     projectile.mark_enemy_hit(enemy)
@@ -69,45 +59,13 @@ class CollisionManager:
         
         for enemy in enemies:
             if pygame.sprite.collide_rect(enemy, self.player):
-                # Check if player has purring shield
-                if hasattr(self.player, 'has_purring_shield') and self.player.has_purring_shield:
-                    # Shield reflects damage back to enemy
-                    if enemy.take_damage(self.player.shield_damage):
-                        self.player.gain_exp(10)
-                        enemy.kill()
-                        collided_enemies.append(enemy)
-                        continue
-                
-                # Normal collision damage
+              # Normal collision damage
                 damage = enemy.damage if hasattr(enemy, 'damage') else 10
                 self.player.hp -= damage
                 enemy.kill()
                 collided_enemies.append(enemy)
-        
-        # Check shield area damage
-        if hasattr(self.player, 'has_purring_shield') and self.player.has_purring_shield:
-            self.check_shield_area_damage(enemies, collided_enemies)
                 
         return collided_enemies, self.player.hp <= 0
-    
-    def check_shield_area_damage(self, enemies, collided_enemies):
-        """Check for enemies within shield radius and damage them"""
-        import math
-        
-        for enemy in enemies:
-            if enemy in collided_enemies:
-                continue
-                
-            distance = math.hypot(
-                enemy.rect.centerx - self.player.rect.centerx,
-                enemy.rect.centery - self.player.rect.centery
-            )
-            
-            if distance <= self.player.shield_radius:
-                if enemy.take_damage(self.player.shield_damage // 3):  # Reduced shield aura damage
-                    self.player.gain_exp(5)
-                    enemy.kill()
-                    collided_enemies.append(enemy)
     
     def apply_projectile_effects(self, projectile, enemy):
         """Apply special effects from projectiles to enemies"""
@@ -136,6 +94,12 @@ class CollisionManager:
             heal_amount = int(self.player.max_hp * self.player.heal_amount)
             self.player.hp = min(self.player.max_hp, self.player.hp + heal_amount)
             
+        # Apply pawquake effect
+        if (hasattr(self.player, 'has_pawquake') and self.player.has_pawquake):
+            # Knock back enemy
+            knockback_vector = pygame.math.Vector2(enemy.rect.center) - pygame.math.Vector2(self.player.rect.center)
+            knockback_vector.scale_to_length(self.player.knockback_distance)
+            enemy.rect.move_ip(knockback_vector.x, knockback_vector.y)
         
         # Apply projectile-specific effects
         if hasattr(projectile, 'apply_effects'):
