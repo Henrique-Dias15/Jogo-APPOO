@@ -21,14 +21,6 @@ class Player(pygame.sprite.Sprite):
         self.level_up_callback = None  # Add callback for level up
         self.projectile_damage = 10  # Base projectile damage
         
-        # Ability-related attributes
-        self.has_frozen_claw = False
-        self.freeze_chance = 0
-        self.freeze_duration = 0
-        self.has_flaming_paws = False
-        self.burn_duration = 0
-        self.burn_damage = 0
-        
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
         self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
@@ -51,8 +43,8 @@ class Player(pygame.sprite.Sprite):
             dy *= 0.7071
 
         # Update position
-        self.rect.x += dx
-        self.rect.y += dy
+        self.rect.x += int(dx)
+        self.rect.y += int(dy)
         
         # Apply boundary checks
         if self.rect.left < 0:
@@ -92,25 +84,4 @@ class Player(pygame.sprite.Sprite):
     def update(self, keys):
         """Update player state"""
         self.move(keys)
-        self.draw_shield_effect()
     
-    def draw_shield_effect(self):
-        """Draw purring shield visual effect if active."""
-        if hasattr(self, 'has_purring_shield') and self.has_purring_shield:
-            # Create a larger surface for the shield effect
-            shield_surface = pygame.Surface((self.shield_radius * 2, self.shield_radius * 2), pygame.SRCALPHA)
-            center = (self.shield_radius, self.shield_radius)
-            
-            # Draw shield ring
-            pygame.draw.circle(shield_surface, (0, 255, 255, 60), center, self.shield_radius, 3)
-            pygame.draw.circle(shield_surface, (0, 255, 255, 30), center, self.shield_radius - 10, 2)
-            
-            # Blit shield to main surface (this would normally be done in render)
-            # For now, we'll modify the player image to show shield status
-            if self.shield_radius > 0:
-                # Create a temporary visual indicator by adding a blue border
-                temp_image = pygame.Surface((35, 35), pygame.SRCALPHA)
-                temp_image.fill((0, 0, 0, 0))
-                pygame.draw.rect(temp_image, (0, 255, 255), (0, 0, 35, 35), 2)
-                temp_image.blit(self.image, (2, 2))
-                self.image = temp_image

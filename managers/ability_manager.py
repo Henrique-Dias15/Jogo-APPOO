@@ -4,7 +4,7 @@ from utils.settings import PLAYER_SPEED, PLAYER_MAX_HP, ENEMY_SPEED
 from abilities.base_ability import PassiveAbility, ActiveAbility, BuffAbility
 
 # Import abilities by category
-from abilities.passive import CatnipSpell, FrozenClaw, FlamingPaws
+from abilities.passive import CatnipSpell, FrozenClaw, FlamingPaws, Tailwind
 
 class AbilityManager:
     """
@@ -19,6 +19,7 @@ class AbilityManager:
             'catnip_spell': CatnipSpell(),
             'flaming_paws': FlamingPaws(),
             'frozen_claw': FrozenClaw(),
+            'tailwind': Tailwind()
         }
         
         # Player's acquired abilities
@@ -86,9 +87,10 @@ class AbilityManager:
         """Activate a specific ability."""
         if ability_name in self.player_abilities:
             ability = self.player_abilities[ability_name]
+            enemies = self.enemy_manager.enemies if self.enemy_manager else []
             return ability.activate(
                 self.player, 
-                enemies=self.enemy_manager.enemies,
+                enemies=enemies,
                 projectile_manager=self.projectile_manager,
                 **kwargs
             )
@@ -129,7 +131,7 @@ class AbilityManager:
                     'name': ability.name,
                     'ability': ability_name,
                     'type': 'upgrade_magical',
-                    'description': f"Melhora: {ability.description}",
+                    'description': f"{ability.description}",
                     'level': ability.level + 1
                 })
         
@@ -138,7 +140,7 @@ class AbilityManager:
     def upgrade_ability(self, ability_name):
         """Apply the selected ability upgrade to the player."""
         # Find the ability in upgrade options to get its type
-        upgrade_options = self.get_upgrade_options()
+        upgrade_options = self.get_magical_ability_options()
         ability_info = None
         
         for option in upgrade_options:
@@ -150,41 +152,13 @@ class AbilityManager:
             return False
         
         ability_type = ability_info.get('type', 'stat')
-        
-        if ability_type == 'stat':
-            return self.upgrade_stat_ability(ability_name)
-        elif ability_type == 'new_magical':
+
+        if ability_type == 'new_magical':
             return self.acquire_magical_ability(ability_name)
         elif ability_type == 'upgrade_magical':
             return self.upgrade_magical_ability(ability_name)
         
         return False
-    
-    def upgrade_stat_ability(self, ability_name):
-        """Upgrade traditional stat abilities."""
-        if ability_name not in self.stat_abilities:
-            return False
-            
-        # Increase the ability level
-        self.stat_abilities[ability_name] += 1
-        
-        # Apply the effect based on the ability
-        if ability_name == 'damage':
-            # Increase projectile damage
-            self.player.projectile_damage = 10 + (self.stat_abilities['damage'] * 5)
-            
-        elif ability_name == 'speed':
-            # Increase movement speed
-            self.player.speed = PLAYER_SPEED + (self.stat_abilities['speed'] - 1)
-            
-        elif ability_name == 'health':
-            # Increase max health
-            old_max_hp = self.player.max_hp
-            self.player.max_hp = PLAYER_MAX_HP + ((self.stat_abilities['health'] - 1) * 20)
-            # Also heal the player by the difference
-            self.player.hp += (self.player.max_hp - old_max_hp)
-            
-        return True
     
     def acquire_magical_ability(self, ability_name):
         """Acquire a new magical ability."""

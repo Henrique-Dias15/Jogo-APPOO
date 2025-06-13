@@ -21,11 +21,11 @@ class BaseAbility(ABC):
         self.activation_time = 0
         
     @abstractmethod
-    def activate(self, player, enemies=None, projectiles=None, **kwargs):
+    def activate(self, player, **kwargs):
         """
         Activate the ability. Must be implemented by subclasses.
         """
-        pass
+        return True
     
     def can_activate(self):
         """
@@ -92,6 +92,8 @@ class PassiveAbility(BaseAbility):
         """
         self.apply_stat_boost(player)
         self.apply_projectile_modifications(player)
+        self.is_active = True
+        self.activation_time = pygame.time.get_ticks()
         return True
     
     def apply_stat_boost(self, player):
@@ -221,42 +223,21 @@ class AreaEffectAbility(ActiveAbility):
 
 class BuffAbility(BaseAbility):
     """
-    Base class for abilities that temporarily buff the player.
+    Base class for abilities that provide permanent buffs to the player.
     """
-    def __init__(self, name, description, cooldown, duration, buff_effects):
-        super().__init__(name, description, cooldown)
-        self.duration = duration
+    def __init__(self, name, description, buff_effects):
+        super().__init__(name, description, cooldown=0)
         self.buff_effects = buff_effects  # Dict of stat_name: multiplier
-        self.original_stats = {}
+        self.permanent = True  
     
     def activate(self, player, **kwargs):
         """
-        Apply temporary buffs to the player.
+        Apply permanent buffs to the player.
         """
-        if not self.can_activate():
-            return False
-        
-        # Store original stats
         for stat_name in self.buff_effects:
             if hasattr(player, stat_name):
-                self.original_stats[stat_name] = getattr(player, stat_name)
-                # Apply buff
-                new_value = self.original_stats[stat_name] * self.buff_effects[stat_name]
+                new_value = getattr(player, stat_name) * self.buff_effects[stat_name]
                 setattr(player, stat_name, new_value)
-        
         self.is_active = True
         self.activation_time = pygame.time.get_ticks()
-        self.start_cooldown()
         return True
-    
-    def deactivate(self, player, **kwargs):
-        """
-        Remove buffs and restore original stats.
-        """
-        # Restore original stats
-        for stat_name, original_value in self.original_stats.items():
-            if hasattr(player, stat_name):
-                setattr(player, stat_name, original_value)
-        
-        super().deactivate(player, **kwargs)
-        self.original_stats.clear()

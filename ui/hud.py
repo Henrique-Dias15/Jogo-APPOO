@@ -71,18 +71,7 @@ class HUD:
             for ability_name, ability in ability_manager.player_abilities.items():
                 # Show ability name and level
                 ability_text = f"{ability.name} (Nv.{ability.level})"
-                if ability.is_active:
-                    ability_text += " [ATIVO]"
-                    color = GREEN
-                elif not ability.can_activate():
-                    # Show cooldown
-                    remaining_cooldown = (ability.cooldown - (pygame.time.get_ticks() - ability.last_used)) / 1000
-                    ability_text += f" ({remaining_cooldown:.1f}s)"
-                    color = RED
-                else:
-                    color = WHITE
-                
-                text_surface = self.small_font.render(ability_text, True, color)
+                text_surface = self.small_font.render(ability_text, True, WHITE)
                 self.screen.blit(text_surface, (10, y_offset))
                 y_offset += 20
         

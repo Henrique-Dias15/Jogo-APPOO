@@ -3,7 +3,7 @@ from abilities.base_ability import PassiveAbility
 from utils.settings import *
 
 class FlamingPaws(PassiveAbility):
-    """Patas Flamejantes - Adiciona efeito de fogo aos ataques"""
+    """Flaming Paws - Adds fire effect to attacks"""
     def __init__(self):        
         # Define projectile modifications for fire effect
         projectile_mods = {
@@ -14,8 +14,8 @@ class FlamingPaws(PassiveAbility):
         }
         
         super().__init__(
-            name="Patas Flamejantes",
-            description="Ataques causam queimadura nos inimigos",
+            name="Flaming Paws",
+            description="Attacks cause burn damage over time",
             stat_name="projectile_damage",
             stat_increase=2,
             projectile_modifications=projectile_mods
