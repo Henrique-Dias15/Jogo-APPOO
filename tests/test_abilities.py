@@ -46,7 +46,13 @@ ABILITIES = {
         'name': 'Pawquake',
         'description': 'Ataques básicos têm chance de repelir inimigos',
         'type': '🔮 Passiva'
-    }
+    },
+    'steel_whiskers': {
+        'key': 'steel_whiskers',
+        'name': 'Steel Whiskers',
+        'description': 'Ataques básicos podem perfurar inimigos',
+        'type': '🔮 Passiva'
+    },
 }
 
 def show_menu():
@@ -56,7 +62,7 @@ def show_menu():
     
     # Organiza por categorias
     categories = {
-        'Passivas': ['catnip', 'frozen', 'flaming', 'tailwind', 'cleaning_tongue', 'pawquake'],
+        'Passivas': ['catnip', 'frozen', 'flaming', 'tailwind', 'cleaning_tongue', 'pawquake', 'steel_whiskers'],
     }
     
     choice_map = {}
