@@ -7,6 +7,8 @@ Script para testar habilidades individuais facilmente.
 
 import subprocess
 import sys
+import os
+from pathlib import Path
 
 # Mapeamento de habilidades disponíveis
 ABILITIES = {
@@ -54,6 +56,12 @@ ABILITIES = {
         'type': '🔮 Passiva'
     },
 }
+
+def get_project_root():
+    """Determina o diretório raiz do projeto"""
+    # Este arquivo está em <project_root>/tests, então precisamos subir um nível
+    current_file = Path(__file__).resolve()
+    return current_file.parent.parent
 
 def show_menu():
     """Exibe o menu interativo de seleção"""
@@ -107,9 +115,13 @@ def test_ability(ability_key):
     
     try:
         # Executa o jogo com a habilidade específica
+        project_root = get_project_root()
+
+        python_exe = sys.executable
+
         result = subprocess.run([
-            'python3', 'main.py', ability_key
-        ], cwd='/home/henrique/Jogo-APPOO')
+            python_exe, str(project_root / 'main.py'), ability_key], cwd=str(project_root),
+        )
         
         if result.returncode == 0:
             print(f"Teste concluído!")
