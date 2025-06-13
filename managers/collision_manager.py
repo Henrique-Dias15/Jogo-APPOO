@@ -129,6 +129,13 @@ class CollisionManager:
             # Start burn damage timer
             if not hasattr(enemy, 'last_burn_tick'):
                 enemy.last_burn_tick = pygame.time.get_ticks()
+                
+        # Apply cleaning tongue effect
+        if (hasattr(self.player, 'has_cleaning_tongue') and self.player.has_cleaning_tongue and 
+            random.random() < self.player.heal_chance):
+            heal_amount = int(self.player.max_hp * self.player.heal_amount)
+            self.player.hp = min(self.player.max_hp, self.player.hp + heal_amount)
+            
         
         # Apply projectile-specific effects
         if hasattr(projectile, 'apply_effects'):
