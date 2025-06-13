@@ -3,5 +3,7 @@ from .frozen_claw import FrozenClaw
 from .flaming_paws import FlamingPaws
 from .tailwind import Tailwind
 from .cleaning_tongue import CleaningTongue
+from .pawquake import Pawquake
 
-__all__ = ['CatnipSpell', 'FrozenClaw', 'FlamingPaws', 'Tailwind', 'CleaningTongue']
+__all__ = ['CatnipSpell', 'FrozenClaw', 'FlamingPaws', 
+           'Tailwind', 'CleaningTongue', 'Pawquake']

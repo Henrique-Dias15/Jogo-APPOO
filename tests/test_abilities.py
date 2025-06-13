@@ -13,20 +13,38 @@ ABILITIES = {
     # Passivas
     'catnip': {
         'key': 'catnip_spell',
-        'name': 'Feitiço de Catnip',
+        'name': 'Catnip Spell',
         'description': 'Aumenta o poder mágico permanentemente',
         'type': '🔮 Passiva'
     },
     'frozen': {
         'key': 'frozen_claw', 
-        'name': 'Garra Gélida',
+        'name': 'Frozen Claw',
         'description': 'Ataques têm chance de congelar inimigos',
         'type': '🔮 Passiva'
     },
     'flaming': {
         'key': 'flaming_paws',
-        'name': 'Patas Flamejantes',
+        'name': 'Flaming Paws',
         'description': 'Ataques causam queimadura e projéteis deixam rastro de fogo',
+        'type': '🔮 Passiva'
+    },
+    'tailwind': {
+        'key': 'tailwind',
+        'name': 'Tailwind',
+        'description': 'Aumenta a velocidade de movimento e projéteis',
+        'type': '🔮 Passiva'
+    },
+    'cleaning_tongue': {
+        'key': 'cleaning_tongue',
+        'name': 'Cleaning Tongue',
+        'description': 'Remove efeitos negativos e cura ao se lamber',
+        'type': '🔮 Passiva'
+    },
+    'pawquake': {
+        'key': 'pawquake',
+        'name': 'Pawquake',
+        'description': 'Ataques básicos têm chance de repelir inimigos',
         'type': '🔮 Passiva'
     }
 }
@@ -38,7 +56,7 @@ def show_menu():
     
     # Organiza por categorias
     categories = {
-        'Passivas': ['catnip', 'frozen', 'flaming']
+        'Passivas': ['catnip', 'frozen', 'flaming', 'tailwind', 'cleaning_tongue', 'pawquake'],
     }
     
     choice_map = {}
