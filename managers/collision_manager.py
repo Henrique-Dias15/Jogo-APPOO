@@ -83,6 +83,18 @@ class CollisionManager:
                 
         return collided_enemies, self.player.hp <= 0
     
+    def check_player_experience_collisions(self):
+        """Check for collisions between player and experience orbs"""
+        collided_experience = []
+        
+        for xp in self.experience_manager.experience_group:
+            if pygame.sprite.collide_rect(xp, self.player):
+                # Player collects experience orb
+                xp.kill()
+                collided_experience.append(xp)
+        
+        return collided_experience
+    
     def apply_projectile_effects(self, projectile, enemy):
         """Apply special effects from projectiles to enemies"""
         # Apply frozen claw effect

@@ -363,6 +363,8 @@ class GameController:
         collided_enemies, is_player_dead = self.collision_manager.check_enemy_player_collisions(
             self.enemy_manager.enemies)
         
+        collided_experience = self.collision_manager.check_player_experience_collisions()
+        
         if is_player_dead:
             self.trigger_input_name()
     
