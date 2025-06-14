@@ -19,3 +19,7 @@ class FastEnemy(BaseEnemy):
             screen_width=screen_width,
             screen_height=screen_height
         )
+
+    def kill(self):
+        """Handle enemy death, drop experience, and remove from groups"""
+        return super().kill(10)

@@ -63,3 +63,7 @@ class TriangleEnemy(BaseShooter):
             self.rect.y = new_y
         else:
             self.rect.y = max(0, min(new_y, self.screen_height - self.rect.height))
+
+    def kill(self):
+        """Handle enemy death, drop experience, and remove from groups"""
+        return super().kill(10)
