@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 from utils.settings import *
-
+from entities.experience.experience import Experience
 class BaseEnemy(pygame.sprite.Sprite):
     """Base class for all enemies in the game."""
 
@@ -81,3 +81,10 @@ class BaseEnemy(pygame.sprite.Sprite):
         if not self.shooter:
             return False
         return pygame.time.get_ticks() - self.last_shot > self.projectile_cooldown
+
+    def kill(self, ammount):
+        """Handle enemy death"""
+        xp = Experience(self.player, self.rect.x, self.rect.y, ammount)
+        super().kill()
+        return xp
+       
