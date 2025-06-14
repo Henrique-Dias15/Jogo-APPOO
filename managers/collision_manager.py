@@ -1,5 +1,7 @@
 import pygame
 import random
+import math
+from entities.projectiles.ability_projectile import AbilityProjectile
 
 class CollisionManager:
     """
@@ -47,6 +49,41 @@ class CollisionManager:
                         break
                     # Continue piercing
                     continue
+                
+                # Handle static projectile logic 
+                if getattr(projectile, 'static', False):
+                    # Initialize jump tracking if missing
+                    if not hasattr(projectile, 'jump_enemies') or projectile.jump_enemies is None:
+                        projectile.jump_enemies = set()
+                    # Track jumped enemy
+                    projectile.jump_enemies.add(enemy)
+
+                    # Check max jumps
+                    max_jumps = getattr(projectile, 'max_jumps', None)
+                    if max_jumps is not None and len(projectile.jump_enemies) >= max_jumps:
+                        projectile.kill()
+                        break
+                    # Find the closest enemy not already jumped to
+                    available_enemies = [e for e in enemies if e not in projectile.jump_enemies and e != enemy]
+                    if available_enemies:
+                        closest_enemy = min(
+                            available_enemies,
+                            key=lambda e: pygame.math.Vector2(e.rect.center).distance_to(projectile.rect.center)
+                        )
+                        # Use update_homing_direction if available
+                        if hasattr(projectile, 'update_homing_direction') and callable(getattr(projectile, 'update_homing_direction')):
+                            projectile.update_homing_direction(closest_enemy)
+                        else:
+                            # Fallback: set dx/dy directly
+                            direction = pygame.math.Vector2(closest_enemy.rect.center) - pygame.math.Vector2(projectile.rect.center)
+                            if direction.length() != 0:
+                                direction = direction.normalize()
+                                speed = getattr(projectile, 'speed', math.hypot(getattr(projectile, 'dx', 0), getattr(projectile, 'dy', 0)))
+                                projectile.dx = direction.x * speed
+                                projectile.dy = direction.y * speed
+                    else:
+                        projectile.kill()
+                    break
 
                 # Non-piercing projectile: remove after hit
                 projectile.kill()
@@ -122,7 +159,17 @@ class CollisionManager:
             # If projectile has a piercing effect, apply it
             if hasattr(projectile, 'pierce_effect'):
                 projectile.pierce_effect(enemy)
-         
+        
+        # Apply static fur effect
+        if hasattr(self.player, 'has_static_fur') and self.player.has_static_fur:
+            # Apply static effect to enemy
+            projectile.static = True
+            projectile.max_jumps = getattr(self.player, 'static_max_jumps', None)
+            # If projectile has a static effect, apply it
+            if hasattr(projectile, 'static_effect'):
+                projectile.static_effect(enemy)
+                
+                
         # Apply projectile-specific effects
         if hasattr(projectile, 'apply_effects'):
             projectile.apply_effects(enemy)
