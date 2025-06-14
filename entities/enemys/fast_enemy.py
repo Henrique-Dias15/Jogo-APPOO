@@ -22,4 +22,4 @@ class FastEnemy(BaseEnemy):
 
     def kill(self):
         """Handle enemy death, drop experience, and remove from groups"""
-        return super().kill(10)
+        return super().kill(5)
