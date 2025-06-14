@@ -9,6 +9,7 @@ from managers.enemy_spawner import EnemyManager
 from managers.projectile_manager import ProjectileManager
 from managers.collision_manager import CollisionManager
 from managers.game_state_manager import GameStateManager
+from managers.experience_manager import ExperienceManager
 from utils.database import DatabaseManager
 
 class GameController:
@@ -60,12 +61,14 @@ class GameController:
         self.ability_manager = AbilityManager(self.player)
         
         # Create game managers
-        self.enemy_manager = EnemyManager(self.player, self.width, self.height)
+        self.enemy_manager:EnemyManager = EnemyManager(self.player, self.width, self.height)
         self.projectile_manager = ProjectileManager(self.player, self.width, self.height)
         self.collision_manager = CollisionManager(self.player)
+        self.experience_manager = ExperienceManager(self.player)
         
         # Connect managers to ability system
         self.ability_manager.set_managers(self.projectile_manager, self.enemy_manager)
+        self.collision_manager.set_manager(self.experience_manager)
         
         # Connect player level up to game controller
         self.player.set_level_up_callback(self.trigger_level_up)
@@ -211,6 +214,7 @@ class GameController:
         self.all_sprites.empty()
         self.enemy_manager.reset()
         self.projectile_manager.reset()
+        self.experience_manager.reset()
     
     def run(self):
         """Main game loop that manages different game states."""
@@ -345,6 +349,7 @@ class GameController:
         self.all_sprites.add(self.player)
         self.all_sprites.add(self.enemy_manager.enemies)
         self.all_sprites.add(self.projectile_manager.projectiles)
+        self.all_sprites.add(self.experience_manager.all_sprites)
     
     def check_collisions(self):
         """Handle all collision detection and resolution."""
