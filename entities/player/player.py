@@ -5,8 +5,9 @@ from utils.settings import *
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, screen_width=None, screen_height=None):
         super().__init__()
-        self.image = pygame.Surface((30, 30))
-        self.image.fill(GREEN)  # Placeholder green rectangle
+        # Load and scale player image
+        original_image = pygame.image.load('assets/images/Gatinho.png').convert_alpha()
+        self.image = pygame.transform.scale(original_image, (100, 100))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         
@@ -84,4 +85,3 @@ class Player(pygame.sprite.Sprite):
     def update(self, keys):
         """Update player state"""
         self.move(keys)
-    
