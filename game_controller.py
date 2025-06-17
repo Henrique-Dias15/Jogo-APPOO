@@ -271,6 +271,10 @@ class GameController:
                         self.database.adicionar(self.current_name, int(self.elapsed_time))
                         self.current_name = ""
                         self.state_manager.change_state(self.state_manager.GAME_OVER)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:  # ESC para sair
+                        pygame.quit()
+                        sys.exit()
                   
             # Handle test mode input
             self.handle_test_mode_input(events)
@@ -388,6 +392,7 @@ class GameController:
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
             self.hud.draw(int(self.elapsed_time), self.ability_manager)
+        
             
             # Then draw level up overlay
             option_rects = self.menu_system.draw_level_up(
