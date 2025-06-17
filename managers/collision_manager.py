@@ -58,13 +58,25 @@ class CollisionManager:
                     # Track jumped enemy
                     projectile.jump_enemies.add(enemy)
 
+                    # Store the first contact position for radius checks
+                    if not hasattr(projectile, 'first_contact_pos'):
+                        projectile.first_contact_pos = pygame.math.Vector2(enemy.rect.center)
+
                     # Check max jumps
                     max_jumps = getattr(projectile, 'max_jumps', None)
                     if max_jumps is not None and len(projectile.jump_enemies) >= max_jumps:
                         projectile.kill()
                         break
-                    # Find the closest enemy not already jumped to
-                    available_enemies = [e for e in enemies if e not in projectile.jump_enemies and e != enemy]
+
+                    # Define the chase radius (you can adjust this value as needed)
+                    chase_radius = getattr(projectile, 'static_chase_radius', 200)
+
+                    # Find the closest enemy not already jumped to and within the radius
+                    available_enemies = [
+                        e for e in enemies
+                        if e not in projectile.jump_enemies and e != enemy and
+                        pygame.math.Vector2(e.rect.center).distance_to(projectile.first_contact_pos) <= chase_radius
+                    ]
                     if available_enemies:
                         closest_enemy = min(
                             available_enemies,
