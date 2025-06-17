@@ -55,6 +55,12 @@ ABILITIES = {
         'description': 'Ataques básicos podem perfurar inimigos',
         'type': '🔮 Passiva'
     },
+    'static_fur': {
+        'key': 'static_fur',
+        'name': 'Static Fur',
+        'description': 'Ataques básicos podem pular para inimigos próximos',
+        'type': '🔮 Passiva'
+    }
 }
 
 def get_project_root():
@@ -70,7 +76,7 @@ def show_menu():
     
     # Organiza por categorias
     categories = {
-        'Passivas': ['catnip', 'frozen', 'flaming', 'tailwind', 'cleaning_tongue', 'pawquake', 'steel_whiskers'],
+        'Passivas': ['catnip', 'frozen', 'flaming', 'tailwind', 'cleaning_tongue', 'pawquake', 'steel_whiskers', 'static_fur'],
     }
     
     choice_map = {}
