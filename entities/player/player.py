@@ -5,9 +5,23 @@ from utils.settings import *
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, screen_width=None, screen_height=None):
         super().__init__()
-        # Load and scale player image
-        original_image = pygame.image.load('assets/images/Gatinho.png').convert_alpha()
-        self.image = pygame.transform.scale(original_image, (100, 100))
+        # Imagem parada
+        self.stand_image = pygame.transform.scale(
+            pygame.image.load('assets/images/Gatinho.png').convert_alpha(), (100, 100)
+        )
+        # Carrega frames do spritesheet (2 colunas)
+        sheet = pygame.image.load('assets/images/Gatinho Correndo.png').convert_alpha()
+        frame_width = sheet.get_width() // 2
+        frame_height = sheet.get_height()
+        self.run_frames = [
+            pygame.transform.scale(sheet.subsurface((i * frame_width, 0, frame_width, frame_height)), (100, 100))
+            for i in range(2)
+        ]
+        self.current_frame = 0
+        self.frame_timer = 0
+        self.frame_delay = 150  # ms por frame
+        self.facing_right = True
+        self.image = self.stand_image
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         
@@ -29,14 +43,21 @@ class Player(pygame.sprite.Sprite):
     def move(self, keys):
         """Move the player based on keyboard input"""
         dx, dy = 0, 0
+        moving = False
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             dx -= self.speed
+            self.facing_right = False
+            moving = True
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             dx += self.speed
+            self.facing_right = True
+            moving = True
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             dy -= self.speed
+            moving = True
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             dy += self.speed
+            moving = True
         
         # Diagonal movement normalization
         if dx != 0 and dy != 0:
@@ -56,6 +77,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > self.screen_height:
             self.rect.bottom = self.screen_height
+
+        self.update_animation(moving)
 
     def gain_exp(self, amount):
         """Add experience points and check for level up"""
@@ -85,3 +108,17 @@ class Player(pygame.sprite.Sprite):
     def update(self, keys):
         """Update player state"""
         self.move(keys)
+
+    def update_animation(self, moving):
+        now = pygame.time.get_ticks()
+        if moving:
+            if now - self.frame_timer > self.frame_delay:
+                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
+                self.frame_timer = now
+            frame = self.run_frames[self.current_frame]
+            if self.facing_right:
+                frame = pygame.transform.flip(frame, True, False)
+            self.image = frame
+        else:
+            self.image = self.stand_image
+        self.rect = self.image.get_rect(center=self.rect.center)
