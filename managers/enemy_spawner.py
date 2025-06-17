@@ -1,10 +1,12 @@
 import pygame
 import random
+from ui import hud
 from utils.settings import *
 from entities.enemys.enemy import Enemy
 from entities.enemys.square_enemy import SquareEnemy
 from entities.enemys.triangle_enemy import TriangleEnemy
 from entities.enemys.fast_enemy import FastEnemy
+from entities.enemys.big_square import BigSquare
 
 class EnemyManager:
     """
@@ -15,7 +17,10 @@ class EnemyManager:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.last_enemy_spawn = pygame.time.get_ticks()
+        self.last_boss_spawn = 0
+        self.is_boss_alive = False  # Track if a boss is currently alive
         self.enemies = pygame.sprite.Group()
+        self.boss = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group()
     
     def spawn_enemy(self, elapsed_time):
@@ -49,7 +54,6 @@ class EnemyManager:
                 
             # Select enemy type based on weights
             enemy_class = random.choices(enemy_types, weights=weights)[0]
-            
             # Create the selected enemy type
             enemy = enemy_class(self.player, screen_width=self.screen_width, screen_height=self.screen_height)
             self.enemies.add(enemy)
@@ -58,6 +62,26 @@ class EnemyManager:
             return enemy
         return None
     
+    def spawn_boss(self, elapsed_time):
+        """
+            Spawn a boss if one is not alive, 5 minutes cooldown
+        """
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_boss_spawn > BOSS_SPAWN_INTERVAL and self.is_boss_alive == False:
+            # Create a boss enemy
+            boss = BigSquare(self.player, screen_width=self.screen_width, screen_height=self.screen_height)
+            self.boss.add(boss)
+            self.enemies.add(boss)
+            self.all_sprites.add(boss)
+            self.is_boss_alive = True
+            return boss
+        return None
+    
+    def kill_boss(self):
+        """Reset boss spawn state"""
+        self.last_boss_spawn = pygame.time.get_ticks()
+        self.is_boss_alive = False
+    
     def update(self, *args, **kwargs):
         """Update all enemies"""
         self.enemies.update(*args, **kwargs)
@@ -65,8 +89,20 @@ class EnemyManager:
     def draw(self, screen):
         """Draw all enemies"""
         self.enemies.draw(screen)
+
+    def draw_boss(self, screen, hud=None):
+        """Draw the boss if it exists and its health bar"""
+        if self.boss:
+            self.boss.draw(screen)
+            
+            # Desenhe a barra de vida para cada boss
+            if hud:
+                for boss in self.boss:
+                    hud.draw_boss_health_bar(boss)
     
     def reset(self):
         """Clear all enemies"""
         self.enemies.empty()
         self.all_sprites.empty()
+        self.isBossAlive = False
+        self.last_boss_spawn = 0

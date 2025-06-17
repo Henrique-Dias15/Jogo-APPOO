@@ -68,7 +68,7 @@ class GameController:
         
         # Connect managers to ability system
         self.ability_manager.set_managers(self.projectile_manager, self.enemy_manager)
-        self.collision_manager.set_manager(self.experience_manager)
+        self.collision_manager.set_manager(self.experience_manager, self.enemy_manager)
         
         # Connect player level up to game controller
         self.player.set_level_up_callback(self.trigger_level_up)
@@ -330,7 +330,7 @@ class GameController:
         
         # Spawn enemies periodically
         self.enemy_manager.spawn_enemy(self.elapsed_time)
-        
+        self.enemy_manager.spawn_boss(self.elapsed_time)
         # Update enemies
         self.enemy_manager.update(keys)
         
@@ -346,10 +346,10 @@ class GameController:
         
         # Update all sprite groups
         self.all_sprites = pygame.sprite.Group()
+        self.all_sprites.add(self.experience_manager.all_sprites)
         self.all_sprites.add(self.player)
         self.all_sprites.add(self.enemy_manager.enemies)
         self.all_sprites.add(self.projectile_manager.projectiles)
-        self.all_sprites.add(self.experience_manager.all_sprites)
     
     def check_collisions(self):
         """Handle all collision detection and resolution."""
@@ -397,6 +397,7 @@ class GameController:
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
             self.hud.draw(int(self.elapsed_time), self.ability_manager)
+            self.enemy_manager.draw_boss(self.screen, self.hud)
         
         # Update display
         pygame.display.flip()

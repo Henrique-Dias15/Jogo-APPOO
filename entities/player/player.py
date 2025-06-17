@@ -35,7 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.last_shot = pygame.time.get_ticks()
         self.level_up_callback = None  # Add callback for level up
         self.projectile_damage = 10  # Base projectile damage
-        
+        self.last_hit_time = 0  # Track last hit time for invincibility
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
         self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
