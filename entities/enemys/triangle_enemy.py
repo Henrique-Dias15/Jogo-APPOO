@@ -1,33 +1,32 @@
 import pygame
 import math
-from entities.enemys.enemy import Enemy
+from entities.enemys.base_shooter import BaseShooter
 from utils.settings import *
 from entities.projectiles.projectile import Projectile
 
-class TriangleEnemy(Enemy):
+class TriangleEnemy(BaseShooter):
     """A enemy that keeps a distance from the player and shoots projectiles"""
-    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None):
+    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None, speed=TRIANGLE_ENEMY_SPEED, hp=TRIANGLE_ENEMY_HP, shooter=True, damage=TRIANGLE_ENEMY_DAMAGE, projectile_cooldown=TRIANGLE_ENEMY_PROJECTILE_COOLDOWN, projectile_damage=TRIANGLE_ENEMY_PROJECTILE_DAMAGE):
         # Call the parent constructor with custom parameters
         super().__init__(
-            player, 
-            x, 
-            y, 
-            screen_width, 
-            screen_height, 
+            player=player,
+            x=x,
+            y=y,
+            screen_width=screen_width,
+            screen_height=screen_height,
             size=(25, 25),  # Medium size
-            color=PURPLE,   # Blue color
-            speed=3,        # Fast speed
-            hp=15,
-            shooter=True    # Can shoot projectiles
+            color=BLUE,   # Blue color
+            speed=speed,        # Fast speed
+            hp=hp,
+            damage=damage,
+            projectile_cooldown=projectile_cooldown,
+            projectile_damage=projectile_damage
         )
         
         # Create a triangle shape
         self.original_image = pygame.Surface((25, 25), pygame.SRCALPHA)
         pygame.draw.polygon(self.original_image, BLUE, [(12, 0), (0, 25), (25, 25)])
         self.image = self.original_image
-        self.last_shot = pygame.time.get_ticks()  # Initialize last shot time
-        self.projectile_cooldown = 500  # milliseconds
-        self.projectile_damage = 5
 
     def update(self, *args, **kwargs):
         """Move enemy towards player and shoot projectiles"""
@@ -39,16 +38,32 @@ class TriangleEnemy(Enemy):
         distance = math.hypot(dx, dy)
         if distance != 0:
             dx, dy = dx / distance, dy / distance
-        
+
+        new_x = self.rect.x
+        new_y = self.rect.y
+
         # Calculate distance to player
         if distance > 500: # If the player is far away, move towards them
-            self.rect.x += dx * self.speed
-            self.rect.y += dy * self.speed
+            new_x += dx * self.speed
+            new_y += dy * self.speed
             self.shooter = False
         elif distance < 300: # If the player is too close, move away from them
-            self.rect.x -= dx * self.speed
-            self.rect.y -= dy * self.speed
+            new_x -= dx * self.speed
+            new_y -= dy * self.speed
             self.shooter = False
         else:  # If the player is at a medium distance, shoot projectiles
             self.shooter = True
 
+        # Update the enemy's position
+        if 0 <= new_x <= self.screen_width - self.rect.width:
+            self.rect.x = new_x
+        else:
+            self.rect.x = max(0, min(new_x, self.screen_width - self.rect.width))
+        if 0 <= new_y <= self.screen_height - self.rect.height:
+            self.rect.y = new_y
+        else:
+            self.rect.y = max(0, min(new_y, self.screen_height - self.rect.height))
+
+    def kill(self):
+        """Handle enemy death, drop experience, and remove from groups"""
+        return super().kill(20)

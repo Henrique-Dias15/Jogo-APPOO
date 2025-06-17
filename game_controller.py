@@ -9,6 +9,7 @@ from managers.enemy_spawner import EnemyManager
 from managers.projectile_manager import ProjectileManager
 from managers.collision_manager import CollisionManager
 from managers.game_state_manager import GameStateManager
+from managers.experience_manager import ExperienceManager
 from utils.database import DatabaseManager
 
 class GameController:
@@ -24,9 +25,8 @@ class GameController:
         
         # Screen and timing setup
         if FULLSCREEN:
-            info = pygame.display.Info()
-            self.width, self.height = info.current_w, info.current_h
-            self.screen = pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
+            self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+            self.width, self.height = self.screen.get_size()
         else:
             self.width, self.height = SCREEN_WIDTH, SCREEN_HEIGHT
             self.screen = pygame.display.set_mode((self.width, self.height))
@@ -61,12 +61,14 @@ class GameController:
         self.ability_manager = AbilityManager(self.player)
         
         # Create game managers
-        self.enemy_manager = EnemyManager(self.player, self.width, self.height)
+        self.enemy_manager:EnemyManager = EnemyManager(self.player, self.width, self.height)
         self.projectile_manager = ProjectileManager(self.player, self.width, self.height)
         self.collision_manager = CollisionManager(self.player)
+        self.experience_manager = ExperienceManager(self.player)
         
         # Connect managers to ability system
         self.ability_manager.set_managers(self.projectile_manager, self.enemy_manager)
+        self.collision_manager.set_manager(self.experience_manager)
         
         # Connect player level up to game controller
         self.player.set_level_up_callback(self.trigger_level_up)
@@ -212,6 +214,7 @@ class GameController:
         self.all_sprites.empty()
         self.enemy_manager.reset()
         self.projectile_manager.reset()
+        self.experience_manager.reset()
     
     def run(self):
         """Main game loop that manages different game states."""
@@ -346,6 +349,7 @@ class GameController:
         self.all_sprites.add(self.player)
         self.all_sprites.add(self.enemy_manager.enemies)
         self.all_sprites.add(self.projectile_manager.projectiles)
+        self.all_sprites.add(self.experience_manager.all_sprites)
     
     def check_collisions(self):
         """Handle all collision detection and resolution."""
@@ -358,6 +362,8 @@ class GameController:
         # Enemy-Player Collisions
         collided_enemies, is_player_dead = self.collision_manager.check_enemy_player_collisions(
             self.enemy_manager.enemies)
+        
+        collided_experience = self.collision_manager.check_player_experience_collisions()
         
         if is_player_dead:
             self.trigger_input_name()

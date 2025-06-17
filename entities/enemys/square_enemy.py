@@ -1,19 +1,25 @@
 import pygame
-from entities.enemys.enemy import Enemy
+from entities.enemys.base_enemy import BaseEnemy
 from utils.settings import *
 
-class SquareEnemy(Enemy):
+class SquareEnemy(BaseEnemy):
     """A larger, slower enemy with more health than the base enemy"""
-    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None):
+    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None, speed=SQUARE_ENEMY_SPEED, hp=SQUARE_ENEMY_HP, shooter=False, damage=SQUARE_ENEMY_DAMAGE):
         # Call the parent constructor with custom parameters
         super().__init__(
-            player, 
-            x, 
-            y, 
-            screen_width, 
-            screen_height, 
+            player,
             size=(40, 40),  # Larger size
             color=RED,      # Red color
-            speed=1.5,      # Slower speed
-            hp=40           # More health
+            speed=speed,      # Slower speed
+            hp=hp,          # More health
+            shooter=shooter,
+            damage=damage,
+            x=x,
+            y=y,
+            screen_width=screen_width,
+            screen_height=screen_height
         )
+
+    def kill(self):
+        """Handle enemy death, drop experience, and remove from groups"""
+        return super().kill(15)
