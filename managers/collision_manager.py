@@ -127,7 +127,8 @@ class CollisionManager:
             # Knock back enemy
             knockback_vector = pygame.math.Vector2(enemy.rect.center) - pygame.math.Vector2(self.player.rect.center)
             knockback_vector.scale_to_length(self.player.knockback_distance)
-            enemy.rect.move_ip(knockback_vector.x, knockback_vector.y)
+            enemy.pos_x += knockback_vector.x
+            enemy.pos_y += knockback_vector.y
             
         # Apply steel whiskers effect
         if hasattr(self.player, 'has_steel_whiskers') and self.player.has_steel_whiskers:
