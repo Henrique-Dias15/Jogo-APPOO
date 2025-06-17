@@ -1,5 +1,6 @@
 import pygame
 import random
+from ui import hud
 from utils.settings import *
 from entities.enemys.enemy import Enemy
 from entities.enemys.square_enemy import SquareEnemy
@@ -88,6 +89,16 @@ class EnemyManager:
     def draw(self, screen):
         """Draw all enemies"""
         self.enemies.draw(screen)
+
+    def draw_boss(self, screen, hud=None):
+        """Draw the boss if it exists and its health bar"""
+        if self.boss:
+            self.boss.draw(screen)
+            
+            # Desenhe a barra de vida para cada boss
+            if hud:
+                for boss in self.boss:
+                    hud.draw_boss_health_bar(boss)
     
     def reset(self):
         """Clear all enemies"""

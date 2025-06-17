@@ -397,6 +397,7 @@ class GameController:
             self.screen.fill(BLACK)
             self.all_sprites.draw(self.screen)
             self.hud.draw(int(self.elapsed_time), self.ability_manager)
+            self.enemy_manager.draw_boss(self.screen, self.hud)
         
         # Update display
         pygame.display.flip()

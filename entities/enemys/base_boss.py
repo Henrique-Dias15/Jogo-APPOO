@@ -23,5 +23,6 @@ class BaseBoss(BaseEnemy):
         
         super().__init__(player=player, size=size, color=color, speed=speed, hp=hp, shooter=shooter, damage=damage, x=x, y=y, screen_width=screen_width, screen_height=screen_height)
         self.is_boss = True  # Flag to indicate this is a boss enemy
+        self.max_hp = hp  # Store max HP for health bar calculations
 
     

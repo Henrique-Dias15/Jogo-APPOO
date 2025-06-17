@@ -79,3 +79,22 @@ class HUD:
         if hasattr(self.player, 'has_purring_shield') and self.player.has_purring_shield:
             shield_text = self.small_font.render("ESCUDO ATIVO", True, CYAN)
             self.screen.blit(shield_text, (10, y_offset))
+
+    def draw_boss_health_bar(self, boss):
+        """Draw health bar above a boss enemy"""
+        if not hasattr(boss, 'is_boss') or not boss.is_boss:
+            return
+        
+        # Defina as dimensões da barra de vida
+        bar_width = 150
+        bar_height = 5
+        
+        # Calcule o preenchimento baseado na vida atual/máxima
+        fill_width = int((boss.hp / boss.max_hp) * bar_width)
+        
+        # Posicione a barra acima do boss
+        bar_x = boss.rect.centerx - (bar_width // 2)
+        bar_y = boss.rect.top - 20  # 20 pixels acima do boss
+        
+        pygame.draw.rect(self.screen, RED, 
+            (bar_x, bar_y, fill_width, bar_height))
