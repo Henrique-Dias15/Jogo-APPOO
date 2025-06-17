@@ -1,6 +1,6 @@
 import pygame
 import random
-from entities.enemys.base_enemy import BaseEnemy
+from utils.settings import *
 class CollisionManager:
     """
     Handles all collision detection and resolution in the game.
@@ -8,9 +8,10 @@ class CollisionManager:
     def __init__(self, player):
         self.player = player
 
-    def set_manager(self, experience_manager):
+    def set_manager(self, experience_manager, enemy_manager):
         """Set the experience manager for handling enemy kills"""
         self.experience_manager = experience_manager
+        self.enemy_manager = enemy_manager
     
     def check_projectile_enemy_collisions(self, projectiles, enemies):
         """Check for collisions between projectiles and enemies"""
@@ -31,6 +32,8 @@ class CollisionManager:
                 # Apply damage once per enemy
                 if enemy.take_damage(projectile.damage):
                     self.experience_manager.kill_enemy(enemy)
+                    if enemy.is_boss:
+                        self.enemy_manager.kill_boss()
                     killed_enemies.append(enemy)
 
                 # Apply special effects
