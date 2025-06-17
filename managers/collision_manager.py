@@ -74,11 +74,11 @@ class CollisionManager:
         collided_enemies = []
         
         for enemy in enemies:
-            if pygame.sprite.collide_rect(enemy, self.player):
+            if pygame.sprite.collide_rect(enemy, self.player) and self.player.last_hit_time + PLAYER_INVICIBILITY_TIME < pygame.time.get_ticks():
               # Normal collision damage
                 damage = enemy.damage if hasattr(enemy, 'damage') else 10
                 self.player.hp -= damage
-                enemy.kill()
+                self.player.last_hit_time = pygame.time.get_ticks()
                 collided_enemies.append(enemy)
                 
         return collided_enemies, self.player.hp <= 0
