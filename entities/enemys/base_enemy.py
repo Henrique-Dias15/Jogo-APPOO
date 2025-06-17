@@ -14,11 +14,14 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.image.fill(color)
         self.rect = self.image.get_rect()
 
+
         # Reference to player for targeting
         self.player = player
 
         # Shooter flag
         self.shooter = shooter
+        # Boss Flag
+        self.is_boss = False 
 
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
@@ -33,7 +36,9 @@ class BaseEnemy(pygame.sprite.Sprite):
             self.spawn_at_screen_edge()
         else:
             self.rect.center = (x, y)
-
+            
+        self.pos_x = float(self.rect.x)
+        self.pos_y = float(self.rect.y)
 
     def spawn_at_screen_edge(self):
         """Spawn enemy at random edge of screen"""
@@ -68,8 +73,11 @@ class BaseEnemy(pygame.sprite.Sprite):
         if distance != 0:
             dx, dy = dx / distance, dy / distance
         
-        self.rect.x += dx * self.speed
-        self.rect.y += dy * self.speed
+        self.pos_x += dx * self.speed
+        self.pos_y += dy * self.speed
+
+        self.rect.x = int(self.pos_x)
+        self.rect.y = int(self.pos_y)
 
     def take_damage(self, damage):
         """Handle enemy taking damage"""

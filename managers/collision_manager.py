@@ -3,7 +3,7 @@ import random
 from entities.enemys.base_enemy import BaseEnemy
 import math
 from entities.projectiles.ability_projectile import AbilityProjectile
-
+from utils.settings import *
 class CollisionManager:
     """
     Handles all collision detection and resolution in the game.
@@ -11,9 +11,10 @@ class CollisionManager:
     def __init__(self, player):
         self.player = player
 
-    def set_manager(self, experience_manager):
+    def set_manager(self, experience_manager, enemy_manager):
         """Set the experience manager for handling enemy kills"""
         self.experience_manager = experience_manager
+        self.enemy_manager = enemy_manager
     
     def check_projectile_enemy_collisions(self, projectiles, enemies):
         """Check for collisions between projectiles and enemies"""
@@ -34,6 +35,8 @@ class CollisionManager:
                 # Apply damage once per enemy
                 if enemy.take_damage(projectile.damage):
                     self.experience_manager.kill_enemy(enemy)
+                    if enemy.is_boss:
+                        self.enemy_manager.kill_boss()
                     killed_enemies.append(enemy)
 
                 # Apply special effects
@@ -124,11 +127,11 @@ class CollisionManager:
         collided_enemies = []
         
         for enemy in enemies:
-            if pygame.sprite.collide_rect(enemy, self.player):
+            if pygame.sprite.collide_rect(enemy, self.player) and self.player.last_hit_time + PLAYER_INVICIBILITY_TIME < pygame.time.get_ticks():
               # Normal collision damage
                 damage = enemy.damage if hasattr(enemy, 'damage') else 10
                 self.player.hp -= damage
-                enemy.kill()
+                self.player.last_hit_time = pygame.time.get_ticks()
                 collided_enemies.append(enemy)
                 
         return collided_enemies, self.player.hp <= 0
@@ -177,7 +180,8 @@ class CollisionManager:
             # Knock back enemy
             knockback_vector = pygame.math.Vector2(enemy.rect.center) - pygame.math.Vector2(self.player.rect.center)
             knockback_vector.scale_to_length(self.player.knockback_distance)
-            enemy.rect.move_ip(knockback_vector.x, knockback_vector.y)
+            enemy.pos_x += knockback_vector.x
+            enemy.pos_y += knockback_vector.y
             
         # Apply steel whiskers effect
         if hasattr(self.player, 'has_steel_whiskers') and self.player.has_steel_whiskers:
