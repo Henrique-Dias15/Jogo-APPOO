@@ -17,7 +17,7 @@ class EnemyManager:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.last_enemy_spawn = pygame.time.get_ticks()
-        self.last_boss_spawn = 0
+        self.last_boss_spawn = pygame.time.get_ticks()
         self.is_boss_alive = False  # Track if a boss is currently alive
         self.enemies = pygame.sprite.Group()
         self.boss = pygame.sprite.Group()

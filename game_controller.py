@@ -307,6 +307,7 @@ class GameController:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     waiting = False
                     self.state_manager.change_state(self.state_manager.PLAYING)
+                    self.reset_game_state()
                     self.elapsed_time = 0  # Reset timer when starting from menu
             
             # Draw menu
