@@ -100,6 +100,12 @@ class CollisionManager:
                                 speed = getattr(projectile, 'speed', math.hypot(getattr(projectile, 'dx', 0), getattr(projectile, 'dy', 0)))
                                 projectile.dx = direction.x * speed
                                 projectile.dy = direction.y * speed
+                                if hasattr(projectile, 'run_frames'):
+                                    center = projectile.rect.center
+                                    angle = math.degrees(math.atan2(-projectile.dy, projectile.dx))
+                                    projectile.angle = angle
+                                    projectile.rect = projectile.image.get_rect(center=center)
+                                    
                     else:
                         projectile.kill()
                     break
