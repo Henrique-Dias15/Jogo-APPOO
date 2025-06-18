@@ -1,6 +1,6 @@
 import pygame
 from entities.projectiles.projectile import Projectile
-
+import math
 class ProjectileManager:
     """
     Handles projectile creation, tracking, and updates.
@@ -13,8 +13,8 @@ class ProjectileManager:
         self.all_sprites = pygame.sprite.Group()
         self.enemy_projectiles = pygame.sprite.Group()
         self.player_projectiles = pygame.sprite.Group()
-    
-    def create_projectile(self, shooter, target_x, target_y, is_player=True):
+
+    def create_projectile(self, shooter, target_x, target_y, is_player=True, angle=None):
         """Create a projectile targeting the specified coordinates"""
         if shooter.can_shoot():
             # Check if player has projectile modifications from passive abilities
@@ -29,7 +29,8 @@ class ProjectileManager:
                     screen_width=self.screen_width,
                     screen_height=self.screen_height,
                     damage=shooter.projectile_damage,
-                    modifications=modifications
+                    modifications=modifications, 
+                    angle=angle
                 )
             else:
                 # Use basic projectile
@@ -72,14 +73,15 @@ class ProjectileManager:
             dx = enemy.rect.centerx - self.player.rect.centerx
             dy = enemy.rect.centery - self.player.rect.centery
             distance = (dx**2 + dy**2)**0.5  # Euclidean distance
-            
+
             # Update closest enemy if this one is closer
             if distance < min_distance:
                 min_distance = distance
                 closest_enemy = enemy
+                angle = math.degrees(math.atan2(-dy, dx))  # Calculate angle to enemy
         
         if closest_enemy:
-            return self.create_projectile(self.player, closest_enemy.rect.centerx, closest_enemy.rect.centery)
+            return self.create_projectile(self.player, closest_enemy.rect.centerx, closest_enemy.rect.centery,is_player=True, angle=angle)
 
         return None
     
