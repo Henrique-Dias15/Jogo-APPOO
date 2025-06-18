@@ -12,6 +12,7 @@ class FlamingPaws(PassiveAbility):
             'particles': 'fire_trail',
             'size': (6, 6),
             'spritesheet': 'assets/images/fire/Fogo.png',
+            'sprite_frame_delay': 150,
         }
         
         super().__init__(

@@ -25,7 +25,7 @@ class Projectile(pygame.sprite.Sprite):
                 ]
                 self.current_frame = 0
                 self.frame_timer = 0
-                self.frame_delay = 100
+                self.frame_delay = self.modifications.get('sprite_frame_delay')  # Default to 100ms
                 if self.angle is not None:
                     self.image = pygame.transform.rotate(self.run_frames[0], self.angle)
                 else:

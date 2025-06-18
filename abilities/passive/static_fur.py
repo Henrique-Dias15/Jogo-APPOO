@@ -11,6 +11,7 @@ class StaticFur(PassiveAbility):
             'particles': 'static_trail',  # Placeholder for static particles
             'size': (6, 6),
             'spritesheet': 'assets/images/lightning/Raio.png',  # Placeholder for static fur spritesheet
+            'sprite_frame_delay': 150,  # Frame rate for static fur animation
         }
         
         super().__init__(
