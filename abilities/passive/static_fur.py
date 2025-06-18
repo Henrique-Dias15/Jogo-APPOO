@@ -9,7 +9,8 @@ class StaticFur(PassiveAbility):
             'color':  (242, 255, 61),  # Electric color
             'visual_effect': 'static_jump',
             'particles': 'static_trail',  # Placeholder for static particles
-            'size': (6, 6)  
+            'size': (6, 6),
+            'spritesheet': 'assets/images/lightning/Raio.png',  # Placeholder for static fur spritesheet
         }
         
         super().__init__(
