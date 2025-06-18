@@ -9,7 +9,9 @@ class Tailwind(PassiveAbility):
             'color': (143, 94, 255), # Air color
             'visual_effect': 'tailwind',
             'particles': 'tailwind_trail',
-            'size': (5, 5)
+            'size': (5, 5),
+            'spritesheet': 'assets/images/air/Ar.png',
+            'sprite_frame_delay': 75,
         }
         
         super().__init__(
