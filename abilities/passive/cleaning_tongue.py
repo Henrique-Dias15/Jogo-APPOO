@@ -8,7 +8,9 @@ class CleaningTongue(PassiveAbility):
             'color': (28, 163, 236),  # Water Color
             'visual_effect': 'healing',
             'particles': 'healing_trail',  # Not working for now
-            'size': (7, 7)  
+            'size': (7, 7),
+            'spritesheet': 'assets/images/water/Agua.png',
+            'sprite_frame_delay': 100,
         }
 
         super().__init__(
