@@ -32,6 +32,10 @@ class CollisionManager:
                 if getattr(projectile, 'piercing', False) and enemy in projectile.hit_enemies:
                     continue
 
+
+                if getattr(projectile, 'static', False) and enemy in projectile.jump_enemies:
+                    continue
+
                 # Apply damage once per enemy
                 if enemy.take_damage(projectile.damage):
                     self.experience_manager.kill_enemy(enemy)
@@ -62,9 +66,7 @@ class CollisionManager:
                     # Initialize jump tracking if missing
                     if not hasattr(projectile, 'jump_enemies') or projectile.jump_enemies is None:
                         projectile.jump_enemies = set()
-                    # Track jumped enemy
                     projectile.jump_enemies.add(enemy)
-
                     # Store the first contact position for radius checks
                     if not hasattr(projectile, 'first_contact_pos'):
                         projectile.first_contact_pos = pygame.math.Vector2(enemy.rect.center)
