@@ -93,8 +93,10 @@ class HUD:
         fill_width = int((boss.hp / boss.max_hp) * bar_width)
         
         # Posicione a barra acima do boss
-        bar_x = boss.rect.centerx - (bar_width // 2)
-        bar_y = boss.rect.top - 20  # 20 pixels acima do boss
+        center_x = int(getattr(boss, 'pos_x', boss.rect.centerx))
+        top_y = int(getattr(boss, 'pos_y', boss.rect.centery)) - getattr(boss, 'base_height', boss.rect.height) //2
+        bar_x = center_x - (bar_width // 2)
+        bar_y = top_y
         
         pygame.draw.rect(self.screen, RED, 
             (bar_x, bar_y, fill_width, bar_height))
