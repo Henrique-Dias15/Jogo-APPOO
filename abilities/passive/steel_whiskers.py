@@ -9,7 +9,9 @@ class SteelWhiskers(PassiveAbility):
             'color': (192, 192, 249),  # Metal color
             'visual_effect': 'piercing',
             'particles': 'piercing_trail',  # Placeholder for piercing particles
-            'size': (8, 8)  
+            'size': (8, 8),
+            'spritesheet': 'assets/images/metal/Metal.png',
+            'sprite_frame_delay': 50,
         }
         
         super().__init__(
