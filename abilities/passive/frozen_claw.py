@@ -10,7 +10,9 @@ class FrozenClaw(PassiveAbility):
             'color': (112, 230, 246),  # Ice color
             'visual_effect': 'frozen',
             'particles': 'ice_trail', # Not working for now
-            'size': (7, 7)  
+            'size': (7, 7),
+            'spritesheet':'assets/images/ice/Gelo.png',
+            'sprite_frame_delay': 100, 
         }
         
         super().__init__(
