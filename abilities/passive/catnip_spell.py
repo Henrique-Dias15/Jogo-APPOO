@@ -9,7 +9,9 @@ class CatnipSpell(PassiveAbility):
             'color': (51, 209, 122),  # Plant color
             'visual_effect': 'catnip',
             'particles': 'catnip_trail',  # Not working for now
-            'size': (6, 6)  
+            'size': (6, 6),
+            'spritesheet': 'assets/images/plant/Planta.png',
+            'sprite_frame_delay': 100,
         }
         
         super().__init__(
