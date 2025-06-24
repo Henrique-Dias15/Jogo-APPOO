@@ -3,16 +3,17 @@ import random
 import math
 from utils.settings import *
 from entities.experience.experience import Experience
+import math
 class BaseEnemy(pygame.sprite.Sprite):
     """Base class for all enemies in the game."""
 
-    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None,turn=False):
+    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None):
         super().__init__()
 
         # Create enemy sprite with specified size and color
         if spritesheet:
             try:
-                sheet = pygame.image.load(spritesheet).convert_alpha()
+                sheet = pygame.transform.scale(pygame.image.load(spritesheet).convert_alpha(), size)
                 frame_width = sheet.get_width() // frame_ammount
                 frame_height = sheet.get_height()
                 self.run_frames = [
@@ -50,7 +51,6 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.speed = speed
         self.hp = hp
         self.damage = damage
-        self.turn = turn
 
         self.rect = self.image.get_rect()
         if x is None or y is None:
@@ -81,18 +81,18 @@ class BaseEnemy(pygame.sprite.Sprite):
         """Move enemy towards player, now accepts any arguments"""
             # Check for status effects that prevent movement
         if hasattr(self, 'frozen') and self.frozen:
-            return
+            return 0
         
         # Handle charmed enemies (attack other enemies instead)
         if hasattr(self, 'charmed') and self.charmed:
             self.update_charmed_behavior()
-            return
+            return 0
         
         # Calculate direction to player
         dx = self.player.rect.centerx - self.rect.centerx
         dy = self.player.rect.centery - self.rect.centery
 
-        self.angle = math.degrees(math.atan2(-dy, dx)+ math.pi / 2)  # Adjust angle for pygame coordinate system
+        self.angle = math.degrees(math.atan2(-dy, dx))  # Adjust angle for pygame coordinate system
         
         # Normalize movement
         distance = math.hypot(dx, dy)
@@ -105,26 +105,6 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.rect.x = int(self.pos_x)
         self.rect.y = int(self.pos_y)
         self.rect.center = (self.pos_x, self.pos_y)
-
-        if hasattr(self, 'has_animation') and self.has_animation:
-            now = pygame.time.get_ticks()
-            if now - self.frame_timer >= self.frame_delay:
-                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
-                self.frame_timer = now
-                self.image = self.run_frames[self.current_frame]
-                current_frame = self.run_frames[self.current_frame]
-                if self.angle is not None and self.turn!= False:
-                    center = self.rect.center
-                    self.image = pygame.transform.rotate(current_frame, self.angle)
-                    self.rect = self.image.get_rect(center=center)
-                else:
-                    self.image = current_frame
-        else:
-            if self.angle is not None and self.turn != False:
-                center = self.rect.center
-                self.image = pygame.transform.rotate(self.image, self.angle)
-                self.rect = self.image.get_rect(center=center)
-        self.mask = pygame.mask.from_surface(self.image)
 
     def take_damage(self, damage):
         """Handle enemy taking damage"""
@@ -142,4 +122,38 @@ class BaseEnemy(pygame.sprite.Sprite):
         xp = Experience(self.player, self.rect.x, self.rect.y, ammount)
         super().kill()
         return xp
-       
+    
+    def update_animation_rotation(self):
+        if hasattr(self, 'has_animation') and self.has_animation:
+            now = pygame.time.get_ticks()
+            if now - self.frame_timer >= self.frame_delay:
+                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
+                self.frame_timer = now
+                self.image = self.run_frames[self.current_frame]
+                current_frame = self.run_frames[self.current_frame]
+                if self.angle is not None:
+                    center = self.rect.center
+                    self.image = pygame.transform.rotate(current_frame, self.angle+90)
+                    self.rect = self.image.get_rect(center=center)
+                else:
+                    self.image = current_frame
+        else:
+            if self.angle is not None:
+                center = self.rect.center
+                self.image = pygame.transform.rotate(self.image, self.angle)
+                self.rect = self.image.get_rect(center=center)
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update_animation_turning(self):
+        if hasattr(self, 'has_animation') and self.has_animation:
+            now = pygame.time.get_ticks()
+            if now - self.frame_timer >= self.frame_delay:
+                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
+                self.frame_timer = now
+                self.image = self.run_frames[self.current_frame]
+                current_frame = self.run_frames[self.current_frame]
+                if not (self.angle > 90 or self.angle < -90):  # Only flip if not facing left:
+                    center = self.rect.center
+                    self.image = pygame.transform.flip(current_frame, True, False)
+                    self.rect = self.image.get_rect(center=center)
+        self.mask = pygame.mask.from_surface(self.image)
