@@ -17,6 +17,7 @@ class Enemy(BaseEnemy):
             screen_height=screen_height,
             spritesheet='assets/images/rat/Rato.png',
             frame_ammount=2,  # Number of frames in the sprite sheet
+            frame_delay=150,
         )
 
     def update(self, *args, **kwargs):

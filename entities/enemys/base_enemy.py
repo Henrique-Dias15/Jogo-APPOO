@@ -7,7 +7,7 @@ import math
 class BaseEnemy(pygame.sprite.Sprite):
     """Base class for all enemies in the game."""
 
-    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None):
+    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None, frame_delay=None):
         super().__init__()
 
         # Create enemy sprite with specified size and color
@@ -22,7 +22,7 @@ class BaseEnemy(pygame.sprite.Sprite):
                 ]
                 self.current_frame = 0
                 self.frame_timer = 0
-                self.frame_delay = 100  # Default to 100ms
+                self.frame_delay = frame_delay  # Default to 100ms
                 self.image = self.run_frames[0]
                 self.has_animation = True
             except Exception as e:

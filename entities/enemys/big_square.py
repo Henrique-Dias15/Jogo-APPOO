@@ -21,7 +21,8 @@ class BigSquare(BaseBoss):
             screen_width=screen_width,
             screen_height=screen_height,
             spritesheet="assets/images/rumba_boss/Rumba.png",  # Path to the boss spritesheet,
-            frame_ammount=3
+            frame_ammount=3,
+            frame_delay=100
         )
         
     
