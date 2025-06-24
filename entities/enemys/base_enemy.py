@@ -6,14 +6,33 @@ from entities.experience.experience import Experience
 class BaseEnemy(pygame.sprite.Sprite):
     """Base class for all enemies in the game."""
 
-    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None):
+    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None,turn=False):
         super().__init__()
 
         # Create enemy sprite with specified size and color
-        self.image = pygame.Surface(size)
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
-
+        if spritesheet:
+            try:
+                sheet = pygame.image.load(spritesheet).convert_alpha()
+                frame_width = sheet.get_width() // frame_ammount
+                frame_height = sheet.get_height()
+                self.run_frames = [
+                    pygame.transform.scale(sheet.subsurface((i * frame_width, 0, frame_width, frame_height)), size)
+                    for i in range(frame_ammount)
+                ]
+                self.current_frame = 0
+                self.frame_timer = 0
+                self.frame_delay = 100  # Default to 100ms
+                self.image = self.run_frames[0]
+                self.has_animation = True
+            except Exception as e:
+                print(f"Erro ao carregar spritesheet: {e}")
+                self.image = pygame.Surface(size)
+                self.image.fill(color)
+                self.has_animation = False
+        else:
+            self.image = pygame.Surface(size)
+            self.image.fill(color)
+            self.has_animation = False
 
         # Reference to player for targeting
         self.player = player
@@ -31,7 +50,9 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.speed = speed
         self.hp = hp
         self.damage = damage
+        self.turn = turn
 
+        self.rect = self.image.get_rect()
         if x is None or y is None:
             self.spawn_at_screen_edge()
         else:
@@ -39,6 +60,9 @@ class BaseEnemy(pygame.sprite.Sprite):
             
         self.pos_x = float(self.rect.x)
         self.pos_y = float(self.rect.y)
+        self.rect.center = (self.pos_x, self.pos_y)
+        self.base_height = self.image.get_height()
+        self.mask = pygame.mask.from_surface(self.image)
 
     def spawn_at_screen_edge(self):
         """Spawn enemy at random edge of screen"""
@@ -67,6 +91,8 @@ class BaseEnemy(pygame.sprite.Sprite):
         # Calculate direction to player
         dx = self.player.rect.centerx - self.rect.centerx
         dy = self.player.rect.centery - self.rect.centery
+
+        self.angle = math.degrees(math.atan2(-dy, dx)+ math.pi / 2)  # Adjust angle for pygame coordinate system
         
         # Normalize movement
         distance = math.hypot(dx, dy)
@@ -78,6 +104,27 @@ class BaseEnemy(pygame.sprite.Sprite):
 
         self.rect.x = int(self.pos_x)
         self.rect.y = int(self.pos_y)
+        self.rect.center = (self.pos_x, self.pos_y)
+
+        if hasattr(self, 'has_animation') and self.has_animation:
+            now = pygame.time.get_ticks()
+            if now - self.frame_timer >= self.frame_delay:
+                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
+                self.frame_timer = now
+                self.image = self.run_frames[self.current_frame]
+                current_frame = self.run_frames[self.current_frame]
+                if self.angle is not None and self.turn!= False:
+                    center = self.rect.center
+                    self.image = pygame.transform.rotate(current_frame, self.angle)
+                    self.rect = self.image.get_rect(center=center)
+                else:
+                    self.image = current_frame
+        else:
+            if self.angle is not None and self.turn != False:
+                center = self.rect.center
+                self.image = pygame.transform.rotate(self.image, self.angle)
+                self.rect = self.image.get_rect(center=center)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def take_damage(self, damage):
         """Handle enemy taking damage"""
