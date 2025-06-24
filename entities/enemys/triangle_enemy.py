@@ -22,6 +22,8 @@ class TriangleEnemy(BaseShooter):
             projectile_cooldown=projectile_cooldown,
             projectile_damage=projectile_damage
         )
+        self.pos_x = float(self.rect.x)
+        self.pos_y = float(self.rect.y)
         
         # Create a triangle shape
         self.original_image = pygame.Surface((25, 25), pygame.SRCALPHA)
@@ -39,31 +41,24 @@ class TriangleEnemy(BaseShooter):
         if distance != 0:
             dx, dy = dx / distance, dy / distance
 
-        new_x = self.rect.x
-        new_y = self.rect.y
-
         # Calculate distance to player
         if distance > 500: # If the player is far away, move towards them
-            new_x += dx * self.speed
-            new_y += dy * self.speed
+            self.pos_x += dx * self.speed
+            self.pos_y += dy * self.speed
             self.shooter = False
         elif distance < 300: # If the player is too close, move away from them
-            new_x -= dx * self.speed
-            new_y -= dy * self.speed
+            self.pos_x -= dx * self.speed
+            self.pos_y -= dy * self.speed
             self.shooter = False
         else:  # If the player is at a medium distance, shoot projectiles
             self.shooter = True
 
-        # Update the enemy's position
-        if 0 <= new_x <= self.screen_width - self.rect.width:
-            self.rect.x = new_x
-        else:
-            self.rect.x = max(0, min(new_x, self.screen_width - self.rect.width))
-        if 0 <= new_y <= self.screen_height - self.rect.height:
-            self.rect.y = new_y
-        else:
-            self.rect.y = max(0, min(new_y, self.screen_height - self.rect.height))
+        self.pos_x = max(0, min(self.pos_x, self.screen_width - self.rect.width))
+        self.pos_y = max(0, min(self.pos_y, self.screen_height - self.rect.height))
 
+        # Atualize o rect a partir da posição real
+        self.rect.x = int(self.pos_x)
+        self.rect.y = int(self.pos_y)
     def kill(self):
         """Handle enemy death, drop experience, and remove from groups"""
         return super().kill(20)
