@@ -9,7 +9,9 @@ class Pawquake(PassiveAbility):
             'color': (210, 103, 39),  # Earth color
             'visual_effect': 'knockback',
             'particles': 'knockback_trail',  # Placeholder for knockback particles
-            'size': (7, 7)  
+            'size': (7, 7),
+            'spritesheet': 'assets/images/earth/Terra.png',
+            'sprite_frame_delay': 100,
         }
         
         super().__init__(
