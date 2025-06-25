@@ -393,7 +393,7 @@ class GameController:
         elif self.state_manager.is_state(self.state_manager.LEVEL_UP):
             # Base game still visible under level up menu
             # Draw game first
-            self.screen.fill(BLACK)
+            self.screen.blit(self.background, (0, 0))
             self.all_sprites.draw(self.screen)
             self.hud.draw(int(self.elapsed_time), self.ability_manager)
         
