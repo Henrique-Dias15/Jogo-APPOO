@@ -23,3 +23,5 @@ class BaseShooter(BaseEnemy):
         self.projectile_damage = projectile_damage
         self.projectile_cooldown = projectile_cooldown
         self.last_shot = pygame.time.get_ticks()
+        projectile_modifications = {}
+        

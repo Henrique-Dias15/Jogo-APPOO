@@ -30,7 +30,8 @@ class ProjectileManager:
                     screen_height=self.screen_height,
                     damage=shooter.projectile_damage,
                     modifications=modifications, 
-                    angle=angle
+                    angle=angle,
+                    is_player_projectile=is_player,
                 )
             else:
                 # Use basic projectile
@@ -42,7 +43,7 @@ class ProjectileManager:
                     screen_width=self.screen_width,
                     screen_height=self.screen_height,
                     damage=shooter.projectile_damage,
-                    is_player_projectile=True
+                    is_player_projectile=is_player,
                 )
             
             if is_player:
@@ -89,12 +90,17 @@ class ProjectileManager:
         """Automatically target player and create projectile for enemies"""
         for enemy in enemies:
             if enemy.shooter and enemy.can_shoot():
+                dx = self.player.rect.centerx - enemy.rect.centerx
+                dy = self.player.rect.centery - enemy.rect.centery
+
+                angle = math.degrees(math.atan2(-dy, dx))  # Calculate angle to player
                 # Use enemy's shooter method to create projectile
                 return self.create_projectile(
                     enemy, 
                     self.player.rect.centerx, 
                     self.player.rect.centery, 
-                    is_player=False
+                    is_player=False,
+                    angle=angle
                 )
 
     def update(self, enemies=None, *args, **kwargs):

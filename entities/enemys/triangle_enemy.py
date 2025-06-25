@@ -27,6 +27,10 @@ class TriangleEnemy(BaseShooter):
         )
         self.pos_x = float(self.rect.x)
         self.pos_y = float(self.rect.y)
+        self.projectile_modifications = {
+            'spritesheet': 'assets/images/bottle_spray/Projetil.png',
+            'sprite_frame_delay': 150,
+        }
 
     def update(self, *args, **kwargs):
         """Move enemy towards player and shoot projectiles"""
