@@ -40,6 +40,9 @@ class GameController:
         
         # Game state manager
         self.state_manager = GameStateManager()
+
+        self.background = pygame.image.load("assets/images/background/Background.png").convert()
+        self.background = pygame.transform.scale(self.background, (self.width, self.height))
         
         # Initialize game state
         self.reset_game_state()
@@ -395,7 +398,7 @@ class GameController:
                 self.player.level, self.state_manager.upgrade_options)
         else:
             # Normal game rendering
-            self.screen.fill(BLACK)
+            self.screen.blit(self.background, (0, 0))
             self.enemy_manager.draw_boss(self.screen, self.hud)
             self.all_sprites.draw(self.screen)
             self.hud.draw(int(self.elapsed_time), self.ability_manager)
