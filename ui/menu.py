@@ -14,29 +14,13 @@ class MenuSystem:
         self.height = screen.get_height()
     
     def draw_start_menu(self):
-        """Render the game's start menu."""
+        """Render the game's start menu with a fullscreen custom image only."""
         self.screen.fill(BLACK)
-        
-        # Title
-        title = self.font_title.render(
-            GAME_TITLE, 
-            True, WHITE
-        )
-        title_rect = title.get_rect(
-            center=(self.width//2, self.height//2 - 100)
-        )
-        
-        # Subtitle
-        subtitle = self.font_menu.render(
-            "Press ENTER to Start", 
-            True, GREEN
-        )
-        subtitle_rect = subtitle.get_rect(
-            center=(self.width//2, self.height//2)
-        )
-        
-        self.screen.blit(title, title_rect)
-        self.screen.blit(subtitle, subtitle_rect)
+        # Load and scale the menu image to fit the screen
+        menu_img = pygame.image.load('assets/images/menu/Menu.png').convert_alpha()
+        scaled_img = pygame.transform.smoothscale(menu_img, (self.width, self.height))
+        self.screen.blit(scaled_img, (0, 0))
+        # Não exibe texto adicional, pois já está na imagem
     
     def draw_input_name(self, current_name, player_level, max_length=10):
         """Render the name input screen."""
