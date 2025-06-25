@@ -165,3 +165,31 @@ class BaseEnemy(pygame.sprite.Sprite):
                     self.image = pygame.transform.flip(self.run_frames[self.current_frame], True, False)
                     self.rect = self.image.get_rect(center=center)
         self.mask = pygame.mask.from_surface(self.image)
+
+    def update_animation_turning_rotation(self):
+        if hasattr(self, 'has_animation') and self.has_animation:
+            now = pygame.time.get_ticks()
+            if now - self.frame_timer >= self.frame_delay:
+                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
+                self.frame_timer = now
+                self.image = self.run_frames[self.current_frame]
+        
+        frame = self.run_frames[self.current_frame]
+        flip = False
+        angle = self.angle if self.angle is not None else 0
+        if self.angle is not None:
+            if  -90 < self.angle < 90:
+                flip = True
+
+        if flip:
+            frame = pygame.transform.flip(frame, True, False)
+        else:
+            angle = angle+180
+
+        if self.angle is not None:
+            frame = pygame.transform.rotate(frame, angle)
+
+        center = self.rect.center
+        self.image = frame
+        self.rect = self.image.get_rect(center=center)
+        self.mask = pygame.mask.from_surface(self.image)
