@@ -41,7 +41,7 @@ class GameController:
         # Game state manager
         self.state_manager = GameStateManager()
 
-        self.background = pygame.image.load("assets/images/background/Background.png").convert()
+        self.background = pygame.image.load("assets/images/ui/background/Background.png").convert()
         self.background = pygame.transform.scale(self.background, (self.width, self.height))
         
         # Initialize game state

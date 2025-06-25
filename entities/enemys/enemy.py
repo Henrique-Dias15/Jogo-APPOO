@@ -15,7 +15,7 @@ class Enemy(BaseEnemy):
             y=y, 
             screen_width=screen_width, 
             screen_height=screen_height,
-            spritesheet='assets/images/rat/Rato.png',
+            spritesheet='assets/images/enemys/rat/Rato.png',
             frame_ammount=2,  # Number of frames in the sprite sheet
             frame_delay=150,
         )

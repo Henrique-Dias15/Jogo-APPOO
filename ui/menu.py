@@ -17,7 +17,7 @@ class MenuSystem:
         """Render the game's start menu with a fullscreen custom image only."""
         self.screen.fill(BLACK)
         # Load and scale the menu image to fit the screen
-        menu_img = pygame.image.load('assets/images/menu/Menu.png').convert_alpha()
+        menu_img = pygame.image.load('assets/images/ui/menu/Menu.png').convert_alpha()
         scaled_img = pygame.transform.smoothscale(menu_img, (self.width, self.height))
         self.screen.blit(scaled_img, (0, 0))
         # Não exibe texto adicional, pois já está na imagem

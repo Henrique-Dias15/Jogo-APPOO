@@ -21,14 +21,14 @@ class TriangleEnemy(BaseShooter):
             damage=damage,
             projectile_cooldown=projectile_cooldown,
             projectile_damage=projectile_damage,
-            spritesheet='assets/images/bottle_spray/Pshpsh.png',
+            spritesheet='assets/images/enemys/bottle_spray/Pshpsh.png',
             frame_ammount=2,  # Number of frames in the sprite sheet
             frame_delay=200,
         )
         self.pos_x = float(self.rect.x)
         self.pos_y = float(self.rect.y)
         self.projectile_modifications = {
-            'spritesheet': 'assets/images/bottle_spray/Projetil.png',
+            'spritesheet': 'assets/images/enemys/bottle_spray/Projetil.png',
             'sprite_frame_delay': 150,
         }
 
