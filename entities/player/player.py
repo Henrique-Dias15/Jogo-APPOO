@@ -39,6 +39,7 @@ class Player(pygame.sprite.Sprite):
         # Store actual screen dimensions
         self.screen_width = screen_width if screen_width is not None else SCREEN_WIDTH
         self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self, keys):
         """Move the player based on keyboard input"""
@@ -122,3 +123,4 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = self.stand_image
         self.rect = self.image.get_rect(center=self.rect.center)
+        self.mask = pygame.mask.from_surface(self.image)

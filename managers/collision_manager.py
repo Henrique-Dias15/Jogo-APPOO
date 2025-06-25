@@ -122,7 +122,7 @@ class CollisionManager:
         """Check for collisions between projectiles and player"""
         collided_projectiles = []
         for projectile in projectiles:
-            if pygame.sprite.collide_rect(projectile, self.player):
+            if pygame.sprite.collide_mask(projectile, self.player):
                 # Handle player hit by projectile
                 self.player.hp -= projectile.damage
                 projectile.kill()
@@ -149,7 +149,7 @@ class CollisionManager:
         collided_experience = []
         
         for xp in self.experience_manager.experience_group:
-            if pygame.sprite.collide_rect(xp, self.player):
+            if pygame.sprite.collide_mask(xp, self.player):
                 # Player collects experience orb
                 xp.kill()
                 collided_experience.append(xp)
