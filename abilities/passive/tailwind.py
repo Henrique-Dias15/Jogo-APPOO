@@ -10,7 +10,7 @@ class Tailwind(PassiveAbility):
             'visual_effect': 'tailwind',
             'particles': 'tailwind_trail',
             'size': (5, 5),
-            'spritesheet': 'assets/images/air/Ar.png',
+            'spritesheet': 'assets/images/abilities/air/Ar.png',
             'sprite_frame_delay': 75,
         }
         

@@ -38,7 +38,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.has_animation = False
         else:
             try:
-                sheet = pygame.image.load('assets/images/base/Base.png').convert_alpha()
+                sheet = pygame.image.load('assets/images/abilities/base/Base.png').convert_alpha()
                 frame_width = sheet.get_width() // 6
                 frame_height = sheet.get_height()
                 self.run_frames = [

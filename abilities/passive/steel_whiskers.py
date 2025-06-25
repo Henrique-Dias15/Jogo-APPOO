@@ -10,7 +10,7 @@ class SteelWhiskers(PassiveAbility):
             'visual_effect': 'piercing',
             'particles': 'piercing_trail',  # Placeholder for piercing particles
             'size': (8, 8),
-            'spritesheet': 'assets/images/metal/Metal.png',
+            'spritesheet': 'assets/images/abilities/metal/Metal.png',
             'sprite_frame_delay': 50,
         }
         

@@ -10,7 +10,7 @@ class CatnipSpell(PassiveAbility):
             'visual_effect': 'catnip',
             'particles': 'catnip_trail',  # Not working for now
             'size': (6, 6),
-            'spritesheet': 'assets/images/plant/Planta.png',
+            'spritesheet': 'assets/images/abilities/plant/Planta.png',
             'sprite_frame_delay': 100,
         }
         

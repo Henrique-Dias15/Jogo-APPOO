@@ -11,7 +11,7 @@ class FrozenClaw(PassiveAbility):
             'visual_effect': 'frozen',
             'particles': 'ice_trail', # Not working for now
             'size': (7, 7),
-            'spritesheet':'assets/images/ice/Gelo.png',
+            'spritesheet':'assets/images/abilities/ice/Gelo.png',
             'sprite_frame_delay': 100, 
         }
         

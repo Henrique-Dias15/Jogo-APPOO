@@ -10,7 +10,7 @@ class Pawquake(PassiveAbility):
             'visual_effect': 'knockback',
             'particles': 'knockback_trail',  # Placeholder for knockback particles
             'size': (7, 7),
-            'spritesheet': 'assets/images/earth/Terra.png',
+            'spritesheet': 'assets/images/abilities/earth/Terra.png',
             'sprite_frame_delay': 100,
         }
         

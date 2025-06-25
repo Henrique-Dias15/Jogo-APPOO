@@ -11,7 +11,7 @@ class FlamingPaws(PassiveAbility):
             'visual_effect': 'empowered',
             'particles': 'fire_trail',
             'size': (6, 6),
-            'spritesheet': 'assets/images/fire/Fogo.png',
+            'spritesheet': 'assets/images/abilities/fire/Fogo.png',
             'sprite_frame_delay': 150,
         }
         

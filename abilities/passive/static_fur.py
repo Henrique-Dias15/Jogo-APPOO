@@ -10,7 +10,7 @@ class StaticFur(PassiveAbility):
             'visual_effect': 'static_jump',
             'particles': 'static_trail',  # Placeholder for static particles
             'size': (6, 6),
-            'spritesheet': 'assets/images/lightning/Raio.png',  # Placeholder for static fur spritesheet
+            'spritesheet': 'assets/images/abilities/lightning/Raio.png',  # Placeholder for static fur spritesheet
             'sprite_frame_delay': 150,  # Frame rate for static fur animation
         }
         

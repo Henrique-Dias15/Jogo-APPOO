@@ -9,7 +9,7 @@ class CleaningTongue(PassiveAbility):
             'visual_effect': 'healing',
             'particles': 'healing_trail',  # Not working for now
             'size': (7, 7),
-            'spritesheet': 'assets/images/water/Water.png',
+            'spritesheet': 'assets/images/abilities/water/Water.png',
             'sprite_frame_delay': 100,
         }
 
