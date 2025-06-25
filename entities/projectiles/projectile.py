@@ -37,9 +37,27 @@ class Projectile(pygame.sprite.Sprite):
                 self.image.fill(color)
                 self.has_animation = False
         else:
-            self.image = pygame.Surface(size)
-            self.image.fill(color)
-            self.has_animation = False
+            try:
+                sheet = pygame.image.load('assets/images/base/Base.png').convert_alpha()
+                frame_width = sheet.get_width() // 6
+                frame_height = sheet.get_height()
+                self.run_frames = [
+                    pygame.transform.scale(sheet.subsurface((i * frame_width, 0, frame_width, frame_height)), (20, 20))
+                    for i in range(6)
+                ]
+                self.current_frame = 0
+                self.frame_timer = 0
+                self.frame_delay = self.modifications.get('sprite_frame_delay')  # Default to 100ms
+                if self.angle is not None:
+                    self.image = pygame.transform.rotate(self.run_frames[0], self.angle)
+                else:
+                    self.image = self.run_frames[0]
+                self.has_animation = True
+            except Exception as e:
+                print(f"Erro ao carregar spritesheet: {e}")
+                self.image = pygame.Surface(size)
+                self.image.fill(color)
+                self.has_animation = False
 
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -68,7 +86,7 @@ class Projectile(pygame.sprite.Sprite):
 
         if hasattr(self, 'has_animation') and self.has_animation:
             now = pygame.time.get_ticks()
-            if now - self.frame_timer >= self.frame_delay:
+            if self.frame_delay is not None and now - self.frame_timer >= self.frame_delay:
                 self.current_frame = (self.current_frame + 1) % len(self.run_frames)
                 self.frame_timer = now
 
