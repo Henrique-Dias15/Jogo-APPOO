@@ -7,10 +7,10 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         # Imagem parada
         self.stand_image = pygame.transform.scale(
-            pygame.image.load('assets/images/Gatinho.png').convert_alpha(), (100, 100)
+            pygame.image.load('assets/images/kitty/Gatinho.png').convert_alpha(), (100, 100)
         )
         # Carrega frames do spritesheet (2 colunas)
-        sheet = pygame.image.load('assets/images/Gatinho Correndo.png').convert_alpha()
+        sheet = pygame.image.load('assets/images/kitty/Gatinho Correndo.png').convert_alpha()
         frame_width = sheet.get_width() // 2
         frame_height = sheet.get_height()
         self.run_frames = [

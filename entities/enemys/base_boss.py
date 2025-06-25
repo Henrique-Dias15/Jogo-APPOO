@@ -7,7 +7,7 @@ class BaseBoss(BaseEnemy):
     Inherits from BaseEnemy and can be extended with boss-specific attributes and methods.
     """
     
-    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None):
+    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None, frame_delay=None):
         center_x = screen_width // 2
         center_y = screen_height // 2
         
@@ -21,7 +21,7 @@ class BaseBoss(BaseEnemy):
             else:
                 x, y = temp_rect.center
         
-        super().__init__(player=player, size=size, color=color, speed=speed, hp=hp, shooter=shooter, damage=damage, x=x, y=y, screen_width=screen_width, screen_height=screen_height)
+        super().__init__(player=player, size=size, color=color, speed=speed, hp=hp, shooter=shooter, damage=damage, x=x, y=y, screen_width=screen_width, screen_height=screen_height, spritesheet=spritesheet, frame_ammount=frame_ammount, frame_delay=frame_delay)
         self.is_boss = True  # Flag to indicate this is a boss enemy
         self.max_hp = hp  # Store max HP for health bar calculations
 

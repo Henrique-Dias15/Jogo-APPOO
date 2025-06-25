@@ -3,17 +3,40 @@ import random
 import math
 from utils.settings import *
 from entities.experience.experience import Experience
+import math
 class BaseEnemy(pygame.sprite.Sprite):
     """Base class for all enemies in the game."""
 
-    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None):
+    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None, frame_delay=None):
         super().__init__()
 
         # Create enemy sprite with specified size and color
-        self.image = pygame.Surface(size)
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
-
+        if spritesheet:
+            try:
+                self.sheet = pygame.transform.scale(pygame.image.load(spritesheet).convert_alpha(), size)
+                frame_width = self.sheet.get_width() // frame_ammount
+                frame_height = self.sheet.get_height()
+                self.run_frames = [
+                    pygame.transform.scale(self.sheet.subsurface((i * frame_width, 0, frame_width, frame_height)), size)
+                    for i in range(frame_ammount)
+                ]
+                self.current_frame = 0
+                self.frame_timer = 0
+                self.frame_delay = frame_delay  # Default to 100ms
+                self.image = self.run_frames[0]
+                if frame_ammount > 1:
+                    self.has_animation = True
+                else:
+                    self.has_animation = False
+            except Exception as e:
+                print(f"Erro ao carregar spritesheet: {e}")
+                self.image = pygame.Surface(size)
+                self.image.fill(color)
+                self.has_animation = False
+        else:
+            self.image = pygame.Surface(size)
+            self.image.fill(color)
+            self.has_animation = False
 
         # Reference to player for targeting
         self.player = player
@@ -32,6 +55,7 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.hp = hp
         self.damage = damage
 
+        self.rect = self.image.get_rect()
         if x is None or y is None:
             self.spawn_at_screen_edge()
         else:
@@ -39,6 +63,9 @@ class BaseEnemy(pygame.sprite.Sprite):
             
         self.pos_x = float(self.rect.x)
         self.pos_y = float(self.rect.y)
+        self.rect.center = (self.pos_x, self.pos_y)
+        self.base_height = self.image.get_height()
+        self.mask = pygame.mask.from_surface(self.image)
 
     def spawn_at_screen_edge(self):
         """Spawn enemy at random edge of screen"""
@@ -57,16 +84,18 @@ class BaseEnemy(pygame.sprite.Sprite):
         """Move enemy towards player, now accepts any arguments"""
             # Check for status effects that prevent movement
         if hasattr(self, 'frozen') and self.frozen:
-            return
+            return 0
         
         # Handle charmed enemies (attack other enemies instead)
         if hasattr(self, 'charmed') and self.charmed:
             self.update_charmed_behavior()
-            return
+            return 0
         
         # Calculate direction to player
         dx = self.player.rect.centerx - self.rect.centerx
         dy = self.player.rect.centery - self.rect.centery
+
+        self.angle = math.degrees(math.atan2(-dy, dx))  # Adjust angle for pygame coordinate system
         
         # Normalize movement
         distance = math.hypot(dx, dy)
@@ -78,6 +107,7 @@ class BaseEnemy(pygame.sprite.Sprite):
 
         self.rect.x = int(self.pos_x)
         self.rect.y = int(self.pos_y)
+        self.rect.center = (self.pos_x, self.pos_y)
 
     def take_damage(self, damage):
         """Handle enemy taking damage"""
@@ -95,4 +125,43 @@ class BaseEnemy(pygame.sprite.Sprite):
         xp = Experience(self.player, self.rect.x, self.rect.y, ammount)
         super().kill()
         return xp
-       
+    
+    def update_animation_rotation(self):
+        if hasattr(self, 'has_animation') and self.has_animation:
+            now = pygame.time.get_ticks()
+            if now - self.frame_timer >= self.frame_delay:
+                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
+                self.frame_timer = now
+                self.image = self.run_frames[self.current_frame]
+        else:
+            if self.angle is not None:
+                center = self.rect.center
+                self.image = pygame.transform.rotate(self.image, self.angle)
+                self.rect = self.image.get_rect(center=center)
+            if hasattr(self, 'sheet') and self.sheet:
+                self.image = self.run_frames[0]
+                self.current_frame = 0
+        if self.angle is not None:
+            center = self.rect.center
+            self.image = pygame.transform.rotate(self.run_frames[self.current_frame], self.angle+90)
+            self.rect = self.image.get_rect(center=center)
+        else:
+            self.image = self.run_frames[self.current_frame]
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update_animation_turning(self):
+        if hasattr(self, 'has_animation') and self.has_animation:
+            now = pygame.time.get_ticks()
+            if now - self.frame_timer >= self.frame_delay:
+                self.current_frame = (self.current_frame + 1) % len(self.run_frames)
+                self.frame_timer = now
+                self.image = self.run_frames[self.current_frame]
+        else:
+            if hasattr(self, 'sheet') and self.sheet:
+                self.image = self.run_frames[0]
+                self.current_frame = 0
+        if not (self.angle > 90 or self.angle < -90):  # Only flip if not facing left:
+                    center = self.rect.center
+                    self.image = pygame.transform.flip(self.run_frames[self.current_frame], True, False)
+                    self.rect = self.image.get_rect(center=center)
+        self.mask = pygame.mask.from_surface(self.image)

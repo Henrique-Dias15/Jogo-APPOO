@@ -32,6 +32,10 @@ class CollisionManager:
                 if getattr(projectile, 'piercing', False) and enemy in projectile.hit_enemies:
                     continue
 
+
+                if getattr(projectile, 'static', False) and enemy in projectile.jump_enemies:
+                    continue
+
                 # Apply damage once per enemy
                 if enemy.take_damage(projectile.damage):
                     self.experience_manager.kill_enemy(enemy)
@@ -62,9 +66,7 @@ class CollisionManager:
                     # Initialize jump tracking if missing
                     if not hasattr(projectile, 'jump_enemies') or projectile.jump_enemies is None:
                         projectile.jump_enemies = set()
-                    # Track jumped enemy
                     projectile.jump_enemies.add(enemy)
-
                     # Store the first contact position for radius checks
                     if not hasattr(projectile, 'first_contact_pos'):
                         projectile.first_contact_pos = pygame.math.Vector2(enemy.rect.center)
@@ -100,6 +102,12 @@ class CollisionManager:
                                 speed = getattr(projectile, 'speed', math.hypot(getattr(projectile, 'dx', 0), getattr(projectile, 'dy', 0)))
                                 projectile.dx = direction.x * speed
                                 projectile.dy = direction.y * speed
+                                if hasattr(projectile, 'run_frames'):
+                                    center = projectile.rect.center
+                                    angle = math.degrees(math.atan2(-projectile.dy, projectile.dx))
+                                    projectile.angle = angle
+                                    projectile.rect = projectile.image.get_rect(center=center)
+                                    
                     else:
                         projectile.kill()
                     break
@@ -127,7 +135,7 @@ class CollisionManager:
         collided_enemies = []
         
         for enemy in enemies:
-            if pygame.sprite.collide_rect(enemy, self.player) and self.player.last_hit_time + PLAYER_INVICIBILITY_TIME < pygame.time.get_ticks():
+            if pygame.sprite.collide_mask(enemy, self.player) and self.player.last_hit_time + PLAYER_INVICIBILITY_TIME < pygame.time.get_ticks():
               # Normal collision damage
                 damage = enemy.damage if hasattr(enemy, 'damage') else 10
                 self.player.hp -= damage
