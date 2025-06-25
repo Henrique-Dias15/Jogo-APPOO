@@ -13,18 +13,21 @@ class BaseEnemy(pygame.sprite.Sprite):
         # Create enemy sprite with specified size and color
         if spritesheet:
             try:
-                sheet = pygame.transform.scale(pygame.image.load(spritesheet).convert_alpha(), size)
-                frame_width = sheet.get_width() // frame_ammount
-                frame_height = sheet.get_height()
+                self.sheet = pygame.transform.scale(pygame.image.load(spritesheet).convert_alpha(), size)
+                frame_width = self.sheet.get_width() // frame_ammount
+                frame_height = self.sheet.get_height()
                 self.run_frames = [
-                    pygame.transform.scale(sheet.subsurface((i * frame_width, 0, frame_width, frame_height)), size)
+                    pygame.transform.scale(self.sheet.subsurface((i * frame_width, 0, frame_width, frame_height)), size)
                     for i in range(frame_ammount)
                 ]
                 self.current_frame = 0
                 self.frame_timer = 0
                 self.frame_delay = frame_delay  # Default to 100ms
                 self.image = self.run_frames[0]
-                self.has_animation = True
+                if frame_ammount > 1:
+                    self.has_animation = True
+                else:
+                    self.has_animation = False
             except Exception as e:
                 print(f"Erro ao carregar spritesheet: {e}")
                 self.image = pygame.Surface(size)
@@ -130,18 +133,20 @@ class BaseEnemy(pygame.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.run_frames)
                 self.frame_timer = now
                 self.image = self.run_frames[self.current_frame]
-                current_frame = self.run_frames[self.current_frame]
-                if self.angle is not None:
-                    center = self.rect.center
-                    self.image = pygame.transform.rotate(current_frame, self.angle+90)
-                    self.rect = self.image.get_rect(center=center)
-                else:
-                    self.image = current_frame
         else:
             if self.angle is not None:
                 center = self.rect.center
                 self.image = pygame.transform.rotate(self.image, self.angle)
                 self.rect = self.image.get_rect(center=center)
+            if hasattr(self, 'sheet') and self.sheet:
+                self.image = self.run_frames[0]
+                self.current_frame = 0
+        if self.angle is not None:
+            center = self.rect.center
+            self.image = pygame.transform.rotate(self.run_frames[self.current_frame], self.angle+90)
+            self.rect = self.image.get_rect(center=center)
+        else:
+            self.image = self.run_frames[self.current_frame]
         self.mask = pygame.mask.from_surface(self.image)
 
     def update_animation_turning(self):
@@ -151,9 +156,12 @@ class BaseEnemy(pygame.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.run_frames)
                 self.frame_timer = now
                 self.image = self.run_frames[self.current_frame]
-                current_frame = self.run_frames[self.current_frame]
-                if not (self.angle > 90 or self.angle < -90):  # Only flip if not facing left:
+        else:
+            if hasattr(self, 'sheet') and self.sheet:
+                self.image = self.run_frames[0]
+                self.current_frame = 0
+        if not (self.angle > 90 or self.angle < -90):  # Only flip if not facing left:
                     center = self.rect.center
-                    self.image = pygame.transform.flip(current_frame, True, False)
+                    self.image = pygame.transform.flip(self.run_frames[self.current_frame], True, False)
                     self.rect = self.image.get_rect(center=center)
         self.mask = pygame.mask.from_surface(self.image)
