@@ -3,11 +3,26 @@ import random
 import math
 from utils.settings import *
 from entities.experience.experience import Experience
+from entities.player.player import Player
+from typing import Optional, Tuple
 import math
 class BaseEnemy(pygame.sprite.Sprite):
     """Base class for all enemies in the game."""
 
-    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None, frame_delay=None):
+    def __init__(self, 
+        player:Player, 
+        size:Tuple[int, int, int], 
+        color:Tuple[int, int, int], 
+        speed:float, 
+        hp:int, 
+        shooter:bool, 
+        damage:float, 
+        x:Optional[float]=None, 
+        y:Optional[float]=None, 
+        screen_width:Optional[float]=None, 
+        screen_height:Optional[float]=None, 
+        spritesheet:Optional[str]=None, frame_ammount:Optional[int]=None, frame_delay:Optional[float]=None
+    ) -> None:
         super().__init__()
 
         # Create enemy sprite with specified size and color
@@ -67,7 +82,7 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.base_height = self.image.get_height()
         self.mask = pygame.mask.from_surface(self.image)
 
-    def spawn_at_screen_edge(self):
+    def spawn_at_screen_edge(self) -> None:
         """Spawn enemy at random edge of screen"""
         side = random.choice(['top', 'bottom', 'left', 'right'])
         
@@ -80,7 +95,7 @@ class BaseEnemy(pygame.sprite.Sprite):
         else:  # right
             self.rect.midright = (self.screen_width, random.randint(0, self.screen_height))
 
-    def update(self, *args, **kwargs):
+    def update(self, *args, **kwargs) -> Optional[int]:
         """Move enemy towards player, now accepts any arguments"""
             # Check for status effects that prevent movement
         if hasattr(self, 'frozen') and self.frozen:
@@ -109,24 +124,24 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.rect.y = int(self.pos_y)
         self.rect.center = (self.pos_x, self.pos_y)
 
-    def take_damage(self, damage):
+    def take_damage(self, damage) -> bool:
         """Handle enemy taking damage"""
         self.hp -= damage
         return self.hp <= 0
 
-    def can_shoot(self):
+    def can_shoot(self) -> bool:
         """Check if the enemy can shoot based on cooldown"""
         if not self.shooter:
             return False
         return pygame.time.get_ticks() - self.last_shot > self.projectile_cooldown
 
-    def kill(self, ammount):
+    def kill(self, ammount) -> Experience:
         """Handle enemy death"""
         xp = Experience(self.player, self.rect.x, self.rect.y, ammount)
         super().kill()
         return xp
     
-    def update_animation_rotation(self):
+    def update_animation_rotation(self) -> None:
         if hasattr(self, 'has_animation') and self.has_animation:
             now = pygame.time.get_ticks()
             if now - self.frame_timer >= self.frame_delay:
@@ -149,7 +164,7 @@ class BaseEnemy(pygame.sprite.Sprite):
             self.image = self.run_frames[self.current_frame]
         self.mask = pygame.mask.from_surface(self.image)
 
-    def update_animation_turning(self):
+    def update_animation_turning(self) -> None:
         if hasattr(self, 'has_animation') and self.has_animation:
             now = pygame.time.get_ticks()
             if now - self.frame_timer >= self.frame_delay:
@@ -166,7 +181,7 @@ class BaseEnemy(pygame.sprite.Sprite):
                     self.rect = self.image.get_rect(center=center)
         self.mask = pygame.mask.from_surface(self.image)
 
-    def update_animation_turning_rotation(self):
+    def update_animation_turning_rotation(self) -> None:
         if hasattr(self, 'has_animation') and self.has_animation:
             now = pygame.time.get_ticks()
             if now - self.frame_timer >= self.frame_delay:

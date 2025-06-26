@@ -7,12 +7,15 @@ from entities.enemys.square_enemy import SquareEnemy
 from entities.enemys.triangle_enemy import TriangleEnemy
 from entities.enemys.fast_enemy import FastEnemy
 from entities.enemys.big_square import BigSquare
-
+from entities.player.player import Player
+from entities.enemys.base_enemy import BaseEnemy
+from entities.enemys.base_boss import BaseBoss
+from typing import Optional
 class EnemyManager:
     """
     Handles enemy spawning and management.
     """
-    def __init__(self, player, screen_width, screen_height):
+    def __init__(self, player:Player, screen_width:float, screen_height:float):
         self.player = player
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -23,7 +26,7 @@ class EnemyManager:
         self.boss = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group()
     
-    def spawn_enemy(self, elapsed_time):
+    def spawn_enemy(self, elapsed_time:int)-> BaseEnemy:
         """
         Spawn enemies based on game time and difficulty progression.
         """
@@ -62,7 +65,7 @@ class EnemyManager:
             return enemy
         return None
     
-    def spawn_boss(self, elapsed_time):
+    def spawn_boss(self, elapsed_time) -> Optional[BaseBoss]:
         """
             Spawn a boss if one is not alive, 5 minutes cooldown
         """
@@ -77,20 +80,20 @@ class EnemyManager:
             return boss
         return None
     
-    def kill_boss(self):
+    def kill_boss(self) -> None:
         """Reset boss spawn state"""
         self.last_boss_spawn = pygame.time.get_ticks()
         self.is_boss_alive = False
     
-    def update(self, *args, **kwargs):
+    def update(self, *args, **kwargs) -> None:
         """Update all enemies"""
         self.enemies.update(*args, **kwargs)
         
-    def draw(self, screen):
+    def draw(self, screen:pygame.Surface) -> None:
         """Draw all enemies"""
         self.enemies.draw(screen)
 
-    def draw_boss(self, screen, hud=None):
+    def draw_boss(self, screen:pygame.Surface, hud:"HUD"=None) -> None:
         """Draw the boss if it exists and its health bar"""
         if self.boss:
             self.boss.draw(screen)
@@ -100,7 +103,7 @@ class EnemyManager:
                 for boss in self.boss:
                     hud.draw_boss_health_bar(boss)
     
-    def reset(self):
+    def reset(self) -> None:
         """Clear all enemies"""
         self.enemies.empty()
         self.all_sprites.empty()

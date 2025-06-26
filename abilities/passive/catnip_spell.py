@@ -1,6 +1,6 @@
 from abilities.base_ability import PassiveAbility
 from utils.settings import *
-
+from entities.player.player import Player
 class CatnipSpell(PassiveAbility):
     """Catnip Spell - Increases magical power permanently"""
     def __init__(self):
@@ -22,12 +22,12 @@ class CatnipSpell(PassiveAbility):
             projectile_modifications=projectile_mods
         )
         
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         super().activate(player, **kwargs)
         # Add catnip effect to player
         player.has_catnip_spell = True
         return True
     
-    def on_upgrade(self):
+    def on_upgrade(self) -> None:
         super().on_upgrade()
         self.stat_increase += 2

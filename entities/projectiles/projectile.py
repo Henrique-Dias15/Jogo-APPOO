@@ -1,9 +1,21 @@
 import pygame
 import math
 from utils.settings import *
-
+from typing import Optional
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, x, y, target_x, target_y, screen_width=None, screen_height=None, speed=7, damage=10, modifications=None, is_player_projectile=True, angle=None):
+    def __init__(self, 
+        x: float, 
+        y: float, 
+        target_x: float, 
+        target_y: float, 
+        screen_width: Optional[float] = None, 
+        screen_height: Optional[float] = None, 
+        speed: Optional[float] = 7, 
+        damage: Optional[float] = 10, 
+        modifications: Optional[object] = None, 
+        is_player_projectile: Optional[bool] = True, 
+        angle: Optional[float] = None
+    ) -> None:
         super().__init__()
         
         # Store modifications and apply them
@@ -79,7 +91,7 @@ class Projectile(pygame.sprite.Sprite):
         
         self.damage = damage
 
-    def update(self, *args, **kwargs):
+    def update(self, *args, **kwargs) -> None:
         """Move projectile, now accepts any arguments"""
         self.rect.x += self.dx
         self.rect.y += self.dy

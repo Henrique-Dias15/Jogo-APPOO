@@ -1,5 +1,6 @@
 from abilities.base_ability import PassiveAbility
 from utils.settings import *
+from entities.player.player import Player
 
 class SteelWhiskers(PassiveAbility):
     """Steel Whiskers - Basic attacks can pierce through enemies"""
@@ -23,7 +24,7 @@ class SteelWhiskers(PassiveAbility):
         )
         self.max_pierces = 2  # Number of enemies to pierce through
     
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         super().activate(player, **kwargs)
         # Add piercing effect to player
         player.has_steel_whiskers = True

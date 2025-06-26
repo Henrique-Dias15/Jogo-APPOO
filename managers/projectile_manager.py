@@ -1,11 +1,14 @@
 import pygame
 from entities.projectiles.projectile import Projectile
 import math
+from entities.player.player import Player
+from entities.enemys.base_enemy import BaseEnemy
+from typing import Optional
 class ProjectileManager:
     """
     Handles projectile creation, tracking, and updates.
     """
-    def __init__(self, player, screen_width, screen_height):
+    def __init__(self, player:Player, screen_width:float, screen_height:float) -> None:
         self.player = player
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -14,7 +17,7 @@ class ProjectileManager:
         self.enemy_projectiles = pygame.sprite.Group()
         self.player_projectiles = pygame.sprite.Group()
 
-    def create_projectile(self, shooter, target_x, target_y, is_player=True, angle=None):
+    def create_projectile(self, shooter:Player|BaseEnemy, target_x:float, target_y:float, is_player:Optional[bool] = True, angle:Optional[float] = None) -> Optional[Projectile]:
         """Create a projectile targeting the specified coordinates"""
         if shooter.can_shoot():
             # Check if player has projectile modifications from passive abilities
@@ -60,7 +63,7 @@ class ProjectileManager:
             
         return None
             
-    def handle_auto_shooting(self, enemies):
+    def handle_auto_shooting(self, enemies:list[BaseEnemy]) -> Optional[Projectile]:
         """Automatically target nearest enemy and create projectile"""
         if not self.player.can_shoot() or not enemies:
             return None
@@ -86,7 +89,7 @@ class ProjectileManager:
 
         return None
     
-    def handle_enemy_auto_shooting(self, enemies):
+    def handle_enemy_auto_shooting(self, enemies:list[BaseEnemy]) -> Optional[Projectile]:
         """Automatically target player and create projectile for enemies"""
         for enemy in enemies:
             if enemy.shooter and enemy.can_shoot():
@@ -103,7 +106,7 @@ class ProjectileManager:
                     angle=angle
                 )
 
-    def update(self, enemies=None, *args, **kwargs):
+    def update(self, enemies:list[BaseEnemy]=None, *args, **kwargs)-> None:
         """Update all projectiles, passing enemies for homing projectiles"""
         for projectile in self.projectiles:
             if hasattr(projectile, 'update'):
@@ -112,7 +115,7 @@ class ProjectileManager:
                 else:
                     projectile.update(*args, **kwargs)
         
-    def draw(self, screen):
+    def draw(self, screen:pygame.Surface) -> None:
         """Draw all projectiles"""
         for projectile in self.projectiles:
             if hasattr(projectile, 'draw') and callable(projectile.draw):
@@ -122,7 +125,7 @@ class ProjectileManager:
                 # Basic projectiles use standard sprite drawing
                 screen.blit(projectile.image, projectile.rect)
     
-    def reset(self):
+    def reset(self) -> None:
         """Clear all projectiles"""
         self.projectiles.empty()
         self.all_sprites.empty()

@@ -1,10 +1,22 @@
 import pygame
 from entities.enemys.base_enemy import BaseEnemy
 from utils.settings import *
-
+from entities.player.player import Player
+from typing import Optional, Tuple
+from entities.experience.experience import Experience
 class FastEnemy(BaseEnemy):
     """A very fast but weak enemy that does less damage"""
-    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None, speed=FAST_ENEMY_SPEED, hp=FAST_ENEMY_HP, shooter=False, damage=FAST_ENEMY_DAMAGE):
+    def __init__(self, 
+        player: Player, 
+        x: Optional[float] = None, 
+        y: Optional[float] = None, 
+        screen_width: Optional[float] = None, 
+        screen_height: Optional[float] = None, 
+        speed: Optional[float] = FAST_ENEMY_SPEED, 
+        hp: Optional[int] = FAST_ENEMY_HP, 
+        shooter: Optional[bool] = False, 
+        damage: Optional[float] = FAST_ENEMY_DAMAGE
+    ):
         # Call the parent constructor with custom parameters
         super().__init__(
             player,
@@ -23,11 +35,11 @@ class FastEnemy(BaseEnemy):
             frame_delay=100
         )
 
-    def kill(self):
+    def kill(self) -> Experience:
         """Handle enemy death, drop experience, and remove from groups"""
         return super().kill(5)
     
-    def update(self, *args, **kwargs):
+    def update(self, *args, **kwargs) -> None:
         """Update the enemy's position and state"""
         result = super().update(*args, **kwargs)
         self.update_animation_turning_rotation()

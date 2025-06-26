@@ -1,15 +1,17 @@
 import pygame
 from utils.settings import *
-
+from entities.player.player import Player
+from managers.ability_manager import AbilityManager
+from entities.enemys.base_boss import BaseBoss
 class HUD:
     """Manages the heads-up display for game information."""
-    def __init__(self, player, screen):
+    def __init__(self, player:Player, screen:pygame.Surface) -> None:
         self.player = player
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
         self.small_font = pygame.font.Font(None, 24)
     
-    def draw(self, clock, ability_manager=None):
+    def draw(self, clock:int, ability_manager:AbilityManager=None) -> None:
         """Render all HUD elements."""
         self._draw_health_bar()
         self._draw_level_and_exp()
@@ -17,7 +19,7 @@ class HUD:
         if ability_manager:
             self._draw_active_abilities(ability_manager)
     
-    def _draw_health_bar(self):
+    def _draw_health_bar(self) -> None:
         """Draw player's health bar."""
         bar_width = 200
         bar_height = 20
@@ -31,7 +33,7 @@ class HUD:
         pygame.draw.rect(self.screen, RED, 
             (10, 10, fill_width, bar_height))
     
-    def _draw_level_and_exp(self):
+    def _draw_level_and_exp(self)-> None:
         """Display player's level and experience."""
         level_text = self.font.render(
             f"Level: {self.player.level}", 
@@ -45,7 +47,7 @@ class HUD:
         self.screen.blit(level_text, (10, 40))
         self.screen.blit(exp_text, (10, 70))
     
-    def _draw_time(self, clock):
+    def _draw_time(self, clock:int) -> None:
         """Display the current game time in minutes:seconds format."""
         # Convert to minutes and seconds
         minutes = int(clock) // 60
@@ -58,7 +60,7 @@ class HUD:
         
         self.screen.blit(time_text, (10, 100))
     
-    def _draw_active_abilities(self, ability_manager):
+    def _draw_active_abilities(self, ability_manager:AbilityManager) -> None:
         """Display active abilities and their status."""
         y_offset = 140
         
@@ -80,7 +82,7 @@ class HUD:
             shield_text = self.small_font.render("ESCUDO ATIVO", True, CYAN)
             self.screen.blit(shield_text, (10, y_offset))
 
-    def draw_boss_health_bar(self, boss):
+    def draw_boss_health_bar(self, boss:BaseBoss) -> None:
         """Draw health bar above a boss enemy"""
         if not hasattr(boss, 'is_boss') or not boss.is_boss:
             return

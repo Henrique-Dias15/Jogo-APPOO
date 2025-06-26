@@ -1,5 +1,8 @@
 import pygame
 from utils.settings import *
+from typing import Optional
+from ui.menu import MenuSystem
+from managers.ability_manager import AbilityManager
 
 class GameStateManager:
     """
@@ -20,19 +23,19 @@ class GameStateManager:
         # Level up options
         self.upgrade_options = []
     
-    def change_state(self, new_state):
+    def change_state(self, new_state:str)->None:
         """Change to a new game state"""
         self.current_state = new_state
     
-    def is_state(self, state):
+    def is_state(self, state:str)->bool:
         """Check if current state matches the given state"""
         return self.current_state == state
     
-    def set_level_up_options(self, options):
+    def set_level_up_options(self, options:list[dict])->None:
         """Set available upgrade options for level up screen"""
         self.upgrade_options = options
 
-    def handle_name_input(self, event, current_name="", max_length=10):
+    def handle_name_input(self, event, current_name:Optional[str]="", max_length:Optional[int]=10) -> tuple[str, bool]:
         """Handle input for name entry"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
@@ -53,7 +56,7 @@ class GameStateManager:
         
         return current_name, False
         
-    def handle_game_over_input(self, event):
+    def handle_game_over_input(self, event: pygame.event.Event) -> bool:
         """Handle input during game over state"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
@@ -65,7 +68,7 @@ class GameStateManager:
                 return False
         return True
     
-    def handle_game_won_input(self, event):
+    def handle_game_won_input(self, event: pygame.event.Event) -> bool:
         """Handle input during game won state"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
@@ -77,7 +80,7 @@ class GameStateManager:
                 return False  # This needs to return False to signal quitting
         return True
     
-    def handle_level_up_input(self, event, menu_system, player_level, option_rects, ability_manager):
+    def handle_level_up_input(self, event, menu_system:MenuSystem, player_level:int, option_rects:list[dict], ability_manager:AbilityManager) -> bool:
         """Handle input during level up state"""
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos

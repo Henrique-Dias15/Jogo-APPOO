@@ -4,19 +4,24 @@ from entities.enemys.base_enemy import BaseEnemy
 import math
 from entities.projectiles.ability_projectile import AbilityProjectile
 from utils.settings import *
+from entities.player.player import Player
+from managers.experience_manager import ExperienceManager
+from managers.enemy_spawner import EnemyManager
+from entities.projectiles.projectile import Projectile
+from entities.enemys.base_enemy import BaseEnemy
 class CollisionManager:
     """
     Handles all collision detection and resolution in the game.
     """
-    def __init__(self, player):
+    def __init__(self, player:Player) -> None:
         self.player = player
 
-    def set_manager(self, experience_manager, enemy_manager):
+    def set_manager(self, experience_manager:ExperienceManager, enemy_manager:EnemyManager)-> None:
         """Set the experience manager for handling enemy kills"""
         self.experience_manager = experience_manager
         self.enemy_manager = enemy_manager
     
-    def check_projectile_enemy_collisions(self, projectiles, enemies):
+    def check_projectile_enemy_collisions(self, projectiles:list[Projectile], enemies:list[BaseEnemy])-> list[BaseEnemy]:
         """Check for collisions between projectiles and enemies"""
         killed_enemies = []
         
@@ -118,7 +123,7 @@ class CollisionManager:
          
         return killed_enemies
 
-    def check_projectile_player_collisions(self, projectiles):
+    def check_projectile_player_collisions(self, projectiles: list[Projectile]) -> tuple[list[Projectile], bool]:
         """Check for collisions between projectiles and player"""
         collided_projectiles = []
         for projectile in projectiles:
@@ -130,7 +135,7 @@ class CollisionManager:
 
         return collided_projectiles, self.player.hp <= 0
                     
-    def check_enemy_player_collisions(self, enemies):
+    def check_enemy_player_collisions(self, enemies: list[BaseEnemy]) -> tuple[list[BaseEnemy], bool]:
         """Check for collisions between enemies and player"""
         collided_enemies = []
         
@@ -144,7 +149,7 @@ class CollisionManager:
                 
         return collided_enemies, self.player.hp <= 0
     
-    def check_player_experience_collisions(self):
+    def check_player_experience_collisions(self) -> list[pygame.sprite.Sprite]:
         """Check for collisions between player and experience orbs"""
         collided_experience = []
         
@@ -156,7 +161,7 @@ class CollisionManager:
         
         return collided_experience
     
-    def apply_projectile_effects(self, projectile, enemy):
+    def apply_projectile_effects(self, projectile: Projectile, enemy:BaseEnemy) -> None:
         """Apply special effects from projectiles to enemies"""
         # Apply frozen claw effect
         if (hasattr(self.player, 'has_frozen_claw') and self.player.has_frozen_claw and 

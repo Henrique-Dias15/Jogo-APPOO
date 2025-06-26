@@ -1,5 +1,6 @@
 from abilities.base_ability import PassiveAbility
 from utils.settings import *
+from entities.player.player import Player
 
 class Pawquake(PassiveAbility):
     """Pawquake - Basic attacks have a knockback effect on enemies"""
@@ -23,7 +24,7 @@ class Pawquake(PassiveAbility):
         )
         self.knockback_distance = 60  # Distance to knock back enemies
     
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         super().activate(player, **kwargs)
         # Add knockback effect to player
         player.has_pawquake = True

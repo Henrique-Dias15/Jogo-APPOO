@@ -2,18 +2,19 @@ import pygame
 from utils.settings import *
 from utils.database import DatabaseManager
 import time as tm
+from typing import Optional
 class MenuSystem:
     """Manages different game menus and state transitions."""
-    def __init__(self, screen):
+    def __init__(self, screen:pygame.Surface, databaseManager: DatabaseManager)->None:
         self.screen = screen
         self.font_title = pygame.font.Font(None, 64)
         self.font_menu = pygame.font.Font(None, 48)
-        self.databaseManager = DatabaseManager("game_data.db")
+        self.databaseManager = databaseManager
         # Get the actual screen dimensions
         self.width = screen.get_width()
         self.height = screen.get_height()
     
-    def draw_start_menu(self):
+    def draw_start_menu(self)->None:
         """Render the game's start menu with a fullscreen custom image only."""
         self.screen.fill(BLACK)
         # Load and scale the menu image to fit the screen
@@ -22,7 +23,7 @@ class MenuSystem:
         self.screen.blit(scaled_img, (0, 0))
         # Não exibe texto adicional, pois já está na imagem
     
-    def draw_input_name(self, current_name, player_level, max_length=10):
+    def draw_input_name(self, current_name:str, player_level:int, max_length:Optional[int]=10) -> None:
         """Render the name input screen."""
         self.screen.fill(BLACK)
 
@@ -95,7 +96,7 @@ class MenuSystem:
         self.screen.blit(limit_text, limit_rect)
         self.screen.blit(instructions, instructions_rect)
 
-    def draw_game_over(self, player_level):
+    def draw_game_over(self, player_level:int)->None:
         """Render the game over screen."""
         self.screen.fill(BLACK)
         
@@ -166,7 +167,7 @@ class MenuSystem:
         self.screen.blit(level_text, level_rect)
         self.screen.blit(restart_text, restart_rect)
         
-    def draw_level_up(self, player_level, upgrade_options):
+    def draw_level_up(self, player_level:int, upgrade_options:list[dict]) -> list[pygame.Rect]:
         """Render the level up screen with upgrade options as cards."""
         # Create semi-transparent overlay
         overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
@@ -254,7 +255,7 @@ class MenuSystem:
         
         return option_rects  # Return clickable regions
     
-    def draw_game_won(self, player_level):
+    def draw_game_won(self, player_level:int) -> None:
         """Render the game over screen."""
         self.screen.fill(BLACK)
         

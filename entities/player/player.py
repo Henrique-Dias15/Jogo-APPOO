@@ -1,9 +1,8 @@
 import pygame
-import math
 from utils.settings import *
-
+from typing import Optional, Callable
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, screen_width=None, screen_height=None):
+    def __init__(self, x: float, y: float, screen_width: Optional[float]=None, screen_height: Optional[float]=None)->None:
         super().__init__()
         # Imagem parada
         self.stand_image = pygame.transform.scale(
@@ -41,7 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.screen_height = screen_height if screen_height is not None else SCREEN_HEIGHT
         self.mask = pygame.mask.from_surface(self.image)
 
-    def move(self, keys):
+    def move(self, keys:pygame.key.ScancodeWrapper) -> None:
         """Move the player based on keyboard input"""
         dx, dy = 0, 0
         moving = False
@@ -81,13 +80,13 @@ class Player(pygame.sprite.Sprite):
 
         self.update_animation(moving)
 
-    def gain_exp(self, amount):
+    def gain_exp(self, amount:int) -> None:
         """Add experience points and check for level up"""
         self.exp += amount
         if self.exp >= 100:  # Simple level up mechanism
             self.level_up()
 
-    def level_up(self):
+    def level_up(self) -> None:
         """Handle leveling up logic"""
         self.level += 1
         self.exp -= 100  # Reset exp
@@ -97,20 +96,20 @@ class Player(pygame.sprite.Sprite):
         if self.level_up_callback:
             self.level_up_callback()
 
-    def set_level_up_callback(self, callback):
+    def set_level_up_callback(self, callback:Callable[[], None]) -> None:
         """Set the function to call when player levels up"""
         self.level_up_callback = callback
 
-    def can_shoot(self):
+    def can_shoot(self) -> bool:
         """Check if player can shoot a projectile"""
         now = pygame.time.get_ticks()
         return now - self.last_shot > self.projectile_cooldown
 
-    def update(self, keys):
+    def update(self, keys: pygame.key.ScancodeWrapper) -> None:
         """Update player state"""
         self.move(keys)
 
-    def update_animation(self, moving):
+    def update_animation(self, moving:bool) -> None:
         now = pygame.time.get_ticks()
         if moving:
             if now - self.frame_timer > self.frame_delay:

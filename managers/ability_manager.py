@@ -5,12 +5,15 @@ from abilities.base_ability import PassiveAbility, ActiveAbility, BuffAbility
 
 # Import abilities by category
 from abilities.passive import CatnipSpell, FrozenClaw, FlamingPaws, Tailwind, CleaningTongue, Pawquake, SteelWhiskers, StaticFur
-
+from entities.player.player import Player
+from managers.projectile_manager import ProjectileManager
+from managers.enemy_spawner import EnemyManager
+from entities.enemys.base_enemy import BaseEnemy
 class AbilityManager:
     """
     Enhanced ability manager that handles magical cat abilities and upgrades.
     """
-    def __init__(self, player):
+    def __init__(self, player: Player) -> None:
         self.player = player
         
         # Magical abilities collection
@@ -36,12 +39,12 @@ class AbilityManager:
         self.projectile_manager = None
         self.enemy_manager = None
     
-    def set_managers(self, projectile_manager, enemy_manager):
+    def set_managers(self, projectile_manager:ProjectileManager, enemy_manager:EnemyManager) -> None:
         """Set references to game managers for ability activation."""
         self.projectile_manager = projectile_manager
         self.enemy_manager = enemy_manager
     
-    def update(self, dt, keys=None):
+    def update(self, dt, keys: pygame.key.ScancodeWrapper = None) -> None:
         """Update all active abilities and handle auto-triggers."""
         if not self.enemy_manager or not self.projectile_manager:
             return
@@ -61,7 +64,7 @@ class AbilityManager:
         # Update enemy status effects
         self.update_enemy_effects(enemies)
     
-    def update_enemy_effects(self, enemies):
+    def update_enemy_effects(self, enemies:list[BaseEnemy]) -> None:
         """Update status effects on enemies."""
         current_time = pygame.time.get_ticks()
         
@@ -87,7 +90,7 @@ class AbilityManager:
                             enemy.kill()
                         enemy.last_burn_tick = current_time
     
-    def activate_ability(self, ability_name, **kwargs):
+    def activate_ability(self, ability_name:str, **kwargs) -> bool:
         """Activate a specific ability."""
         if ability_name in self.player_abilities:
             ability = self.player_abilities[ability_name]
@@ -100,7 +103,7 @@ class AbilityManager:
             )
         return False
     
-    def get_upgrade_options(self):
+    def get_upgrade_options(self) -> list[dict]:
         """
         Generate upgrade options for magical abilities.
         """
@@ -114,7 +117,7 @@ class AbilityManager:
         
         return selected_options
     
-    def get_magical_ability_options(self):
+    def get_magical_ability_options(self) -> list[dict]:
         """Get available magical ability options."""
         options = []
         
@@ -141,7 +144,7 @@ class AbilityManager:
         
         return options
     
-    def upgrade_ability(self, ability_name):
+    def upgrade_ability(self, ability_name:str) -> bool:
         """Apply the selected ability upgrade to the player."""
         # Find the ability in upgrade options to get its type
         upgrade_options = self.get_magical_ability_options()
@@ -164,7 +167,7 @@ class AbilityManager:
         
         return False
     
-    def acquire_magical_ability(self, ability_name):
+    def acquire_magical_ability(self, ability_name:str) -> bool:
         """Acquire a new magical ability."""
         if ability_name in self.passive_abilities and ability_name not in self.player_abilities:
             # Create a new instance of the ability
@@ -181,7 +184,7 @@ class AbilityManager:
             return True
         return False
     
-    def upgrade_magical_ability(self, ability_name):
+    def upgrade_magical_ability(self, ability_name:str) -> bool:
         """Upgrade an existing magical ability."""
         if ability_name in self.player_abilities:
             ability = self.player_abilities[ability_name]

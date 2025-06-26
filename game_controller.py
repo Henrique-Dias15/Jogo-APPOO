@@ -16,7 +16,7 @@ class GameController:
     """
     Primary game management class responsible for coordinating game systems.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the game with all necessary components."""
         pygame.init()
         pygame.display.set_caption(GAME_TITLE)
@@ -36,7 +36,7 @@ class GameController:
         self.elapsed_time = 0
                 
         # UI Systems
-        self.menu_system = MenuSystem(self.screen)
+        self.menu_system = MenuSystem(self.screen, self.database)
         
         # Game state manager
         self.state_manager = GameStateManager()
@@ -47,7 +47,7 @@ class GameController:
         # Initialize game state
         self.reset_game_state()
     
-    def reset_game_state(self):
+    def reset_game_state(self) -> None:
         """Reset all game variables to their initial state."""
         # All sprites group for rendering
         self.all_sprites = pygame.sprite.Group()
@@ -79,22 +79,22 @@ class GameController:
         # Don't reset the game state here unless starting from scratch
         # We'll reset elapsed_time when transitioning from menu to playing
     
-    def trigger_level_up(self):
+    def trigger_level_up(self) -> None:
         """Pause game and show level up screen."""
         self.state_manager.change_state(self.state_manager.LEVEL_UP)
         self.state_manager.set_level_up_options(self.ability_manager.get_upgrade_options())
     
-    def trigger_input_name(self):
+    def trigger_input_name(self) -> None:
         """Pause game and show input name screen."""
         self.state_manager.change_state(self.state_manager.INPUTTING_NAME)
         
 
-    def trigger_game_over(self):
+    def trigger_game_over(self) -> None:
         """Set game over state and prepare for restart/exit."""
         self.state_manager.change_state(self.state_manager.GAME_OVER)
         self.clear_game_entities()
         
-    def trigger_game_won(self):
+    def trigger_game_won(self) -> None:
         """Set game won state and prepare for restart/exit."""
         self.state_manager.change_state(self.state_manager.GAME_WON)
         self.clear_game_entities()
@@ -212,14 +212,14 @@ class GameController:
         else:
             print(f"❌ Habilidade '{test_key}' não encontrada!")
 
-    def clear_game_entities(self):
+    def clear_game_entities(self) -> None:
         """Clear all game entities."""
         self.all_sprites.empty()
         self.enemy_manager.reset()
         self.projectile_manager.reset()
         self.experience_manager.reset()
     
-    def run(self):
+    def run(self) -> None:
         """Main game loop that manages different game states."""
         # Start with the main menu
         self.show_start_menu()
@@ -300,7 +300,7 @@ class GameController:
         pygame.quit()
         sys.exit()
     
-    def show_start_menu(self):
+    def show_start_menu(self) -> None:
         """Display the start menu and wait for player to begin."""
         self.state_manager.change_state(self.state_manager.MAIN_MENU)
         
@@ -324,7 +324,7 @@ class GameController:
             # Still need to tick the clock here to maintain frame rate
             self.clock.tick(FPS)
     
-    def update_game_state(self):
+    def update_game_state(self) -> None:
         """Update all game logic."""
         # Get current keyboard state
         keys = pygame.key.get_pressed()
@@ -359,7 +359,7 @@ class GameController:
         self.all_sprites.add(self.enemy_manager.enemies)
         self.all_sprites.add(self.projectile_manager.projectiles)
     
-    def check_collisions(self):
+    def check_collisions(self) -> None:
         """Handle all collision detection and resolution."""
         # Projectile-Enemy Collisions
         killed_enemies = self.collision_manager.check_projectile_enemy_collisions(
@@ -376,7 +376,7 @@ class GameController:
         if is_player_dead:
             self.trigger_input_name()
     
-    def render_screen(self):
+    def render_screen(self) -> None:
         """Render appropriate screen based on game state."""
         if self.state_manager.is_state(self.state_manager.MAIN_MENU):
             # Menu screen
@@ -411,7 +411,7 @@ class GameController:
         # Update display
         pygame.display.flip()
 
-def main(test_ability=None):
+def main(test_ability=None) :
     """Entry point for the game."""
     game = GameController()
     

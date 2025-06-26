@@ -1,5 +1,6 @@
 from abilities.base_ability import PassiveAbility
 from utils.settings import *
+from entities.player.player import Player
 
 class StaticFur(PassiveAbility):
     """Static Fur - Basic attacks can jump to nearby enemies."""
@@ -23,7 +24,7 @@ class StaticFur(PassiveAbility):
         )
         self.enemies_jump = 2  # Number of enemies to jump to
 
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         super().activate(player, **kwargs)
         player.has_static_fur = True
         player.static_max_jumps = self.enemies_jump

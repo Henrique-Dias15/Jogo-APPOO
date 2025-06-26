@@ -2,13 +2,15 @@ import pygame
 import math
 from abc import ABC, abstractmethod
 from utils.settings import *
-
+from entities.player.player import Player
+from entities.enemys.base_enemy import BaseEnemy
+from entities.projectiles.projectile import Projectile
 class BaseAbility(ABC):
     """
     Abstract base class for all abilities in the game.
     Provides common functionality and enforces implementation of key methods.
     """
-    def __init__(self, name, description, cooldown, level=1, max_level=5):
+    def __init__(self, name:str, description:str, cooldown:float, level:int=1, max_level:int=5):
         self.name = name
         self.description = description
         self.base_cooldown = cooldown
@@ -21,7 +23,7 @@ class BaseAbility(ABC):
         self.activation_time = 0
         
     @abstractmethod
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs):
         """
         Activate the ability. Must be implemented by subclasses.
         """
@@ -56,7 +58,7 @@ class BaseAbility(ABC):
         """
         pass
     
-    def update(self, dt, player, enemies=None, projectiles=None, **kwargs):
+    def update(self, dt, player:Player, enemies:list[BaseEnemy]=None, projectiles:list[Projectile]=None, **kwargs):
         """
         Update the ability state. Called every frame.
         Override for abilities that need continuous updates.
@@ -67,7 +69,7 @@ class BaseAbility(ABC):
             if current_time - self.activation_time >= self.duration:
                 self.deactivate(player, **kwargs)
     
-    def deactivate(self, player, **kwargs):
+    def deactivate(self, player:Player, **kwargs):
         """
         Deactivate the ability. Override for abilities with duration.
         """
@@ -79,14 +81,14 @@ class PassiveAbility(BaseAbility):
     Base class for passive abilities that provide permanent stat boosts.
     Can also modify projectiles fired by the player.
     """
-    def __init__(self, name, description, stat_name, stat_increase, projectile_modifications=None):
+    def __init__(self, name:str, description:str, stat_name:str, stat_increase:int, projectile_modifications:dict=None):
         super().__init__(name, description, cooldown=0)  # No cooldown for passive abilities
         self.stat_name = stat_name
         self.base_stat_increase = stat_increase
         self.stat_increase = stat_increase
         self.projectile_modifications = projectile_modifications or {}
     
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         """
         Apply the passive effect to the player.
         """
@@ -96,7 +98,7 @@ class PassiveAbility(BaseAbility):
         self.activation_time = pygame.time.get_ticks()
         return True
     
-    def apply_stat_boost(self, player):
+    def apply_stat_boost(self, player:Player) -> None:
         """
         Apply the stat boost to the player.
         """
@@ -104,7 +106,7 @@ class PassiveAbility(BaseAbility):
             current_value = getattr(player, self.stat_name)
             setattr(player, self.stat_name, current_value + self.stat_increase)
     
-    def apply_projectile_modifications(self, player):
+    def apply_projectile_modifications(self, player:Player) -> None:
         """
         Apply projectile modifications to the player.
         """
@@ -125,14 +127,14 @@ class PassiveAbility(BaseAbility):
                 # For other modifications, use the latest value
                 player.projectile_modifications[key] = value
     
-    def get_projectile_modifications(self):
+    def get_projectile_modifications(self) -> dict:
         """
         Get the projectile modifications this ability provides.
         Override this method for dynamic modifications.
         """
         return self.projectile_modifications.copy()
     
-    def on_upgrade(self):
+    def on_upgrade(self) -> None: 
         """
         Increase the stat boost when upgraded.
         """

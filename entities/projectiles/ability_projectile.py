@@ -1,15 +1,29 @@
 import pygame
 import math
 from utils.settings import *
-
+from typing import Tuple, Optional
+from entities.enemys.base_enemy import BaseEnemy
 class AbilityProjectile(pygame.sprite.Sprite):
     """
     Projectile class specifically for abilities, with more customization options.
     """
-    def __init__(self, x, y, target_x, target_y, speed=7, damage=10, 
-                 size=(8, 8), color=BLUE, screen_width=None, screen_height=None,
-                 piercing=False, static=False, lifetime=None, homing=False, 
-                 effects=None):
+    def __init__(self, 
+        x: float, 
+        y: float, 
+        target_x: float, 
+        target_y: float, 
+        speed: Optional[float] = 7, 
+        damage: Optional[float] = 10, 
+        size: Optional[Tuple[int,int]] = (8, 8), 
+        color: Optional[Tuple[int,int,int]] = BLUE, 
+        screen_width: Optional[float] = None, 
+        screen_height: Optional[float] = None,
+        piercing: Optional[bool] = False, 
+        static: Optional[bool] = False, 
+        lifetime: Optional[int] = None, 
+        homing: Optional[bool] = False, 
+        effects: Optional[list] = None
+        ) -> None:
         super().__init__()
         
         # Visual properties
@@ -55,7 +69,7 @@ class AbilityProjectile(pygame.sprite.Sprite):
         self.hit_enemies = set() if piercing else None
         self.jump_enemies = set() if static else None
     
-    def update(self, enemies=None, *args, **kwargs):
+    def update(self, enemies: list[BaseEnemy]=None, *args, **kwargs) -> None:
         """Update projectile position and handle homing."""
         # Handle homing behavior
         if self.homing and enemies:
@@ -79,7 +93,7 @@ class AbilityProjectile(pygame.sprite.Sprite):
             self.rect.bottom < -50 or self.rect.top > self.screen_height + 50):
             self.kill()
     
-    def find_closest_enemy(self, enemies):
+    def find_closest_enemy(self, enemies:list[BaseEnemy]) -> Optional[BaseEnemy]:
         """Find the closest enemy for homing behavior."""
         if not enemies:
             return None
@@ -98,7 +112,7 @@ class AbilityProjectile(pygame.sprite.Sprite):
         
         return closest_enemy
     
-    def update_homing_direction(self, target):
+    def update_homing_direction(self, target:BaseEnemy) -> None:
         """Update direction to home in on target."""
         dx = target.rect.centerx - self.rect.centerx
         dy = target.rect.centery - self.rect.centery
@@ -120,20 +134,20 @@ class AbilityProjectile(pygame.sprite.Sprite):
                 self.dx = (self.dx / current_speed) * self.speed
                 self.dy = (self.dy / current_speed) * self.speed
     
-    def can_hit_enemy(self, enemy):
+    def can_hit_enemy(self, enemy:BaseEnemy) -> bool:
         """Check if this projectile can hit the given enemy."""
         if not self.piercing:
             return True
         return enemy not in self.hit_enemies
     
-    def mark_enemy_hit(self, enemy):
+    def mark_enemy_hit(self, enemy:BaseEnemy) -> None:
         """Mark an enemy as hit (for piercing projectiles)."""
         if self.piercing and self.hit_enemies is not None:
             self.hit_enemies.add(enemy)
         if self.static and self.jump_enemies is not None:
             self.jump_enemies.add(enemy)
     
-    def apply_effects(self, enemy):
+    def apply_effects(self, enemy:BaseEnemy) -> None:
         """Apply any special effects to the hit enemy."""
         for effect in self.effects:
             effect(enemy)
@@ -143,12 +157,19 @@ class SpecialProjectile(AbilityProjectile):
     """
     Enhanced projectile for special abilities with visual effects.
     """
-    def __init__(self, x, y, target_x, target_y, projectile_type="magic_orb", **kwargs):
+    def __init__(self, 
+        x: float, 
+        y: float, 
+        target_x: float, 
+        target_y: float, 
+        projectile_type: Optional[str] = "magic_orb", 
+        **kwargs
+    ) -> None:
         self.projectile_type = projectile_type
         super().__init__(x, y, target_x, target_y, **kwargs)
         self.setup_visual()
     
-    def setup_visual(self):
+    def setup_visual(self) -> None:
         """Setup visual appearance based on projectile type."""
         if self.projectile_type == "magic_orb":
             # Create a glowing orb effect

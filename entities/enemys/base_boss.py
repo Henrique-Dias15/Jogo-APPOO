@@ -1,13 +1,29 @@
 from entities.enemys.base_enemy import BaseEnemy
 import pygame
-
+from entities.player.player import Player
+from typing import Optional, Tuple
 class BaseBoss(BaseEnemy):
     """
     Base class for all bosses in the game.
     Inherits from BaseEnemy and can be extended with boss-specific attributes and methods.
     """
     
-    def __init__(self, player, size, color, speed, hp, shooter, damage, x=None, y=None, screen_width=None, screen_height=None, spritesheet=None, frame_ammount=None, frame_delay=None):
+    def __init__(self, 
+        player:Player, 
+        size:Tuple, 
+        color:Tuple, 
+        speed:float, 
+        hp:int, 
+        shooter:bool, 
+        damage:float, 
+        x:Optional[float]=None, 
+        y:Optional[float]=None, 
+        screen_width:Optional[float]=None, 
+        screen_height:Optional[float]=None, 
+        spritesheet:Optional[str]=None, 
+        frame_ammount:Optional[int]=None, 
+        frame_delay:Optional[float]=None
+    ) -> None:
         center_x = screen_width // 2
         center_y = screen_height // 2
         

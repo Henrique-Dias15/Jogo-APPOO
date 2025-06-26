@@ -1,6 +1,7 @@
 import pygame
 from abilities.base_ability import PassiveAbility
 from utils.settings import *
+from entities.player.player import Player
 
 class FlamingPaws(PassiveAbility):
     """Flaming Paws - Adds fire effect to attacks"""
@@ -25,7 +26,7 @@ class FlamingPaws(PassiveAbility):
         self.burn_duration = 3000  # 3 seconds
         self.burn_damage = 20  # Damage per tick (every 500ms)
     
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         super().activate(player, **kwargs)
         # Add burn effect to player
         player.has_flaming_paws = True

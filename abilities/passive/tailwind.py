@@ -1,5 +1,6 @@
 import pygame
 from abilities.base_ability import PassiveAbility
+from entities.player.player import Player
 
 class Tailwind(PassiveAbility):
     """Tailwind - Increases movement speed and firing rate."""
@@ -23,7 +24,7 @@ class Tailwind(PassiveAbility):
         )
         self.cooldown_reduction = 0.3    
     
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         super().activate(player, **kwargs)
         player.has_tailwind = True
         player.projectile_cooldown = int(

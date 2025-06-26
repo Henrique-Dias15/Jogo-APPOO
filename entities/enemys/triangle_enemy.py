@@ -3,10 +3,24 @@ import math
 from entities.enemys.base_shooter import BaseShooter
 from utils.settings import *
 from entities.projectiles.projectile import Projectile
+from entities.player.player import Player
+from typing import Optional, Tuple
+from entities.experience.experience import Experience
 
 class TriangleEnemy(BaseShooter):
     """A enemy that keeps a distance from the player and shoots projectiles"""
-    def __init__(self, player, x=None, y=None, screen_width=None, screen_height=None, speed=TRIANGLE_ENEMY_SPEED, hp=TRIANGLE_ENEMY_HP, shooter=True, damage=TRIANGLE_ENEMY_DAMAGE, projectile_cooldown=TRIANGLE_ENEMY_PROJECTILE_COOLDOWN, projectile_damage=TRIANGLE_ENEMY_PROJECTILE_DAMAGE):
+    def __init__(self, 
+        player: Player, 
+        x: Optional[float] = None, 
+        y: Optional[float] = None, 
+        screen_width: Optional[float] = None, 
+        screen_height: Optional[float] = None, 
+        speed: Optional[float] = TRIANGLE_ENEMY_SPEED, 
+        hp: Optional[int] = TRIANGLE_ENEMY_HP, 
+        damage:Optional[float] = TRIANGLE_ENEMY_DAMAGE, 
+        projectile_cooldown: Optional[int] = TRIANGLE_ENEMY_PROJECTILE_COOLDOWN, 
+        projectile_damage: Optional[float] = TRIANGLE_ENEMY_PROJECTILE_DAMAGE
+        ) -> None:
         # Call the parent constructor with custom parameters
         super().__init__(
             player=player,
@@ -32,7 +46,7 @@ class TriangleEnemy(BaseShooter):
             'sprite_frame_delay': 150,
         }
 
-    def update(self, *args, **kwargs):
+    def update(self, *args, **kwargs) -> None:
         """Move enemy towards player and shoot projectiles"""
         # Calculate direction to player
         dx = self.player.rect.centerx - self.rect.centerx
@@ -69,6 +83,6 @@ class TriangleEnemy(BaseShooter):
 
         self.update_animation_turning()
 
-    def kill(self):
+    def kill(self) -> Experience:
         """Handle enemy death, drop experience, and remove from groups"""
         return super().kill(20)

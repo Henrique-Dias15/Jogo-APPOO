@@ -1,5 +1,5 @@
 from abilities.base_ability import PassiveAbility
-
+from entities.player.player import Player
 class CleaningTongue(PassiveAbility):
     """Cleaning Tongue - Basic shots have a chance to heal a % of max HP on hit"""
     def __init__(self):
@@ -23,7 +23,7 @@ class CleaningTongue(PassiveAbility):
         self.heal_chance = 0.05
         self.heal_amount = 0.15
         
-    def activate(self, player, **kwargs):
+    def activate(self, player:Player, **kwargs) -> bool:
         super().activate(player, **kwargs)
         # Add healing effect to player
         player.has_cleaning_tongue = True
